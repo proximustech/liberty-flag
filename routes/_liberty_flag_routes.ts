@@ -9,7 +9,8 @@ let getRouter = (viewVars: any) => {
     router.get('/buckets', async (ctx) => {
         try {
             const bucketService = new BucketService()
-            viewVars.buckets = bucketService.getAll()
+            viewVars.buckets = await bucketService.getAll()
+            bucketService.close()
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
             console.error(error)

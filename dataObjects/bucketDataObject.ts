@@ -1,5 +1,5 @@
 export class BucketDataObject {
-    _id:string = ""
+    _id:any = ""
     uuid:string = ""
     name:string = ""
     subBuckets:Array<BucketDataObject> = []

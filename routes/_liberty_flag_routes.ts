@@ -5,9 +5,9 @@ let getRouter = (viewVars: any) => {
     const prefix = 'liberty_flag'
     const router = new Router({prefix: '/'+ prefix});
 
-    router.get('/projects', async (ctx) => {
+    router.get('/buckets', async (ctx) => {
         try {
-            return ctx.render('plugins/_'+prefix+'/views/projects', viewVars);
+            return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
             console.error(error)
         }

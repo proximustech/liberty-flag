@@ -4,8 +4,10 @@ import { BucketDataObject } from "../dataObjects/bucketDataObject";
 
 export class BucketService {
 
-    mongoClient:MongoClient
-    mongoService:MongoService
+    private mongoClient:MongoClient
+    private mongoService:MongoService
+    private dataBase = "lf_plugin"
+    private collection = "buckets"
 
     constructor(){
         this.mongoService = new MongoService()
@@ -19,14 +21,21 @@ export class BucketService {
         bucket._id = new ObjectId(bucket.uuid)
         bucket.subBuckets = []
 
-        const db = this.mongoClient.db("lf_plugin");
-        await db.collection('buckets').insertOne(bucket)
+        const db = this.mongoClient.db(this.dataBase);
+        const result = await db.collection(this.collection).insertOne(bucket)
 
         return bucket
     }
 
-    update(bucket:BucketDataObject){
-        return bucket
+    async update(bucket:BucketDataObject){
+
+        const db = this.mongoClient.db(this.dataBase)
+        const buckets = db.collection(this.collection);
+        const result = await buckets.replaceOne({
+          uuid: bucket.uuid }, bucket,
+          {upsert: false}
+        )        
+
     }
 
     delete(bucketUuid:string){
@@ -40,9 +49,13 @@ export class BucketService {
     async getAll(){
         let buckets:Array<BucketDataObject> = []
 
-        let bucket = await this.create("LP")
+        let bucket = await this.create("First Name")
         buckets.push(bucket)
-
+        
+        bucket.name = "Second Name";
+        await this.update(bucket)
+        buckets.push(bucket)
+        
         return buckets
     }
 

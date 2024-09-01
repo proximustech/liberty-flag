@@ -1,6 +1,6 @@
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
-import { BucketDataObject } from "../dataObjects/bucketDataObject";
+import { BucketDataObject } from "../dataObjects/BucketDataObject";
 
 export class BucketService {
     
@@ -32,33 +32,31 @@ export class BucketService {
     }
 
     async updateOne(bucket:BucketDataObject){
-        const result = await this.collection.replaceOne({
-          uuid: bucket.uuid }, bucket,
-          {upsert: false}
-        )        
-
+        const result = await this.collection.replaceOne(
+            {uuid: bucket.uuid }, 
+            bucket,
+            {upsert: false}
+        )
     }
 
-    async deleteByUuId(bucketuuId:string){
-        const result = await this.collection.deleteOne({ uuid: bucketuuId })
+    async deleteByUuId(bucketUuId:string){
+        const result = await this.collection.deleteOne({ uuid: bucketUuId })
     }
 
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
-        const cursor = await this.collection.find({uuid : uuid});
+        const cursor = this.collection.find({uuid : uuid});
 
         while (await cursor.hasNext()) {
-            // @ts-ignore
-            let document:BucketDataObject = await cursor.next();
+            let document = (await cursor.next() as BucketDataObject);
             return document
         }
 
         return new BucketDataObject()
-
     }
 
     async getAll() : Promise<BucketDataObject[]> {
-        await this.processTest()
+        //await this.processTest()
         const cursor = this.collection.find({});
         return (await cursor.toArray() as BucketDataObject[])
     }

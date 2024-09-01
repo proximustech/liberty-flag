@@ -88,7 +88,7 @@ export class BucketService {
         bucket.name = "Other Name";
         await this.updateOne(bucket)
 
-        this.deleteByUuId(bucket.uuid)
+        await this.deleteByUuId(bucket.uuid)
 
     }
 

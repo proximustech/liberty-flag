@@ -14,7 +14,7 @@ export class BucketService {
         this.mongoClient = this.mongoService.getMongoClient()
     }
 
-    async create(name:string){
+    async createByName(name:string){
         let bucket = new BucketDataObject()
         bucket.name = name
         bucket.uuid = this.mongoService.createMongoUuId()
@@ -27,36 +27,67 @@ export class BucketService {
         return bucket
     }
 
-    async update(bucket:BucketDataObject){
-
+    async updateOne(bucket:BucketDataObject){
         const db = this.mongoClient.db(this.dataBase)
-        const buckets = db.collection(this.collection);
-        const result = await buckets.replaceOne({
+        const result = await db.collection(this.collection).replaceOne({
           uuid: bucket.uuid }, bucket,
           {upsert: false}
         )        
 
     }
 
-    delete(bucketUuid:string){
+    async deleteByUuId(bucketuuId:string){
+        const db = this.mongoClient.db(this.dataBase)
+        const result = await db.collection(this.collection).deleteOne({ uuid: bucketuuId })
+    }
+
+    async getByUuId(uuid:string) : Promise<BucketDataObject> {
+
+        const db = this.mongoClient.db(this.dataBase)
+        const cursor = await db.collection(this.collection).find({uuid : uuid});
+
+        while (await cursor.hasNext()) {
+            // @ts-ignore
+            let document:BucketDataObject = await cursor.next();
+            return document
+        }
+
+        return new BucketDataObject()
 
     }
 
-    getByUuId(uuid:string){
-        
+    
+    async getAll() : Promise<BucketDataObject[]> {
+
+        await this.processTest()
+
+        let list: BucketDataObject[] = [];
+        const db = this.mongoClient.db(this.dataBase)
+        const cursor = db.collection(this.collection).find({});
+    
+        while (await cursor.hasNext()) {
+            let document = (await cursor.next() as BucketDataObject) ;
+            list.push(document);
+        }
+
+        return list
     }
+    
 
-    async getAll(){
-        let buckets:Array<BucketDataObject> = []
+    private async processTest(){
+        /**
+         * Some process
+         */
 
-        let bucket = await this.create("First Name")
-        buckets.push(bucket)
-        
+        let bucketFirst = await this.createByName("First Name")
+
+        let bucket = await this.getByUuId(bucketFirst.uuid)
+
         bucket.name = "Second Name";
-        await this.update(bucket)
-        buckets.push(bucket)
-        
-        return buckets
+        await this.updateOne(bucket)
+
+        this.deleteByUuId(bucket.uuid)
+
     }
 
 }

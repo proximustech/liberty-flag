@@ -1,35 +1,38 @@
 import { MongoService } from "./MongoService";
-import { ObjectId,MongoClient } from 'mongodb';
+import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { BucketDataObject } from "../dataObjects/bucketDataObject";
 
 export class BucketService {
-
+    
+    private dataBaseName = "lf_plugin"
+    private collectionName = "buckets"
     private mongoClient:MongoClient
     private mongoService:MongoService
-    private dataBase = "lf_plugin"
-    private collection = "buckets"
+    private dataBase:Db
+    private collection:Collection
 
     constructor(){
         this.mongoService = new MongoService()
         this.mongoClient = this.mongoService.getMongoClient()
+        this.dataBase = this.mongoClient.db(this.dataBaseName);
+        this.collection = this.dataBase.collection(this.collectionName);
     }
 
-    async createByName(name:string){
+    getNew(){
         let bucket = new BucketDataObject()
-        bucket.name = name
         bucket.uuid = this.mongoService.createMongoUuId()
         bucket._id = new ObjectId(bucket.uuid)
         bucket.subBuckets = []
 
-        const db = this.mongoClient.db(this.dataBase);
-        const result = await db.collection(this.collection).insertOne(bucket)
-
         return bucket
     }
 
+    async create(bucket:BucketDataObject){
+        const result = await this.collection.insertOne(bucket)
+    }
+
     async updateOne(bucket:BucketDataObject){
-        const db = this.mongoClient.db(this.dataBase)
-        const result = await db.collection(this.collection).replaceOne({
+        const result = await this.collection.replaceOne({
           uuid: bucket.uuid }, bucket,
           {upsert: false}
         )        
@@ -37,14 +40,12 @@ export class BucketService {
     }
 
     async deleteByUuId(bucketuuId:string){
-        const db = this.mongoClient.db(this.dataBase)
-        const result = await db.collection(this.collection).deleteOne({ uuid: bucketuuId })
+        const result = await this.collection.deleteOne({ uuid: bucketuuId })
     }
 
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
-        const db = this.mongoClient.db(this.dataBase)
-        const cursor = await db.collection(this.collection).find({uuid : uuid});
+        const cursor = await this.collection.find({uuid : uuid});
 
         while (await cursor.hasNext()) {
             // @ts-ignore
@@ -62,8 +63,7 @@ export class BucketService {
         await this.processTest()
 
         let list: BucketDataObject[] = [];
-        const db = this.mongoClient.db(this.dataBase)
-        const cursor = db.collection(this.collection).find({});
+        const cursor = this.collection.find({});
     
         while (await cursor.hasNext()) {
             let document = (await cursor.next() as BucketDataObject) ;
@@ -79,11 +79,13 @@ export class BucketService {
          * Some process
          */
 
-        let bucketFirst = await this.createByName("First Name")
+        let bucketFirst = this.getNew()
+        bucketFirst.name = "First Name"
+        await this.create(bucketFirst)
 
         let bucket = await this.getByUuId(bucketFirst.uuid)
 
-        bucket.name = "Second Name";
+        bucket.name = "Other Name";
         await this.updateOne(bucket)
 
         this.deleteByUuId(bucket.uuid)

@@ -57,20 +57,10 @@ export class BucketService {
 
     }
 
-    
     async getAll() : Promise<BucketDataObject[]> {
-
         await this.processTest()
-
-        let list: BucketDataObject[] = [];
         const cursor = this.collection.find({});
-    
-        while (await cursor.hasNext()) {
-            let document = (await cursor.next() as BucketDataObject) ;
-            list.push(document);
-        }
-
-        return list
+        return (await cursor.toArray() as BucketDataObject[])
     }
     
 
@@ -88,7 +78,7 @@ export class BucketService {
         bucket.name = "Other Name";
         await this.updateOne(bucket)
 
-        await this.deleteByUuId(bucket.uuid)
+        //await this.deleteByUuId(bucket.uuid)
 
     }
 

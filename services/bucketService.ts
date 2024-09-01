@@ -1,40 +1,35 @@
+import { MongoService } from "../services/MongoService";
 import { BucketDataObject } from "../dataObjects/bucketDataObject";
-import {v4 as uuidv4} from 'uuid';
-import { env } from 'node:process';
-import { MongoClient, ServerApiVersion,ObjectId } from 'mongodb';
+
+import { ObjectId,MongoClient } from 'mongodb';
 
 export class BucketService {
 
-    client:MongoClient
+    mongoClient:MongoClient
+    mongoService:MongoService
 
     constructor(){
-        // @ts-ignore
-        this.client = new MongoClient(env.MONGO_URI, {
-            serverApi: {
-                version: ServerApiVersion.v1,
-                strict: true,
-                deprecationErrors: true,
-            }
-        });        
+        this.mongoService = new MongoService()
+        this.mongoClient = this.mongoService.getMongoClient()
     }
 
     async create(name:string){
         let bucket = new BucketDataObject()
         bucket.name = name
-        bucket.uuid = uuidv4().split("-").join("").substring(0,24)
+        bucket.uuid = this.mongoService.createMongoUuId()
         bucket._id = new ObjectId(bucket.uuid)
         bucket.subBuckets = []
 
-        const db = this.client.db("lf_plugin");
+        const db = this.mongoClient.db("lf_plugin");
         await db.collection('buckets').insertOne(bucket)
 
         return bucket
-        
     }
 
     update(bucket:BucketDataObject){
         return bucket
     }
+
     delete(bucketUuid:string){
 
     }
@@ -52,7 +47,4 @@ export class BucketService {
         return buckets
     }
 
-    close(){
-        this.client.close()
-    }
 }

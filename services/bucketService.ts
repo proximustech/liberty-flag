@@ -1,4 +1,4 @@
-import { MongoService } from "../services/MongoService";
+import { MongoService } from "./MongoService";
 import { BucketDataObject } from "../dataObjects/bucketDataObject";
 
 import { ObjectId,MongoClient } from 'mongodb';

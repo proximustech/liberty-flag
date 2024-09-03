@@ -1,5 +1,28 @@
-<% buckets.forEach(bucket => { %>
-    <%= bucket.name %><br>
-    <%= bucket.uuid %>
-    <hr>
-<% }) %>
+<label style="width: 45%;font-size: 45;">Buckets</label>
+<br>
+<br>
+<button id="create_bucket_button" class="btn btn-primary" style="margin-top: 4px;" onclick="app.openDetail(document.getElementById('create_bucket_button'))" ><i class="bi bi-plus-circle"></i> Add</button>
+<div class="btn-group" role="group" style="margin-top: 4px;">
+    <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+    <input class="form-control" id="bucket_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >
+</div>
+<br>
+<br>
+<table id="buckets_table" class="table table-striped table-hover" data-toggle="table" data-pagination="true" data-search="true" data-search-align="left" data-search-selector="#bucket_search_box" data-search-highlight="true">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Id</th>
+        </tr>
+    </thead>
+    <% buckets.forEach(bucket => { %>
+    <tr>
+        <td><%= bucket.name %></td>
+        <td><%= bucket.uuid %></td>
+    </tr>
+    <% }) %>
+</table>
+<script>
+    var $buckets_table = $('#buckets_table')
+    $buckets_table.bootstrapTable()
+</script>

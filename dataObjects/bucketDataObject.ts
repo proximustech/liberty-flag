@@ -1,4 +1,4 @@
-import { validateFunction } from "../../../values/dataObjectValidateFunction";
+import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
 
 export class BucketDataObject {
     _id:any = ""
@@ -9,12 +9,12 @@ export class BucketDataObject {
 
 export const BucketDataObjectValidator:any = {
 
-    validateData : {
+    validateSchema : {
         name : {
             regexp:".{5,30}",
             message:"Name must be in the range of 5 and 30 characters."
         },
     },
 
-    validateFunction : validateFunction
+    validateFunction : DataObjectValidateFunction
 }

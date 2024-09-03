@@ -1,5 +1,6 @@
 <script>
-    app.module_data.validateData = JSON.parse(`<%- validateData %>`)
+    app.module_data.bucket_create_form={}
+    app.module_data.bucket_create_form.validateSchema = JSON.parse(`<%- validateSchema %>`)
     eval(`<%- validateFunction %>`)
 </script>
 <input class="form-control" id="bucket_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >

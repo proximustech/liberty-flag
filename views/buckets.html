@@ -9,7 +9,8 @@
 <br>
 <table 
     id="buckets_table" 
-    class="table table-striped table-hover" 
+    class="table table-striped table-hover"
+    style="width:75%"
     data-toggle="table" 
     data-pagination="true" 
     data-search="true" 
@@ -22,13 +23,11 @@
     <thead>
         <tr>
             <th data-sortable="true">Name</th>
-            <th data-sortable="true">Id</th>
         </tr>
     </thead>
     <% buckets.forEach(bucket => { %>
     <tr>
         <td><%= bucket.name %></td>
-        <td><%= bucket.uuid %></td>
     </tr>
     <% }) %>
 </table>

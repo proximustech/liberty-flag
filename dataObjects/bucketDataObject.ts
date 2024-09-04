@@ -1,4 +1,5 @@
 import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
+import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../services/dataObjectHtmlGenerator";
 
 export class BucketDataObject {
     _id:any = ""
@@ -17,4 +18,17 @@ export const BucketDataObjectValidator:any = {
     },
 
     validateFunction : DataObjectValidateFunction
+}
+
+export const BucketDataObjectSpecs:any = {
+
+    metadata : {
+        name : {
+            label:"Name",
+            regexp: BucketDataObjectValidator.validateSchema.name.regexp,
+            inputType:"text"
+        },
+    },
+    htmlDataObjectRender:HtmlDataObjectRender,
+    htmlDataObjectFieldRender:HtmlDataObjectFieldRender
 }

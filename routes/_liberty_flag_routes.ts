@@ -1,6 +1,7 @@
 import Router from "koa-router"
 import { BucketService } from "../services/bucketService";
-import { BucketDataObjectValidator } from "../dataObjects/BucketDataObject";
+import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
+
 import koaBody from 'koa-body';
 
 let getRouter = (viewVars: any) => {
@@ -20,6 +21,8 @@ let getRouter = (viewVars: any) => {
 
     router.get('/bucket_create_form', async (ctx) => {
         try {
+            viewVars.dataObjectHtml = BucketDataObjectSpecs.htmlDataObjectRender(new BucketDataObject(),BucketDataObjectSpecs.metadata)
+
             viewVars.validateSchema = JSON.stringify(BucketDataObjectValidator.validateSchema)
             viewVars.validateFunction = "app.module_data.bucket_create_form.validateFunction=" + BucketDataObjectValidator.validateFunction
 

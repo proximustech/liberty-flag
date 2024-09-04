@@ -21,8 +21,8 @@
 <script>
     app.module_data.bucket_form={}
     app.module_data.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
-    app.module_data.bucket_form.validateSchema = JSON.parse(`<%- validateSchema %>`)
-    eval(`<%- validateFunction %>`)
+    app.module_data.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema) %>`)
+    eval(`<%- bucketValidateFunction %>`)
 
     app.modal_window.setContent('bucket_form_title','bucket_form_body','bucket_form_footer')
 </script>

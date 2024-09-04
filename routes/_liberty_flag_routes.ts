@@ -22,12 +22,12 @@ let getRouter = (viewVars: any) => {
     router.get('/bucket_create_form', async (ctx) => {
         try {
             let bucket = new BucketDataObject()
-            viewVars.bucketFieldsHtml = BucketDataObjectSpecs.htmlDataObjectRender(bucket,BucketDataObjectSpecs.metadata)
+            viewVars.bucket = bucket
             viewVars.bucketMetadata = BucketDataObjectSpecs.metadata
             viewVars.bucketFieldRender = BucketDataObjectSpecs.htmlDataObjectFieldRender
-            viewVars.bucket = bucket
-            viewVars.validateSchema = JSON.stringify(BucketDataObjectValidator.validateSchema)
-            viewVars.validateFunction = "app.module_data.bucket_form.validateFunction=" + BucketDataObjectValidator.validateFunction
+            viewVars.bucketValidateSchema = BucketDataObjectValidator.validateSchema
+            viewVars.bucketValidateFunction = "app.module_data.bucket_form.bucketValidateFunction=" + BucketDataObjectValidator.validateFunction
+            //viewVars.bucketFieldsHtml = BucketDataObjectSpecs.htmlDataObjectRender(bucket,BucketDataObjectSpecs.metadata)
 
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {

@@ -1,6 +1,8 @@
 <label style="width: 45%;font-size: 45;">Buckets</label>
 <br>
-<button id="create_bucket_button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.openDetail(document.getElementById('create_bucket_button'));htmx.ajax('GET', '/<%= prefix %>/bucket_create_form', {target:'#deteail_content', swap:'innerHTML'});" ><i class="bi bi-plus-circle"></i> Add</button>
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" data-bs-toggle="modal" data-bs-target="#general_modal_window" onclick="htmx.ajax('GET', '/<%= prefix %>/bucket_create_form', {target:'#general_modal_body', swap:'innerHTML'});">
+    <i class="bi bi-plus-circle"></i> Add
+</button>
 <div class="btn-group" role="group" style="margin-top: 25px;">
     <button class="btn btn-primary"><i class="bi bi-search"></i></button>
     <input class="form-control" id="bucket_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >

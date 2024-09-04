@@ -4,8 +4,15 @@ import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../service
 export class BucketDataObject {
     _id:any = ""
     uuid:string = ""
+
     name:string = ""
+    description:string = ""
+    contexts:Array<ContextDataObject> = []
     subBuckets:Array<BucketDataObject> = []
+}
+
+export class ContextDataObject {
+    name:string = ""
 }
 
 export const BucketDataObjectValidator:any = {
@@ -24,7 +31,12 @@ export const BucketDataObjectSpecs:any = {
 
     metadata : {
         name : {
-            label:"Name",
+            label:"Bucket Name",
+            regexp: BucketDataObjectValidator.validateSchema.name.regexp,
+            inputType:"text"
+        },
+        context : {
+            label:"Context Name",
             regexp: BucketDataObjectValidator.validateSchema.name.regexp,
             inputType:"text"
         },

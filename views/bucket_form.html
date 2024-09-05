@@ -1,16 +1,96 @@
-<div id="bucket_form_title" style="display: none;" >Create Bucket</div>
-<div id="bucket_form_body" style="display: none;">
-    <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name) %>
-    <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description) %>
-</div>
-<div id="bucket_form_footer" style="display: none;">
-    <button class="btn btn-primary">Save</button>
-</div>
 <script>
     app.module_data.bucket_form={}
     app.module_data.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
     app.module_data.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema) %>`)
     eval(`<%- bucketValidateFunction %>`)
 
+    app.module_data.bucket_form.bucketContext=JSON.parse(`<%- JSON.stringify(bucketContext) %>`)
+    app.module_data.bucket_form.bucketContextValidateSchema = JSON.parse(`<%- JSON.stringify(bucketContextValidateSchema) %>`)
+    app.module_data.bucket_form.bucketContext.name='New Context Name'
+    eval(`<%- bucketContextValidateFunction %>`)
+
+    function createContext(){
+        let newContext = {...app.module_data.bucket_form.bucketContext}
+        let contextsLength=app.module_data.bucket_form.bucket.contexts.push(newContext)
+        addContextToList(newContext,contextsLength -1)
+    }
+
+    function addContextsToList(){
+        document.getElementById('bucket_form_context_list').innerHTML=""
+
+        let counter = 0
+        app.md.bucket_form.bucket.contexts.forEach(context => {
+            addContextToList(context,counter)
+            counter++
+        });
+    }
+
+    function addContextToList(bucketContext,context_index){
+        
+        html = `
+        <div id="context_${context_index}_wrapper" style="margin-bottom: 10px;">
+            <sl-details id="context_${context_index}" summary="${bucketContext.name}">
+                <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
+                <input id="" type="text" class="form-control" oninput="context_keyPress(${context_index},this)" value='${bucketContext.name}' />
+                <label id='context_${context_index}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <br>
+                <br>
+                <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${context_index}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button>
+            </sl-details>
+        </div>      
+        `
+        document.getElementById('bucket_form_context_list').insertAdjacentHTML('beforeend',html)
+        document.getElementById('bucket_form_context_list').childElementCount
+
+    }
+
+    function context_keyPress(contextIndex,element){
+        document.getElementById(`context_${contextIndex}`).summary=element.value;
+        regexpValidator = new RegExp(app.module_data.bucket_form.bucketContextValidateSchema.name.regexp)
+        if(!regexpValidator.test(element.value)){
+            document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.module_data.bucket_form.bucketContextValidateSchema.name.message;
+            
+        }
+        else {
+            document.getElementById(`context_${contextIndex}_validation_message`).innerHTML="";
+        }
+        app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
+    }    
+</script>
+
+<div id="bucket_form_title" style="display: none;" >Create Bucket</div>
+<div id="bucket_form_body" style="display: none;">
+    <sl-tab-group>
+        <sl-tab slot="nav" panel="general">General</sl-tab>
+        <sl-tab slot="nav" panel="contexts">Contexts</sl-tab>
+    
+        <sl-tab-panel name="general">
+            <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name) %>
+            <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description) %>
+        </sl-tab-panel>
+        <sl-tab-panel name="contexts">
+            <div style="text-align: right;">
+                <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 5px;"  onclick="createContext()">
+                    <i class="bi bi-plus-circle"></i> Add Context
+                </button>            
+            </div>
+            <div id="bucket_form_context_list"></div>
+
+            <script>
+                addContextsToList()
+            </script>
+
+
+        </sl-tab-panel>
+        
+    </sl-tab-group>
+</div>
+    
+
+<div id="bucket_form_footer" style="display: none;">
+    <button class="btn btn-primary">Save</button>
+</div>
+
+<script>
     app.modal_window.setContent('bucket_form_title','bucket_form_body','bucket_form_footer')
 </script>

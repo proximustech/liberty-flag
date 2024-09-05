@@ -7,12 +7,8 @@ export class BucketDataObject {
 
     name:string = ""
     description:string = ""
-    contexts:Array<ContextDataObject> = []
+    contexts:Array<BucketContextDataObject> = []
     subBuckets:Array<BucketDataObject> = []
-}
-
-export class ContextDataObject {
-    name:string = ""
 }
 
 export const BucketDataObjectValidator:any = {
@@ -24,7 +20,7 @@ export const BucketDataObjectValidator:any = {
         },
         description : {
             regexp:"^(.|\\n){30,200}$$",
-            message:"Name must be in the range of 30 and 200 characters."
+            message:"Description must be in the range of 30 and 200 characters."
         },
 
     },
@@ -47,6 +43,39 @@ export const BucketDataObjectSpecs:any = {
             validationRegexp: BucketDataObjectValidator.validateSchema.description.regexp,
             validationMessage: BucketDataObjectValidator.validateSchema.description.message,
             inputType:"text_area"
+        },
+
+    },
+    htmlDataObjectRender:HtmlDataObjectRender,
+    htmlDataObjectFieldRender:HtmlDataObjectFieldRender
+}
+
+export class BucketContextDataObject {
+    name:string = ""
+    uuid:string = ""
+}
+
+export const BucketContextDataObjectValidator:any = {
+
+    validateSchema : {
+        name : {
+            regexp:"^.{1,10}$",
+            message:"Name must be in the range of 1 and 10 characters."
+        },
+
+    },
+
+    validateFunction : DataObjectValidateFunction
+}
+
+export const BucketContextDataObjectSpecs:any = {
+
+    metadata : {
+        name : {
+            label:"Context Name",
+            validationRegexp: BucketContextDataObjectValidator.validateSchema.name.regexp,
+            validationMessage: BucketContextDataObjectValidator.validateSchema.name.message,
+            inputType:"text"
         },
 
     },

@@ -23,8 +23,8 @@ export const BucketDataObjectValidator:any = {
             message:"Name must be in the range of 5 and 30 characters."
         },
         description : {
-            regexp:"^.{10,30}$",
-            message:"Name must be in the range of 10 and 30 characters."
+            regexp:"^(.|\\n){30,200}$$",
+            message:"Name must be in the range of 30 and 200 characters."
         },
 
     },

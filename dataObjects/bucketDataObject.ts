@@ -41,14 +41,13 @@ export const BucketDataObjectSpecs:any = {
             validationMessage: BucketDataObjectValidator.validateSchema.name.message,
             inputType:"text"
         },
-        /*
+        
         description : {
             label:"Bucket Description",
             validationRegexp: BucketDataObjectValidator.validateSchema.description.regexp,
             validationMessage: BucketDataObjectValidator.validateSchema.description.message,
             inputType:"text_area"
         },
-        */
 
     },
     htmlDataObjectRender:HtmlDataObjectRender,

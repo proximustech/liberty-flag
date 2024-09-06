@@ -88,7 +88,7 @@
         </sl-tab-panel>
         <sl-tab-panel name="contexts">
             <div style="text-align: right;">
-                <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 5px;"  onclick="createContext()">
+                <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 9px;"  onclick="createContext()">
                     <i class="bi bi-plus-circle"></i> Add Context
                 </button>            
             </div>
@@ -98,8 +98,10 @@
         
     </sl-tab-group>
 
-<sl-button slot="footer" variant="neutral" outline onclick="app.drawer.hide()">Cancel</sl-button>
-<sl-button slot="footer" variant="primary" onclick="submitBucket()">Save</sl-button>
+    <div slot="footer">
+        <button type="button" class="btn btn-outline-secondary" onclick="app.drawer.hide()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitBucket()">Save</sl-button>
+    </div>
 
 <script>
     addContextsToList()

@@ -78,7 +78,7 @@
 </script>
 
 <h3>Create Bucket</h3>
-    <sl-tab-group>
+    <sl-tab-group id="bucket_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
         <sl-tab slot="nav" panel="contexts">Contexts</sl-tab>
     
@@ -94,14 +94,14 @@
             </div>
             <div id="bucket_form_context_list"></div>
 
-            <script>
-                addContextsToList()
-            </script>
-
-
         </sl-tab-panel>
         
     </sl-tab-group>
 
 <sl-button slot="footer" variant="neutral" outline onclick="app.drawer.hide()">Cancel</sl-button>
 <sl-button slot="footer" variant="primary" onclick="submitBucket()">Save</sl-button>
+
+<script>
+    addContextsToList()
+    document.getElementById('bucket_form_tab_group').show('general')
+</script>

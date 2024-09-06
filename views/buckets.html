@@ -1,6 +1,6 @@
 <label style="width: 45%;font-size: 45;">Buckets</label>
 <br>
-<button type="button" class="btn btn-primary" style="margin-top: 25px;" data-bs-toggle="modal" data-bs-target="#general_modal_window" onclick="app.modal_window.clear();htmx.ajax('GET', '/<%= prefix %>/bucket_create_form', {target:'#general_modal_body', swap:'innerHTML'});">
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_create_form', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
 </button>
 <div class="btn-group" role="group" style="margin-top: 25px;">

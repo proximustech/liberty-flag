@@ -65,9 +65,9 @@
             dataType:"json"
         })
         .done(function() {
-            console.log('done')
-            $('#general_modal_window').modal('hide');            
-            $("#content_view").load("<%= prefix %>/buckets");
+            app.drawer.hide();            
+            //$("#content_view").load("<%= prefix %>/buckets");
+            htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
         })
         .fail(function(data) {
         })
@@ -77,8 +77,7 @@
 
 </script>
 
-<div id="bucket_form_title" style="display: none;" >Create Bucket</div>
-<div id="bucket_form_body" style="display: none;">
+<h3>Create Bucket</h3>
     <sl-tab-group>
         <sl-tab slot="nav" panel="general">General</sl-tab>
         <sl-tab slot="nav" panel="contexts">Contexts</sl-tab>
@@ -103,13 +102,5 @@
         </sl-tab-panel>
         
     </sl-tab-group>
-</div>
-    
 
-<div id="bucket_form_footer" style="display: none;">
-    <button class="btn btn-primary" onclick="submitBucket()">Save</button>
-</div>
-
-<script>
-    app.modal_window.setContent('bucket_form_title','bucket_form_body','bucket_form_footer')
-</script>
+<sl-button slot="footer" variant="primary" onclick="submitBucket()">Save</sl-button>

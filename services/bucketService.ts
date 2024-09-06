@@ -18,6 +18,7 @@ export class BucketService {
         this.collection = this.dataBase.collection(this.collectionName);
     }
 
+    //TODO: Remove
     getNew(){
         let bucket = new BucketDataObject()
         bucket.uuid = this.mongoService.createMongoUuId()
@@ -28,6 +29,8 @@ export class BucketService {
     }
 
     async create(bucket:BucketDataObject){
+        bucket.uuid = this.mongoService.createMongoUuId()
+        bucket._id = new ObjectId(bucket.uuid)
         const result = await this.collection.insertOne(bucket)
     }
 

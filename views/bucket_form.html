@@ -55,7 +55,26 @@
             document.getElementById(`context_${contextIndex}_validation_message`).innerHTML="";
         }
         app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
-    }    
+    }  
+    
+    function submitBucket() {
+        let result = $.ajax({
+            type:"POST",
+            url:"<%= prefix %>/bucket",
+            data:app.md.bucket_form.bucket,
+            dataType:"json"
+        })
+        .done(function() {
+            console.log('done')
+            $('#general_modal_window').modal('hide');            
+            $("#content_view").load("<%= prefix %>/buckets");
+        })
+        .fail(function(data) {
+        })
+        .always(function() {
+        });        
+    }
+
 </script>
 
 <div id="bucket_form_title" style="display: none;" >Create Bucket</div>
@@ -88,7 +107,7 @@
     
 
 <div id="bucket_form_footer" style="display: none;">
-    <button class="btn btn-primary">Save</button>
+    <button class="btn btn-primary" onclick="submitBucket()">Save</button>
 </div>
 
 <script>

@@ -29,7 +29,6 @@ let getRouter = (viewVars: any) => {
             viewVars.bucketContextValidateSchema = BucketContextDataObjectValidator.validateSchema
             viewVars.bucketContextValidateFunction = "app.module_data.bucket_form.bucketContextValidateFunction=" + BucketContextDataObjectValidator.validateFunction
 
-
             let bucket = new BucketDataObject()
 
             let bucketContext_dev = new BucketContextDataObject()
@@ -51,12 +50,19 @@ let getRouter = (viewVars: any) => {
             viewVars.bucketValidateFunction = "app.module_data.bucket_form.bucketValidateFunction=" + BucketDataObjectValidator.validateFunction
             //viewVars.bucketFieldsHtml = BucketDataObjectSpecs.htmlDataObjectRender(bucket,BucketDataObjectSpecs.metadata)
 
-
-
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {
             console.error(error)
         }
+    })
+
+    router.post('/bucket',koaBody(), async (ctx) => {
+        const bucketService = new BucketService()     
+        bucketService.create((ctx.request.body as BucketDataObject))
+        ctx.body = {
+            status: 'success',
+        }
+
     })
 
     return router

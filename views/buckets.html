@@ -1,6 +1,6 @@
 <label style="width: 45%;font-size: 45;">Buckets</label>
 <br>
-<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_create_form', {target:'#app_drawer', swap:'innerHTML'});">
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
 </button>
 <div class="btn-group" role="group" style="margin-top: 25px;">
@@ -25,7 +25,12 @@
     </thead>
     <% buckets.forEach(bucket => { %>
     <tr>
-        <td><%= bucket.name %></td>
+        <td>
+            <span>
+                <button class="btn" style="border-radius: 17px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+            </span>
+            <%= bucket.name %>
+        </td>
     </tr>
     <% }) %>
 </table>

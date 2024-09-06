@@ -35,6 +35,7 @@ export class BucketService {
     }
 
     async updateOne(bucket:BucketDataObject){
+        bucket._id = new ObjectId(bucket.uuid)
         const result = await this.collection.replaceOne(
             {uuid: bucket.uuid }, 
             bucket,

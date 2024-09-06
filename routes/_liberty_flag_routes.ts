@@ -20,28 +20,36 @@ let getRouter = (viewVars: any) => {
         }
     })
 
-    router.get('/bucket_create_form', async (ctx) => {
+    router.get('/bucket_form', async (ctx) => {
         try {
+
+            let uuid:any = ctx.request.query.uuid || ""
+            let bucket:BucketDataObject = new BucketDataObject()
+
+            if (uuid !=="") {
+                const bucketService = new BucketService()
+                bucket = await bucketService.getByUuId(uuid) 
+                
+            }
+            else {
+                let bucketContext_dev = new BucketContextDataObject()
+                bucketContext_dev.name="Development"
+                bucket.contexts.push(bucketContext_dev)
+    
+                let bucketContext_qa = new BucketContextDataObject()
+                bucketContext_qa.name="Quality"
+                bucket.contexts.push(bucketContext_qa)
+    
+                let bucketContext_prod = new BucketContextDataObject()
+                bucketContext_prod.name="Production"
+                bucket.contexts.push(bucketContext_prod)
+            }
 
             let bucketContext = new BucketContextDataObject()
             viewVars.bucketContext = bucketContext
             viewVars.bucketContextMetadata = BucketContextDataObjectSpecs.metadata
             viewVars.bucketContextValidateSchema = BucketContextDataObjectValidator.validateSchema
             viewVars.bucketContextValidateFunction = "app.module_data.bucket_form.bucketContextValidateFunction=" + BucketContextDataObjectValidator.validateFunction
-
-            let bucket = new BucketDataObject()
-
-            let bucketContext_dev = new BucketContextDataObject()
-            bucketContext_dev.name="Development"
-            bucket.contexts.push(bucketContext_dev)
-
-            let bucketContext_qa = new BucketContextDataObject()
-            bucketContext_qa.name="Quality"
-            bucket.contexts.push(bucketContext_qa)
-
-            let bucketContext_prod = new BucketContextDataObject()
-            bucketContext_prod.name="Production"
-            bucket.contexts.push(bucketContext_prod)
 
             viewVars.bucket = bucket
             viewVars.bucketMetadata = BucketDataObjectSpecs.metadata
@@ -57,8 +65,13 @@ let getRouter = (viewVars: any) => {
     })
 
     router.post('/bucket',koaBody(), async (ctx) => {
-        const bucketService = new BucketService()     
-        bucketService.create((ctx.request.body as BucketDataObject))
+        const bucketService = new BucketService()
+        let bucket = (ctx.request.body as BucketDataObject)
+        if (bucket.uuid !== "") {
+            bucketService.updateOne(bucket) 
+        } else {
+            bucketService.create(bucket)
+        }
         ctx.body = {
             status: 'success',
         }

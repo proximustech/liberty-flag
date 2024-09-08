@@ -69,14 +69,37 @@ let getRouter = (viewVars: any) => {
     router.post('/bucket',koaBody(), async (ctx) => {
         const bucketService = new BucketService()
         let bucket = (ctx.request.body as BucketDataObject)
-        if (bucket.uuid !== "") {
-            bucketService.updateOne(bucket) 
+
+        let bucketValidationResult=BucketDataObjectValidator.validateFunction(bucket,BucketDataObjectValidator.validateSchema)
+        bucket.contexts.forEach(context => {
+            let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
+            if (!contextValidationResult.isValid) {
+                bucketValidationResult.isValid = false
+                bucketValidationResult.messages = bucketValidationResult.messages.concat(contextValidationResult.messages)
+
+            } 
+            
+        });
+
+        if (bucketValidationResult.isValid) {
+            if (bucket.uuid !== "") {
+                bucketService.updateOne(bucket) 
+            } else {
+                bucketService.create(bucket)
+            }
+            ctx.body = {
+                status: 'success',
+            }
+            
         } else {
-            bucketService.create(bucket)
+            ctx.status=400
+            ctx.body = {
+                status: 'error',
+                messages: bucketValidationResult.messages
+            }
+            
         }
-        ctx.body = {
-            status: 'success',
-        }
+
 
     })
 

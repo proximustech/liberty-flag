@@ -16,11 +16,11 @@ export const BucketDataObjectValidator:any = {
     validateSchema : {
         name : {
             regexp:"^.{5,30}$",
-            message:"Name must be in the range of 5 and 30 characters."
+            message:"Bucket name must be in the range of 5 and 30 characters."
         },
         description : {
             regexp:"^(.|\\n){30,200}$$",
-            message:"Description must be in the range of 30 and 200 characters."
+            message:"Bucket description must be in the range of 30 and 200 characters."
         },
 
     },
@@ -60,7 +60,7 @@ export const BucketContextDataObjectValidator:any = {
     validateSchema : {
         name : {
             regexp:"^.{1,10}$",
-            message:"Name must be in the range of 1 and 10 characters."
+            message:"Context name must be in the range of 1 and 10 characters."
         },
 
     },

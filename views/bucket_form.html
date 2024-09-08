@@ -73,6 +73,11 @@
             }, 1000);
         })
         .fail(function(data) {
+            try {
+                data.responseJSON.messages.forEach(messageData => {
+                    console.log(messageData.message)
+                });
+            } catch (error) {}
         })
         .always(function() {
         });        

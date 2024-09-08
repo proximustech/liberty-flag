@@ -94,7 +94,7 @@
     }    
 
 </script>
-<% if (bucket.name==="") { %>
+<% if (!editing) { %>
     <h3>Create Bucket</h3>
 <% } else { %>
     <sl-alert variant="warning" open>
@@ -107,7 +107,10 @@
     <sl-tab-group id="bucket_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
         <sl-tab slot="nav" panel="contexts">Contexts</sl-tab>
-        <sl-tab slot="nav" panel="operations">Operations</sl-tab>
+        <% if (editing) { %>
+            <sl-tab slot="nav" panel="operations">Operations</sl-tab>
+         
+        <% } %>
     
         <sl-tab-panel name="general">
             <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name) %>
@@ -122,19 +125,21 @@
             <div id="bucket_form_context_list"></div>
 
         </sl-tab-panel>
-        <sl-tab-panel name="operations">
-            <sl-details summary="Delete">
-                <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
-                    Deleting a Bucket involves making it's asociated flags completely UNAVAILABLE.
+        <% if (editing) { %>
+            <sl-tab-panel name="operations">
+                <sl-details summary="Delete">
+                    <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
+                        Deleting a Bucket involves making it's asociated flags completely UNAVAILABLE.
+                        <br>
+                        <br>
+                    </label>
+                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Bucket','Are you sure to delete the bucket <strong><%= bucket.name %></strong> ?','deleteBucket(`<%= bucket.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Bucket</button>
                     <br>
-                    <br>
-                </label>
-                <!-- <button type="button" class="btn btn-outline-danger" onclick="deleteBucket('<%= bucket.uuid %>')"><i class="bi bi-trash-fill"></i> Delete Bucket</button> -->
-                <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Bucket','Are you sure to delete the bucket <strong><%= bucket.name %></strong> ?','deleteBucket(`<%= bucket.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Bucket</button>
-                <br>
-            </sl-details>
-
-        </sl-tab-panel>
+                </sl-details>
+    
+            </sl-tab-panel>
+         
+        <% } %>
         
     </sl-tab-group>
 

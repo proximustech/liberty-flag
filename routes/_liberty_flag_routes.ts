@@ -29,9 +29,11 @@ let getRouter = (viewVars: any) => {
             if (uuid !=="") {
                 const bucketService = new BucketService()
                 bucket = await bucketService.getByUuId(uuid) 
+                viewVars.editing = true
                 
             }
             else {
+                viewVars.editing = false
                 let bucketContext_dev = new BucketContextDataObject()
                 bucketContext_dev.name="Development"
                 bucket.contexts.push(bucketContext_dev)

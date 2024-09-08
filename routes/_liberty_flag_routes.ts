@@ -78,6 +78,28 @@ let getRouter = (viewVars: any) => {
 
     })
 
+    router.delete('/bucket',koaBody(), async (ctx) => {
+        const bucketService = new BucketService()
+
+        let uuid:any = ctx.request.query.uuid || ""
+
+        if (uuid !=="") {
+            await bucketService.deleteByUuId(uuid)    
+            ctx.body = {
+                status: 'success',
+            }
+        }
+        else {
+            ctx.status=400
+            ctx.body = {
+                status: 'error',
+                messate: "Invalid Uuid"
+            }
+
+        }
+
+    })
+
     return router
 }
 

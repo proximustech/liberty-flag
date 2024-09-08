@@ -59,8 +59,8 @@ export const BucketContextDataObjectValidator:any = {
 
     validateSchema : {
         name : {
-            regexp:"^.{1,10}$",
-            message:"Context name must be in the range of 1 and 10 characters."
+            regexp:"^.{1,20}$",
+            message:"Context name must be in the range of 1 and 20 characters."
         },
 
     },

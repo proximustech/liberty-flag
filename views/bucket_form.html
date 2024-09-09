@@ -74,9 +74,11 @@
         })
         .fail(function(data) {
             try {
-                data.responseJSON.messages.forEach(messageData => {
-                    console.log(messageData.message)
-                });
+                for (messageData of data.responseJSON.messages) {
+                    app.toastShow('Form data Error',messageData.message,{type:"error"})
+                    break;
+                }
+
             } catch (error) {}
         })
         .always(function() {

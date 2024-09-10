@@ -35,7 +35,8 @@
                 <label id='context_${contextIndex}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
                 <br>
                 <br>
-                <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button>
+                <!-- <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button> -->
+                <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context ?','app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList();app.dialog.hide()')"><i class="bi bi-trash-fill"></i> Delete Context</button>
             </sl-details>
         </div>  
         `

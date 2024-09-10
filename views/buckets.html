@@ -27,7 +27,7 @@
     <tr>
         <td>
             <span>
-                <button class="btn" style="border-radius: 17px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
             </span>
             <%= bucket.name %>
         </td>

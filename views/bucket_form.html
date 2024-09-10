@@ -58,31 +58,50 @@
     }  
     
     function submitBucket() {
-        let result = $.ajax({
-            type:"POST",
-            url:"<%= prefix %>/bucket",
-            data:app.md.bucket_form.bucket,
-            dataType:"json"
-        })
-        .done(function() {
-            setTimeout(() => {
-                //$("#content_view").load("<%= prefix %>/buckets");
-                htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
-                app.drawer.hide();            
-                
-            }, 1000);
-        })
-        .fail(function(data) {
-            try {
-                for (messageData of data.responseJSON.messages) {
-                    app.toastShow('Form data Error',messageData.message,{type:"error"})
-                    break;
-                }
+        let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(app.md.bucket_form.bucket,app.md.bucket_form.bucketValidateSchema)
+        app.md.bucket_form.bucket.contexts.forEach(context => {
+            let bucketContextValidationResult=app.md.bucket_form.bucketContextValidateFunction(context,app.md.bucket_form.bucketContextValidateSchema)
+            if (!bucketContextValidationResult.isValid) {
+                bucketValidationResult.isValid = false
+                bucketValidationResult.messages = bucketValidationResult.messages.concat(bucketContextValidationResult.messages)
 
-            } catch (error) {}
-        })
-        .always(function() {
+            } 
+            
         });        
+        if (bucketValidationResult.isValid) {
+            let result = $.ajax({
+                type:"POST",
+                url:"<%= prefix %>/bucket",
+                data:app.md.bucket_form.bucket,
+                dataType:"json"
+            })
+            .done(function() {
+                setTimeout(() => {
+                    //$("#content_view").load("<%= prefix %>/buckets");
+                    htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
+                    app.drawer.hide();
+                    app.toastShow('Saved','Bucket saved succesfully.',{type:"info"})           
+                    
+                }, 1000);
+            })
+            .fail(function(data) {
+                try {
+                    for (messageData of data.responseJSON.messages) {
+                        app.toastShow('Form data Error',messageData.message,{type:"error"})
+                        break;
+                    }
+
+                } catch (error) {}
+            })
+            .always(function() {
+            });              
+        } else {
+            try {
+                app.toastShow('Form data Error',bucketValidationResult.messages[0].message,{closable:true,type:"error"})
+            } catch (error) {}
+        }
+
+      
     }
 
     function deleteBucket(uuid) {

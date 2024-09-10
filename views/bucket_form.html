@@ -25,26 +25,26 @@
         });
     }
 
-    function addContextToList(bucketContext,context_index){
+    function addContextToList(bucketContext,contextIndex){
         
         html = `
-        <div id="context_${context_index}_wrapper" style="margin-bottom: 10px;">
-            <sl-details id="context_${context_index}" summary="${bucketContext.name}">
+        <div id="context_${contextIndex}_wrapper" style="margin-bottom: 10px;">
+            <sl-details id="context_${contextIndex}" summary="${bucketContext.name}">
                 <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
-                <input id="" type="text" class="form-control" oninput="context_keyPress(${context_index},this)" value='${bucketContext.name}' />
-                <label id='context_${context_index}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="context_listener(${contextIndex},this)" value='${bucketContext.name}' />
+                <label id='context_${contextIndex}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
                 <br>
                 <br>
-                <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${context_index}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button>
+                <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button>
             </sl-details>
-        </div>      
+        </div>  
         `
         document.getElementById('bucket_form_context_list').insertAdjacentHTML('beforeend',html)
-        document.getElementById('bucket_form_context_list').childElementCount
+        context_listener(contextIndex,document.getElementById(`context_name_${contextIndex}`))
 
     }
 
-    function context_keyPress(contextIndex,element){
+    function context_listener(contextIndex,element){
         document.getElementById(`context_${contextIndex}`).summary=element.value;
         regexpValidator = new RegExp(app.module_data.bucket_form.bucketContextValidateSchema.name.regexp)
         if(!regexpValidator.test(element.value)){

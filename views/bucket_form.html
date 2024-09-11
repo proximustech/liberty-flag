@@ -47,15 +47,26 @@
 
     function context_listener(contextIndex,element){
         document.getElementById(`context_${contextIndex}`).summary=element.value;
-        regexpValidator = new RegExp(app.module_data.bucket_form.bucketContextValidateSchema.name.regexp)
-        if(!regexpValidator.test(element.value)){
-            document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.module_data.bucket_form.bucketContextValidateSchema.name.message;
-            
-        }
-        else {
-            document.getElementById(`context_${contextIndex}_validation_message`).innerHTML="";
-        }
         app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
+
+        if(element.value===""){
+            if(app.module_data.bucket_form.bucketContextValidateSchema.name.required){
+                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.module_data.bucket_form.bucketContextValidateSchema.name.requiredMessage
+
+            }
+            else{
+                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=""
+            }               
+        } else {
+            regexpValidator = new RegExp(app.module_data.bucket_form.bucketContextValidateSchema.name.regexp)
+            if(!regexpValidator.test(element.value)){
+                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.module_data.bucket_form.bucketContextValidateSchema.name.message
+            }
+            else {
+                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=''
+            }
+        }        
+
     }  
     
     function submitBucket() {

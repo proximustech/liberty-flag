@@ -69,7 +69,7 @@
 
     }  
     
-    function submitBucket() {
+    function submitBucket(triggerElement) {
         let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(app.md.bucket_form.bucket,app.md.bucket_form.bucketValidateSchema)
         app.md.bucket_form.bucket.contexts.forEach(context => {
             let bucketContextValidationResult=app.md.bucket_form.bucketContextValidateFunction(context,app.md.bucket_form.bucketContextValidateSchema)
@@ -81,6 +81,7 @@
             
         });        
         if (bucketValidationResult.isValid) {
+            app.setPendingOperation(triggerElement)
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/bucket",
@@ -184,7 +185,7 @@
 
     <div slot="footer">
         <button type="button" class="btn btn-outline-secondary" onclick="app.drawer.hide()">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="submitBucket()">Save</sl-button>
+        <button type="button" class="btn btn-primary" onclick="submitBucket(this)">Save</sl-button>
     </div>
 
 <script>

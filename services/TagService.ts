@@ -27,10 +27,13 @@ export class TagService {
     }
 
     async create(tag:TagDataObject){
+        tag.uuid = this.mongoService.createMongoUuId()
+        tag._id = new ObjectId(tag.uuid)        
         const result = await this.collection.insertOne(tag)
     }
 
     async updateOne(tag:TagDataObject){
+        tag._id = new ObjectId(tag.uuid)
         const result = await this.collection.replaceOne(
             {uuid: tag.uuid }, 
             tag,

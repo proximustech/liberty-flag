@@ -1,0 +1,114 @@
+<script>
+    app.module_data.tag_form={}
+    app.module_data.tag_form.tag=JSON.parse(`<%- JSON.stringify(tag) %>`)
+    app.module_data.tag_form.tagValidateSchema = JSON.parse(`<%- JSON.stringify(tagValidateSchema) %>`)
+    eval(`<%- tagValidateFunction %>`)
+   
+    function submitTag(triggerElement) {
+        let tag = app.md.tag_form.tag
+        let tagValidationResult = app.md.tag_form.tagValidateFunction(tag,app.md.tag_form.tagValidateSchema)
+       
+        if (tagValidationResult.isValid) {
+            app.setPendingOperation(triggerElement)
+            let result = $.ajax({
+                type:"POST",
+                url:"<%= prefix %>/tag",
+                data:"json="+escape(JSON.stringify(tag)),
+                processData: false,
+                dataType:"text"
+            })
+            .done(function() {
+                setTimeout(() => {
+                    //$("#content_view").load("<%= prefix %>/tags");
+                    htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
+                    app.drawer.hide();
+                    app.toastShow('Saved','Tag saved successfully.',{type:"info"})           
+                    
+                }, 1000);
+            })
+            .fail(function(data) {
+                try {
+                    for (messageData of data.responseJSON.messages) {
+                        app.toastShow('Form data Error',messageData.message,{type:"error"})
+                        break;
+                    }
+
+                } catch (error) {}
+            })
+            .always(function() {
+            });              
+        } else {
+            try {
+                app.toastShow('Form data Error',tagValidationResult.messages[0].message,{closable:true,type:"error"})
+            } catch (error) {}
+        }
+
+      
+    }
+
+    function deleteTag(uuid) {
+        let result = $.ajax({
+            type:"DELETE",
+            url:"<%= prefix %>/tag?uuid="+uuid,
+        })
+        .done(function() {      
+            setTimeout(() =>{
+                htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
+                app.drawer.hide();
+                app.dialog.hide()
+                app.toastShow('Deleted','Tag deleted successfully.',{type:"info"}) 
+            },1000)   
+        })
+    
+    }    
+
+</script>
+<% if (!editing) { %>
+    <h3>Create Tag</h3>
+<% } else { %>
+    <sl-alert variant="warning" open>
+        <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+        <strong>Editing Tag</strong><br />
+        <%= tag.name %>
+      </sl-alert>
+
+<% } %>
+    <sl-tab-group id="tag_form_tab_group">
+        <sl-tab slot="nav" panel="general">General</sl-tab>
+
+        <% if (editing) { %>
+            <sl-tab slot="nav" panel="operations">Operations</sl-tab>
+         
+        <% } %>
+    
+        <sl-tab-panel name="general">
+            <%- tagFieldRender("tag","name",tag.name,tagMetadata.name) %>
+            <%- tagFieldRender("tag","description",tag.description,tagMetadata.description) %>
+        </sl-tab-panel>
+
+        <% if (editing) { %>
+            <sl-tab-panel name="operations">
+                <sl-details summary="Delete">
+                    <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
+                        Deleting a Tag will also remove It from the associated elements.
+                        <br>
+                        <br>
+                    </label>
+                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Tag','Are you sure to delete the tag <strong><%= tag.name %></strong> ?','deleteTag(`<%= tag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Tag</button>
+                    <br>
+                </sl-details>
+    
+            </sl-tab-panel>
+         
+        <% } %>
+        
+    </sl-tab-group>
+
+    <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+        <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitTag(this)">Save</sl-button>
+    </div>
+
+<script>
+    document.getElementById('tag_form_tab_group').show('general')
+</script>

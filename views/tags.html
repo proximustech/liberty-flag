@@ -1,0 +1,40 @@
+<label style="width: 45%;font-size: 45;">Tags</label>
+<br>
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
+    <i class="bi bi-plus-circle"></i> Add
+</button>
+<div class="btn-group" role="group" style="margin-top: 25px;">
+    <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+    <input class="form-control" id="tag_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >
+</div>
+<br>
+<br>
+<table 
+    id="tags_table" 
+    data-toggle="table" 
+    data-search="true" 
+    data-search-align="left" 
+    data-search-selector="#tag_search_box" 
+    data-search-highlight="true"
+    data-sortable="true"    
+>
+    <thead>
+        <tr>
+            <th data-sortable="true">Name</th>
+        </tr>
+    </thead>
+    <% tags.forEach(tag => { %>
+    <tr>
+        <td>
+            <span>
+                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form?uuid=<%= tag.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+            </span>
+            <%= tag.name %>
+        </td>
+    </tr>
+    <% }) %>
+</table>
+<script>
+    var $tags_table = $('#tags_table')
+    $tags_table.bootstrapTable()
+</script>

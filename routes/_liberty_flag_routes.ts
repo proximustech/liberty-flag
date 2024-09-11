@@ -68,7 +68,7 @@ let getRouter = (viewVars: any) => {
 
     router.post('/bucket',koaBody(), async (ctx) => {
         const bucketService = new BucketService()
-        let bucket = (ctx.request.body as BucketDataObject)
+        let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
 
         let bucketValidationResult=BucketDataObjectValidator.validateFunction(bucket,BucketDataObjectValidator.validateSchema)
         bucket.contexts.forEach(context => {

@@ -70,8 +70,9 @@
     }  
     
     function submitBucket(triggerElement) {
-        let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(app.md.bucket_form.bucket,app.md.bucket_form.bucketValidateSchema)
-        app.md.bucket_form.bucket.contexts.forEach(context => {
+        let bucket = app.md.bucket_form.bucket
+        let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(bucket,app.md.bucket_form.bucketValidateSchema)
+        bucket.contexts.forEach(context => {
             let bucketContextValidationResult=app.md.bucket_form.bucketContextValidateFunction(context,app.md.bucket_form.bucketContextValidateSchema)
             if (!bucketContextValidationResult.isValid) {
                 bucketValidationResult.isValid = false
@@ -85,8 +86,9 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/bucket",
-                data:app.md.bucket_form.bucket,
-                dataType:"json"
+                data:"json="+escape(JSON.stringify(bucket)),
+                processData: false,
+                dataType:"text"
             })
             .done(function() {
                 setTimeout(() => {

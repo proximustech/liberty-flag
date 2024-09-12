@@ -68,7 +68,7 @@ export class FlagService {
 
         let flagFirst = this.getNew()
         flagFirst.name = "First Name"
-        flagFirst.bucket_id = "ABCDEFG"
+        flagFirst.bucketId = "ABCDEFG"
         await this.create(flagFirst)
 
         let flag = await this.getByUuId(flagFirst.uuid)

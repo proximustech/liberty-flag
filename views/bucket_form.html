@@ -168,7 +168,7 @@
             <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description) %>
         
             <label style='margin-bottom:7px;font-size:17px'>Tags</label>
-            <select id="bucket_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%">
+            <select id="bucket_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%" place>
                 <% tags.forEach(tag => { %>
                     <option value="<%= tag.uuid %>" <% if(bucket.tags.includes(tag.uuid)){ %> selected <% } %> ><%= tag.name %></option>
                  
@@ -213,7 +213,7 @@
     document.getElementById('bucket_form_tab_group').show('general')
 
     $(document).ready(function() {
-        $('.js-example-basic-single').select2({width:'resolve'});
+        $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
     });
 
 </script>

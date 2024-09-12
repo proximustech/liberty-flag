@@ -1,5 +1,6 @@
 import Router from "koa-router"
 import { BucketService } from "../services/BucketService";
+import { TagService } from "../services/TagService";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
 
@@ -23,6 +24,9 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
             let uuid:any = ctx.request.query.uuid || ""
             let bucket:BucketDataObject = new BucketDataObject()
+
+            const tagService = new TagService()
+            viewVars.tags = await tagService.getAll()
 
             if (uuid !=="") {
                 const bucketService = new BucketService()

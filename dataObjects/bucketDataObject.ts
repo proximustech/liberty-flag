@@ -6,6 +6,7 @@ export class BucketDataObject {
     uuid:string = ""
 
     name:string = ""
+    tags:Array<string> = []
     description:string = ""
     contexts:Array<BucketContextDataObject> = []
     subBuckets:Array<BucketDataObject> = []

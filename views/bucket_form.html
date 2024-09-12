@@ -70,6 +70,15 @@
     }  
     
     function submitBucket(triggerElement) {
+
+        let tags=[]
+
+        for(let i=0 ;i<document.getElementById("bucket_tags").selectedOptions.length;i++){
+            tags.push(document.getElementById("bucket_tags").selectedOptions[i].value)
+        }
+        
+        app.md.bucket_form.bucket.tags=tags
+
         let bucket = app.md.bucket_form.bucket
         let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(bucket,app.md.bucket_form.bucketValidateSchema)
         bucket.contexts.forEach(context => {
@@ -157,6 +166,15 @@
         <sl-tab-panel name="general">
             <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name) %>
             <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description) %>
+        
+            <label style='margin-bottom:7px;font-size:17px'>Tags</label>
+            <select id="bucket_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%">
+                <% tags.forEach(tag => { %>
+                    <option value="<%= tag.uuid %>" <% if(bucket.tags.includes(tag.uuid)){ %> selected <% } %> ><%= tag.name %></option>
+                 
+                <% }) %>
+            </select>        
+        
         </sl-tab-panel>
         <sl-tab-panel name="contexts">
             <div style="text-align: right;">
@@ -193,4 +211,9 @@
 <script>
     addContextsToList()
     document.getElementById('bucket_form_tab_group').show('general')
+
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({width:'resolve'});
+    });
+
 </script>

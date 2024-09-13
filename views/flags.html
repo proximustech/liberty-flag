@@ -1,7 +1,6 @@
 <div class="alert alert-light" role="alert" style="text-align: center;">
     <strong>Flags</strong> - Bucket: <%= bucket.name %>
 </div>
-<br>
 <button type="button" class="btn btn-secondary" style="margin-top: 25px;" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
     <i class="bi bi-arrow-left-circle"></i> Back
 </button>

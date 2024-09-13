@@ -1,7 +1,6 @@
 <div class="alert alert-light" role="alert" style="text-align: center;">
     <strong>Tags</strong>
 </div>
-<br>
 <button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
 </button>

@@ -91,7 +91,7 @@
             
         });        
         if (bucketValidationResult.isValid) {
-            app.setPendingOperation(triggerElement)
+            app.setElementForPendingOperation(triggerElement)
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/bucket",
@@ -102,6 +102,7 @@
             .done(function() {
                 setTimeout(() => {
                     //$("#content_view").load("<%= prefix %>/buckets");
+                    app.setViewForPendingOperation('content_view') 
                     htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
                     app.drawer.hide();
                     app.toastShow('Saved','Bucket saved successfully.',{type:"info"})           
@@ -135,6 +136,7 @@
         })
         .done(function() {      
             setTimeout(() =>{
+                app.setViewForPendingOperation('content_view')
                 htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
                 app.drawer.hide();
                 app.dialog.hide()

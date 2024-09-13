@@ -9,7 +9,7 @@
         let tagValidationResult = app.module_data.tag_form.tagValidateFunction(tag,app.module_data.tag_form.tagValidateSchema)
        
         if (tagValidationResult.isValid) {
-            app.setPendingOperation(triggerElement)
+            app.setElementForPendingOperation(triggerElement)
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/tag",
@@ -19,7 +19,7 @@
             })
             .done(function() {
                 setTimeout(() => {
-                    //$("#content_view").load("<%= prefix %>/tags");
+                    app.setViewForPendingOperation('content_view') 
                     htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
                     app.drawer.hide();
                     app.toastShow('Saved','Tag saved successfully.',{type:"info"})           
@@ -53,6 +53,7 @@
         })
         .done(function() {      
             setTimeout(() =>{
+                app.setViewForPendingOperation('content_view')
                 htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
                 app.drawer.hide();
                 app.dialog.hide()

@@ -4,7 +4,7 @@
 <button type="button" class="btn btn-secondary" style="margin-top: 25px;" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
     <i class="bi bi-arrow-left-circle"></i> Back
 </button>
-<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
 </button>
 <div class="btn-group" role="group" style="margin-top: 25px;">
@@ -31,7 +31,7 @@
     <tr>
         <td>
             <span>
-                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
             </span>
             <%= flag.name %>
         </td>

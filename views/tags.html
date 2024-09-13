@@ -1,7 +1,7 @@
 <div class="alert alert-light" role="alert" style="text-align: center;">
     <strong>Tags</strong>
 </div>
-<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
 </button>
 <div class="btn-group" role="group" style="margin-top: 25px;">
@@ -28,7 +28,7 @@
     <tr>
         <td>
             <span>
-                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form?uuid=<%= tag.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form?uuid=<%= tag.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
             </span>
             <%= tag.name %>
         </td>

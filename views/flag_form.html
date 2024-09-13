@@ -20,7 +20,7 @@
             .done(function() {
                 setTimeout(() => {
                     //$("#content_view").load("<%= prefix %>/flags");
-                    htmx.ajax('GET', '/<%= prefix %>/flags', {target:'#content_view', swap:'innerHTML'})
+                    htmx.ajax('GET', '/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>', {target:'#content_view', swap:'innerHTML'})
                     app.drawer.hide();
                     app.toastShow('Saved','Flag saved successfully.',{type:"info"})           
                     
@@ -53,7 +53,7 @@
         })
         .done(function() {      
             setTimeout(() =>{
-                htmx.ajax('GET', '/<%= prefix %>/flags', {target:'#content_view', swap:'innerHTML'})
+                htmx.ajax('GET', '/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>', {target:'#content_view', swap:'innerHTML'})
                 app.drawer.hide();
                 app.dialog.hide()
                 app.toastShow('Deleted','Flag deleted successfully.',{type:"info"}) 
@@ -90,7 +90,7 @@
             <sl-tab-panel name="operations">
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
-                        Deleting a Flag will also remove It from the associated elements.
+                        Afer deleting this Flag, the clients will NO longer receive It's configuration.
                         <br>
                         <br>
                     </label>

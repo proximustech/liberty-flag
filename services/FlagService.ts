@@ -27,10 +27,13 @@ export class FlagService {
     }
 
     async create(flag:FlagDataObject){
+        flag.uuid = this.mongoService.createMongoUuId()
+        flag._id = new ObjectId(flag.uuid)        
         const result = await this.collection.insertOne(flag)
     }
 
     async updateOne(flag:FlagDataObject){
+        flag._id = new ObjectId(flag.uuid)
         const result = await this.collection.replaceOne(
             {uuid: flag.uuid }, 
             flag,

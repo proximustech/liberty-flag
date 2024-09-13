@@ -53,6 +53,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                     
                 }
                 else {
+                    flag.bucket_uuid=bucketUuid
                     viewVars.editing = false
                 }
     

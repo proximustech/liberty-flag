@@ -1,4 +1,5 @@
 import Router from "koa-router"
+import { Uuid } from "../../../services/utilities";
 import { BucketService } from "../services/BucketService";
 import { TagService } from "../services/TagService";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
@@ -74,12 +75,21 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
         let bucketValidationResult=BucketDataObjectValidator.validateFunction(bucket,BucketDataObjectValidator.validateSchema)
         bucket.contexts.forEach(context => {
+            //Validation
             let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
             if (!contextValidationResult.isValid) {
                 bucketValidationResult.isValid = false
                 bucketValidationResult.messages = bucketValidationResult.messages.concat(contextValidationResult.messages)
 
-            } 
+            }
+
+            //Assign uuid to new contexts
+            if (context.uuid ==="") {
+                context.uuid = Uuid.createMongoUuId()
+            } else {
+                //TODO: the uuid already exists
+                
+            }
             
         });
 
@@ -101,7 +111,6 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             }
             
         }
-
 
     })
 
@@ -126,7 +135,6 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
 
     })
-
 
     return router
 }

@@ -1,6 +1,7 @@
 import {v4 as uuidv4} from 'uuid';
 import { env } from 'node:process';
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import { Uuid } from "../../../services/utilities";
 
 export class MongoService {
 
@@ -22,7 +23,8 @@ export class MongoService {
     }
 
     createMongoUuId(){
-        return uuidv4().split("-").join("").substring(0,24)
+        //TODO: Remove this method
+        return Uuid.createMongoUuId()
     }
 
 }

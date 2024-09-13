@@ -54,9 +54,9 @@ export class FlagService {
         return new FlagDataObject()
     }
 
-    async getAll() : Promise<FlagDataObject[]> {
+    async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
         //await this.processTest()
-        const cursor = this.collection.find({});
+        const cursor = this.collection.find({bucket_uuid: bucketUuId});
         return (await cursor.toArray() as FlagDataObject[])
     }
     
@@ -68,7 +68,7 @@ export class FlagService {
 
         let flagFirst = this.getNew()
         flagFirst.name = "First Name"
-        flagFirst.bucketId = "ABCDEFG"
+        flagFirst.bucket_uuid = "ABCDEFG"
         await this.create(flagFirst)
 
         let flag = await this.getByUuId(flagFirst.uuid)

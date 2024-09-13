@@ -19,7 +19,7 @@
         document.getElementById('bucket_form_context_list').innerHTML=""
 
         let counter = 0
-        app.md.bucket_form.bucket.contexts.forEach(context => {
+        app.module_data.bucket_form.bucket.contexts.forEach(context => {
             addContextToList(context,counter)
             counter++
         });
@@ -47,7 +47,7 @@
 
     function context_listener(contextIndex,element){
         document.getElementById(`context_${contextIndex}`).summary=element.value;
-        app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
+        app.module_data.bucket_form.bucket.contexts[contextIndex].name = element.value
 
         if(element.value===""){
             if(app.module_data.bucket_form.bucketContextValidateSchema.name.required){
@@ -77,12 +77,12 @@
             tags.push(document.getElementById("bucket_tags").selectedOptions[i].value)
         }
         
-        app.md.bucket_form.bucket.tags=tags
+        app.module_data.bucket_form.bucket.tags=tags
 
-        let bucket = app.md.bucket_form.bucket
-        let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(bucket,app.md.bucket_form.bucketValidateSchema)
+        let bucket = app.module_data.bucket_form.bucket
+        let bucketValidationResult = app.module_data.bucket_form.bucketValidateFunction(bucket,app.module_data.bucket_form.bucketValidateSchema)
         bucket.contexts.forEach(context => {
-            let bucketContextValidationResult=app.md.bucket_form.bucketContextValidateFunction(context,app.md.bucket_form.bucketContextValidateSchema)
+            let bucketContextValidationResult=app.module_data.bucket_form.bucketContextValidateFunction(context,app.module_data.bucket_form.bucketContextValidateSchema)
             if (!bucketContextValidationResult.isValid) {
                 bucketValidationResult.isValid = false
                 bucketValidationResult.messages = bucketValidationResult.messages.concat(bucketContextValidationResult.messages)

@@ -3,7 +3,7 @@ import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../service
 
 export class FlagDataObject {
     _id:any = ""
-    bucketId:string = ""
+    bucket_uuid:string = ""
     uuid:string = ""
     name:string = ""
     description:string = ""

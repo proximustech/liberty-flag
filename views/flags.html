@@ -1,0 +1,49 @@
+<div class="alert alert-light" role="alert" style="text-align: center;">
+    <strong>Flags</strong> - Bucket: <%= bucket.name %>
+</div>
+<br>
+<button type="button" class="btn btn-secondary" style="margin-top: 25px;" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
+    <i class="bi bi-arrow-left-circle"></i> Back
+</button>
+<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
+    <i class="bi bi-plus-circle"></i> Add
+</button>
+<div class="btn-group" role="group" style="margin-top: 25px;">
+    <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+    <input class="form-control" id="flag_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >
+</div>
+<br>
+<br>
+<table 
+    id="flags_table" 
+    data-toggle="table" 
+    data-search="true" 
+    data-search-align="left" 
+    data-search-selector="#flag_search_box" 
+    data-search-highlight="true"
+    data-sortable="true"    
+>
+    <thead>
+        <tr>
+            <th data-sortable="true">Name</th>
+        </tr>
+    </thead>
+    <% flags.forEach(flag => { %>
+    <tr>
+        <td>
+            <span>
+                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+            </span>
+            <%= flag.name %>
+        </td>
+    </tr>
+    <% }) %>
+</table>
+<script>
+    app.module_data = {}
+
+    app.module_data.flags_list={}
+    app.module_data.flags_list.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
+    app.module_data.flags_table = $('#flags_table')
+    app.module_data.flags_table.bootstrapTable()
+</script>

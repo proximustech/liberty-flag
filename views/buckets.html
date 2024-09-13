@@ -1,4 +1,6 @@
-<label style="width: 45%;font-size: 45;">Buckets</label>
+<div class="alert alert-light" role="alert" style="text-align: center;">
+    <strong>Buckets</strong>
+</div>
 <br>
 <button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
@@ -27,7 +29,12 @@
     <tr>
         <td>
             <span>
-                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                <button class="list_button" onclick="app.drawer.innerHTML='';app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="list_button" onclick="htmx.ajax('GET', '/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>', {target:'#content_view', swap:'innerHTML'});">
+                    <i class="bi bi-flag"></i>
+                </button>
             </span>
             <%= bucket.name %>
         </td>
@@ -35,6 +42,7 @@
     <% }) %>
 </table>
 <script>
-    var $buckets_table = $('#buckets_table')
-    $buckets_table.bootstrapTable()
+    app.module_data = {}
+    app.module_data.buckets_table = $('#buckets_table')
+    app.module_data.buckets_table.bootstrapTable()
 </script>

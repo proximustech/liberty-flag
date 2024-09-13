@@ -1,28 +1,28 @@
 <script>
-    app.module_data.tag_form={}
-    app.module_data.tag_form.tag=JSON.parse(`<%- JSON.stringify(tag) %>`)
-    app.module_data.tag_form.tagValidateSchema = JSON.parse(`<%- JSON.stringify(tagValidateSchema) %>`)
-    eval(`<%- tagValidateFunction %>`)
+    app.module_data.flag_form={}
+    app.module_data.flag_form.flag=JSON.parse(`<%- JSON.stringify(flag) %>`)
+    app.module_data.flag_form.flagValidateSchema = JSON.parse(`<%- JSON.stringify(flagValidateSchema) %>`)
+    eval(`<%- flagValidateFunction %>`)
    
-    function submitTag(triggerElement) {
-        let tag = app.module_data.tag_form.tag
-        let tagValidationResult = app.module_data.tag_form.tagValidateFunction(tag,app.module_data.tag_form.tagValidateSchema)
+    function submitFlag(triggerElement) {
+        let flag = app.module_data.flag_form.flag
+        let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
        
-        if (tagValidationResult.isValid) {
+        if (flagValidationResult.isValid) {
             app.setPendingOperation(triggerElement)
             let result = $.ajax({
                 type:"POST",
-                url:"<%= prefix %>/tag",
-                data:"json="+escape(JSON.stringify(tag)),
+                url:"<%= prefix %>/flag",
+                data:"json="+escape(JSON.stringify(flag)),
                 processData: false,
                 dataType:"text"
             })
             .done(function() {
                 setTimeout(() => {
-                    //$("#content_view").load("<%= prefix %>/tags");
-                    htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
+                    //$("#content_view").load("<%= prefix %>/flags");
+                    htmx.ajax('GET', '/<%= prefix %>/flags', {target:'#content_view', swap:'innerHTML'})
                     app.drawer.hide();
-                    app.toastShow('Saved','Tag saved successfully.',{type:"info"})           
+                    app.toastShow('Saved','Flag saved successfully.',{type:"info"})           
                     
                 }, 1000);
             })
@@ -39,24 +39,24 @@
             });              
         } else {
             try {
-                app.toastShow('Form data Error',tagValidationResult.messages[0].message,{closable:true,type:"error"})
+                app.toastShow('Form data Error',flagValidationResult.messages[0].message,{closable:true,type:"error"})
             } catch (error) {}
         }
 
       
     }
 
-    function deleteTag(uuid) {
+    function deleteFlag(uuid) {
         let result = $.ajax({
             type:"DELETE",
-            url:"<%= prefix %>/tag?uuid="+uuid,
+            url:"<%= prefix %>/flag?uuid="+uuid,
         })
         .done(function() {      
             setTimeout(() =>{
-                htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
+                htmx.ajax('GET', '/<%= prefix %>/flags', {target:'#content_view', swap:'innerHTML'})
                 app.drawer.hide();
                 app.dialog.hide()
-                app.toastShow('Deleted','Tag deleted successfully.',{type:"info"}) 
+                app.toastShow('Deleted','Flag deleted successfully.',{type:"info"}) 
             },1000)   
         })
     
@@ -64,16 +64,16 @@
 
 </script>
 <% if (!editing) { %>
-    <h3>Create Tag</h3>
+    <h3>Create Flag</h3>
 <% } else { %>
     <sl-alert variant="warning" open>
         <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
-        <strong>Editing Tag</strong><br />
-        <%= tag.name %>
+        <strong>Editing Flag</strong><br />
+        <%= flag.name %>
       </sl-alert>
 
 <% } %>
-    <sl-tab-group id="tag_form_tab_group">
+    <sl-tab-group id="flag_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
 
         <% if (editing) { %>
@@ -82,19 +82,19 @@
         <% } %>
     
         <sl-tab-panel name="general">
-            <%- tagFieldRender("tag","name",tag.name,tagMetadata.name) %>
-            <%- tagFieldRender("tag","description",tag.description,tagMetadata.description) %>
+            <%- flagFieldRender("flag","name",flag.name,flagMetadata.name) %>
+            <%- flagFieldRender("flag","description",flag.description,flagMetadata.description) %>
         </sl-tab-panel>
 
         <% if (editing) { %>
             <sl-tab-panel name="operations">
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
-                        Deleting a Tag will also remove It from the associated elements.
+                        Deleting a Flag will also remove It from the associated elements.
                         <br>
                         <br>
                     </label>
-                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Tag','Are you sure to delete the tag <strong><%= tag.name %></strong> ?','deleteTag(`<%= tag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Tag</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Flag','Are you sure to delete the flag <strong><%= flag.name %></strong> ?','deleteFlag(`<%= flag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Flag</button>
                     <br>
                 </sl-details>
     
@@ -106,9 +106,9 @@
 
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-        <button type="button" class="btn btn-primary" onclick="submitTag(this)">Save</sl-button>
+        <button type="button" class="btn btn-primary" onclick="submitFlag(this)">Save</sl-button>
     </div>
 
 <script>
-    document.getElementById('tag_form_tab_group').show('general')
+    document.getElementById('flag_form_tab_group').show('general')
 </script>

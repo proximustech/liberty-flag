@@ -7,6 +7,7 @@ let getRouter = (viewVars: any) => {
 
     router = require("./bucket_routes.ts")(router,viewVars,prefix)
     router = require("./tag_routes.ts")(router,viewVars,prefix)
+    router = require("./flag_routes.ts")(router,viewVars,prefix)
 
     return router
 }

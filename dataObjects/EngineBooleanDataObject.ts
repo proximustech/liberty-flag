@@ -1,14 +1,14 @@
 import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
 import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../services/dataObjectHtmlGenerator";
 
-export class EngineParametersBooleanDataObject {
+export class EngineBooleanDataObject {
     status:boolean
     constructor(status:boolean){
         this.status = status
     }
 }
 
-export const EngineParametersBooleanDataObjectValidator:any = {
+export const EngineBooleanDataObjectValidator:any = {
 
     validateSchema : {
         status : {
@@ -23,15 +23,15 @@ export const EngineParametersBooleanDataObjectValidator:any = {
     validateFunction : DataObjectValidateFunction
 }
 
-export const EngineParametersBooleanDataObjectSpecs:any = {
+export const EngineBooleanDataObjectSpecs:any = {
 
     metadata : {
-        name : {
-            label:"Tag Name",
-            validationRequired: EngineParametersBooleanDataObjectValidator.validateSchema.name.required,
-            validationRegexp: EngineParametersBooleanDataObjectValidator.validateSchema.name.regexp,
-            validationMessage: EngineParametersBooleanDataObjectValidator.validateSchema.name.message,
-            validationRequiredMessage: EngineParametersBooleanDataObjectValidator.validateSchema.name.requiredMessage,
+        status : {
+            label:"Status",
+            validationRequired: EngineBooleanDataObjectValidator.validateSchema.status.required,
+            validationRegexp: EngineBooleanDataObjectValidator.validateSchema.status.regexp,
+            validationMessage: EngineBooleanDataObjectValidator.validateSchema.status.message,
+            validationRequiredMessage: EngineBooleanDataObjectValidator.validateSchema.status.requiredMessage,
             inputType:"switch"
         },      
 

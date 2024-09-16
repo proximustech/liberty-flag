@@ -2,6 +2,7 @@ import Router from "koa-router"
 import { FlagService } from "../services/FlagService";
 import { BucketService } from "../services/BucketService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
+import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
 
 import koaBody from 'koa-body';
 
@@ -65,6 +66,13 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
                 let flagContext = new FlagContextDataObject()
                 viewVars.flagContext = flagContext
+
+                viewVars.engineBoolean = new EngineBooleanDataObject(false)
+
+                viewVars.engineBooleanMetadata = EngineBooleanDataObjectSpecs.metadata
+                viewVars.engineBooleanFieldRender = EngineBooleanDataObjectSpecs.htmlDataObjectFieldRender
+                viewVars.engineBooleanValidateSchema = EngineBooleanDataObjectValidator.validateSchema
+                viewVars.engineBooleanValidateFunction = "app.module_data.flag_form.engineBooleanValidateFunction=" + EngineBooleanDataObjectValidator.validateFunction                
     
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 

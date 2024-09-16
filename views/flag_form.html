@@ -5,7 +5,8 @@
     eval(`<%- flagValidateFunction %>`)
 
     app.module_data.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
-   
+    app.module_data.flag_form.engineBoolean=JSON.parse(`<%- JSON.stringify(engineBoolean) %>`)
+
     function submitFlag(triggerElement) {
         let flag = app.module_data.flag_form.flag
         let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
@@ -65,16 +66,14 @@
     
     }
 
-    function removeFlagContextById(contextUuid){
+    function getFlagContextIndexByUuId(contextUuid){
         found = false
         for (let index = 0; index < app.module_data.flag_form.flag.contexts.length; index++) {
             if( app.module_data.flag_form.flag.contexts[index].bucket_context_uuid===contextUuid){
                 found = index
             }
         }
-        if (found !== false) {
-            app.module_data.flag_form.flag.contexts.splice(found, 1);
-        }
+        return found
     }
 
     function setContextValueConfig(contextUuid){
@@ -88,21 +87,33 @@
         let isChecked = document.getElementById("bucket_context_visibility_"+contextUuid).checked
 
         if (isChecked) {
-            let newContext = {...app.module_data.flag_form.flagContext}
+            let newContext = JSON.parse(JSON.stringify(app.module_data.flag_form.flagContext))
+            newContext.bucket_context_uuid = contextUuid
+
+            newContext.engine="boolean"
+            newContext.engine_parameters.boolean={status:false}
+
             app.module_data.flag_form.flag.contexts.push(newContext)
 
-            newContext.bucket_context_uuid = `${contextUuid}`
             document.getElementById('contexts_values_config').insertAdjacentHTML("beforeend",`
-                <div id="context_${contextUuid}_wrapper" style="margin-bottom: 10px;">
-                    <sl-details id='bucket_context_value_config_${context.uuid}' summary="${context.name}"></sl-details>    
-                </div>
+            <div id="context_${contextUuid}_wrapper" style="margin-bottom: 10px;">
+                <sl-details id='bucket_context_value_config_${context.uuid}' summary="${context.name}">
+                    <div>
+                        <div class="form-check form-switch">
+                            <label class="form-check-label" for="flexCheckChecked">
+                                ON
+                            </label>
+                            <input id="engine_boolean_status" class="form-check-input" type="checkbox" role="switch" style="font-size:large" onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}">
+                        </div>
+                    </div>
+                </sl-details>
+            </div>
             `)
         } else {
-            removeFlagContextById(contextUuid)
+            app.module_data.flag_form.flag.contexts.splice(getFlagContextIndexByUuId(contextUuid), 1);
             document.getElementById('contexts_values_config').removeChild(
                 document.getElementById(`context_${contextUuid}_wrapper`)
             )
-
             
         }
 

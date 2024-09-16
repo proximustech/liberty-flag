@@ -10,7 +10,7 @@
     eval(`<%- bucketContextValidateFunction %>`)
 
     function createContext(){
-        let newContext = {...app.module_data.bucket_form.bucketContext}
+        let newContext = JSON.parse(JSON.stringify(app.module_data.bucket_form.bucketContext))
         let contextsLength=app.module_data.bucket_form.bucket.contexts.push(newContext)
         addContextToList(newContext,contextsLength -1)
     }

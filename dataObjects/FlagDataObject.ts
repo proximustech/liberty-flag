@@ -5,6 +5,7 @@ export class FlagDataObject {
     _id:any = ""
     bucket_uuid:string = ""
     uuid:string = ""
+    
     name:string = ""
     description:string = ""
 

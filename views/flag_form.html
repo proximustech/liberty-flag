@@ -3,6 +3,8 @@
     app.module_data.flag_form.flag=JSON.parse(`<%- JSON.stringify(flag) %>`)
     app.module_data.flag_form.flagValidateSchema = JSON.parse(`<%- JSON.stringify(flagValidateSchema) %>`)
     eval(`<%- flagValidateFunction %>`)
+
+    app.module_data.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
    
     function submitFlag(triggerElement) {
         let flag = app.module_data.flag_form.flag
@@ -61,6 +63,49 @@
             },1000)   
         })
     
+    }
+
+    function removeFlagContextById(contextUuid){
+        found = false
+        for (let index = 0; index < app.module_data.flag_form.flag.contexts.length; index++) {
+            if( app.module_data.flag_form.flag.contexts[index].bucket_context_uuid===contextUuid){
+                found = index
+            }
+        }
+        if (found !== false) {
+            app.module_data.flag_form.flag.contexts.splice(found, 1);
+        }
+    }
+
+    function setContextValueConfig(contextUuid){
+        context = {}
+        app.module_data.flags_list.bucket.contexts.forEach(tempContext => {
+            if (tempContext.uuid === contextUuid) {
+                context = tempContext
+            }
+
+        });
+        let isChecked = document.getElementById("bucket_context_visibility_"+contextUuid).checked
+
+        if (isChecked) {
+            let newContext = {...app.module_data.flag_form.flagContext}
+            app.module_data.flag_form.flag.contexts.push(newContext)
+
+            newContext.bucket_context_uuid = `${contextUuid}`
+            document.getElementById('contexts_values_config').insertAdjacentHTML("beforeend",`
+                <div id="context_${contextUuid}_wrapper" style="margin-bottom: 10px;">
+                    <sl-details id='bucket_context_value_config_${context.uuid}' summary="${context.name}"></sl-details>    
+                </div>
+            `)
+        } else {
+            removeFlagContextById(contextUuid)
+            document.getElementById('contexts_values_config').removeChild(
+                document.getElementById(`context_${contextUuid}_wrapper`)
+            )
+
+            
+        }
+
     }    
 
 </script>
@@ -76,6 +121,7 @@
 <% } %>
     <sl-tab-group id="flag_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
+        <sl-tab slot="nav" panel="values">Values</sl-tab>
 
         <% if (editing) { %>
             <sl-tab slot="nav" panel="operations">Operations</sl-tab>
@@ -85,7 +131,18 @@
         <sl-tab-panel name="general">
             <%- flagFieldRender("flag","name",flag.name,flagMetadata.name) %>
             <%- flagFieldRender("flag","description",flag.description,flagMetadata.description) %>
+            <br>
+            Bucket Context Visibility:<br>
+            <br>
+            <% bucket.contexts.forEach(context => { %>
+
+                <div class="alert alert-light" role="alert">
+                    <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setContextValueConfig('<%= context.uuid %>')" > <%= context.name %>
+                </div>          
+            <% }) %>
+
         </sl-tab-panel>
+        <sl-tab-panel id="contexts_values_config" name="values"></sl-tab-panel>
 
         <% if (editing) { %>
             <sl-tab-panel name="operations">

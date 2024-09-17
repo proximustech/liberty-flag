@@ -93,13 +93,15 @@
             newContext.engine="boolean"
             newContext.engine_parameters.boolean={status:false}
 
+            newContext.engine_parameters.boolean_conditioned={conditions:[]}
+
             app.module_data.flag_form.flag.contexts.push(newContext)
 
             document.getElementById('contexts_values_config').insertAdjacentHTML("beforeend",`
             <div id="context_${contextUuid}_wrapper" style="margin-bottom: 10px;">
                 <sl-details id='bucket_context_value_config_${context.uuid}' summary="${context.name}">
                     <label style='margin-bottom:7px;font-size:17px'>Engine</label>
-                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" place onchange="setEngineView(this.value,'${contextUuid}')">
+                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineView(this.value,'${contextUuid}')">
                         <option value="boolean" selected>Boolean</option>
                         <option value="boolean_conditioned">Boolean: True IF ALL Conditions</option>
                     </select> 
@@ -118,6 +120,20 @@
 
     }
 
+    function setEngineBooleanContitionatedConditionValueConfig(contextUuid,conditionNumber){
+        
+        let firstParameterElement=document.getElementById(`engine_boolean_conditioned_first_paramenter_${contextUuid}_${conditionNumber}`)
+        let secondParameterElement=document.getElementById(`engine_boolean_conditioned_second_paramenter_${contextUuid}_${conditionNumber}`)
+        let operatorParameterElement=document.getElementById(`engine_boolean_conditioned_operator_parameter_${contextUuid}_${conditionNumber}`)
+
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[conditionNumber]={
+            firstParameter : firstParameterElement.value,
+            secondParameter : secondParameterElement.value,
+            operatorParameter : operatorParameterElement.value,
+        }
+        
+    }    
+
     function setEngineView(engine,contextUuid){
         if (engine === "boolean") {
             let checked = ""
@@ -134,27 +150,35 @@
             `
         } else if (engine === "boolean_conditioned") {
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanContitionatedCondition('${contextUuid}')"><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedCondition('${contextUuid}')"><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditioned_conditions_${contextUuid}'></div>
             `            
         }
     }
 
-    function addEngineBooleanContitionatedCondition(contextUuid){
+    function addEngineBooleanConditionedCondition(contextUuid){
+
+        
         let conditionsContainer = document.getElementById(`boolean_conditioned_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[newConditionNumber]={
+            firstParameter : "",
+            secondParameter : "",
+            operatorParameter : "",
+        }
+
         let html =`
             <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
-                <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('boolean_conditioned_conditions_${contextUuid}').removeChild(document.getElementById('boolean_condition_${contextUuid}_${newConditionNumber}'))"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition</label>
-                <input id='engine_boolean_conditioned_status' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="" />
-                <select id="bucket_tags" class="js-example-basic-single" style="width:100%;margin-bottom:7px" place>
-                    <option value="">= Equal</option>
-                    <option value="">!= Different</option>
-                    <option value="">< Less than</option>
-                    <option value="">> Grater than</option>
+                <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('boolean_conditioned_conditions_${contextUuid}').removeChild(document.getElementById('boolean_condition_${contextUuid}_${newConditionNumber}'))"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
+                <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})">
+                    <option value="equal">= Equal</option>
+                    <option value="different">!= Different</option>
+                    <option value="less_tha">< Less than</option>
+                    <option value="greater_than">> Greater than</option>
                 </select>                        
-                <input id='engine_boolean_conditioned_status' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="" />
+                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
             </fieldset>
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)

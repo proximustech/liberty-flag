@@ -134,8 +134,19 @@
             `
         } else if (engine === "boolean_conditioned") {
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-            <fieldset style="padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
-                <label style='margin-bottom:7px;font-size:17px'>Condition</label>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanContitionatedCondition('${contextUuid}')"><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <div id='boolean_conditioned_conditions_${contextUuid}'></div>
+            `            
+        }
+    }
+
+    function addEngineBooleanContitionatedCondition(contextUuid){
+        let conditionsContainer = document.getElementById(`boolean_conditioned_conditions_${contextUuid}`)
+        let newConditionNumber = conditionsContainer.childElementCount
+
+        let html =`
+            <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
+                <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('boolean_conditioned_conditions_${contextUuid}').removeChild(document.getElementById('boolean_condition_${contextUuid}_${newConditionNumber}'))"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition</label>
                 <input id='engine_boolean_conditioned_status' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="" />
                 <select id="bucket_tags" class="js-example-basic-single" style="width:100%;margin-bottom:7px" place>
                     <option value="">= Equal</option>
@@ -145,8 +156,8 @@
                 </select>                        
                 <input id='engine_boolean_conditioned_status' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="" />
             </fieldset>
-            `            
-        }
+        `
+        conditionsContainer.insertAdjacentHTML('afterbegin',html)
     }
 
 </script>
@@ -196,9 +207,7 @@
                 <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Flag','Are you sure to delete the flag <strong><%= flag.name %></strong> ?','deleteFlag(`<%= flag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Flag</button>
                 <br>
             </sl-details>
-
         </sl-tab-panel>
-        
     <% } %>
     
 </sl-tab-group>

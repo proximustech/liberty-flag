@@ -192,34 +192,48 @@
                 <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedCondition('${contextUuid}')"><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditioned_conditions_${contextUuid}'></div>
             `  
-            app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.forEach(condition => {
-                addEngineBooleanConditionedCondition(contextUuid)
-            })          
+            for (let index = 0; index < app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.length; index++) {
+                addEngineBooleanConditionedCondition(contextUuid,app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[index])
+                
+            }        
         }
     }
 
-    function addEngineBooleanConditionedCondition(contextUuid){
+    function addEngineBooleanConditionedCondition(contextUuid,condition={firstParameter : "",secondParameter : "",operatorParameter : "",}){
 
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions
+          
         let conditionsContainer = document.getElementById(`boolean_conditioned_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
-        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[newConditionNumber]={
-            firstParameter : "",
-            secondParameter : "",
-            operatorParameter : "",
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[newConditionNumber]=condition
+
+        let selectedEqual = ""
+        let selectedDifferent = ""
+        let selectedLessThan = ""
+        let selectedGreaterThan = ""
+
+        if (condition.operatorParameter==="equal") {
+            selectedEqual="selected"
+        } else if(condition.operatorParameter==="different") {
+            selectedDifferent="selected"
+        } else if(condition.operatorParameter==="less_than") {
+            selectedLessThan="selected"
+        } else if(condition.operatorParameter==="greater_than") {
+            selectedGreaterThan="selected"
         }
 
         let html =`
             <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedCondition('${contextUuid}',${newConditionNumber})"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
+                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.firstParameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
                 <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})">
-                    <option value="equal">= Equal</option>
-                    <option value="different">!= Different</option>
-                    <option value="less_than">< Less than</option>
-                    <option value="greater_than">> Greater than</option>
+                    <option value="equal" ${selectedEqual} > (=) Equal</option>
+                    <option value="different" ${selectedDifferent} > (!=) Different</option>
+                    <option value="less_than" ${selectedLessThan} > (<) Less than</option>
+                    <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                 </select>                        
-                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
+                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.secondParameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
             </fieldset>
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)

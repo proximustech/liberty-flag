@@ -7,6 +7,8 @@
     app.module_data.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
     app.module_data.flag_form.engineBoolean=JSON.parse(`<%- JSON.stringify(engineBoolean) %>`)
 
+    app.module_data.flag_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
+
     function submitFlag(triggerElement) {
         let flag = app.module_data.flag_form.flag
         let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
@@ -75,42 +77,77 @@
         }
         return found
     }
+    function getBucketContextByUuId(contextUuid){
+        found = {}
+        for (let index = 0; index < app.module_data.flag_form.bucket.contexts.length; index++) {
+            if( app.module_data.flag_form.bucket.contexts[index].uuid===contextUuid){
+                found = app.module_data.flag_form.bucket.contexts[index]
+            }
+        }
+        return found
+    }
 
-    function setContextValueConfig(contextUuid){
-        context = {}
+    function addFlagContextsToList(){
+        document.getElementById('contexts_values_config').innerHTML=""
+        let counter = 0
+        app.module_data.flag_form.flag.contexts.forEach(flagContext => {
+            addFlagContextToList(getBucketContextByUuId(flagContext.bucket_context_uuid),counter)
+            counter++
+        });
+    }
+
+    function addFlagContextToList(bucketContext,counter) {
+        let booleanIsSelected = ""
+        let booleanConditionedIsSelected = ""
+
+        if (app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean") {
+            booleanIsSelected="selected"
+        } else if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditioned") {
+            booleanConditionedIsSelected = "selected"
+        }
+
+        document.getElementById('contexts_values_config').insertAdjacentHTML("beforeend",`
+            <div id="context_${bucketContext.uuid}_wrapper" style="margin-bottom: 10px;">
+                <sl-details id='bucket_context_value_config_${bucketContext.uuid}' summary="${bucketContext.name}">
+                    <label style='margin-bottom:7px;font-size:17px'>Engine</label>
+                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')">
+                        <option value="boolean" ${booleanIsSelected}>Boolean</option>
+                        <option value="boolean_conditioned" ${booleanConditionedIsSelected} >Boolean: True IF ALL Conditions</option>
+                    </select> 
+                    <div id="engine_container_${bucketContext.uuid}" style="padding:5px"></div>
+                </sl-details>
+            </div>
+            `)
+        setEngineView(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine,`${bucketContext.uuid}`)
+    }
+
+
+    function setFlagContextValueConfig(contextUuid){
+        bucketContext = {}
         app.module_data.flags_list.bucket.contexts.forEach(tempContext => {
             if (tempContext.uuid === contextUuid) {
-                context = tempContext
+                bucketContext = tempContext
             }
 
         });
         let isChecked = document.getElementById("bucket_context_visibility_"+contextUuid).checked
 
         if (isChecked) {
-            let newContext = JSON.parse(JSON.stringify(app.module_data.flag_form.flagContext))
-            newContext.bucket_context_uuid = contextUuid
+            let newFlagContext = JSON.parse(JSON.stringify(app.module_data.flag_form.flagContext))
+            newFlagContext.bucket_context_uuid = contextUuid
 
-            newContext.engine="boolean"
-            newContext.engine_parameters.boolean={status:false}
+            newFlagContext.engine="boolean"
+            newFlagContext.engine_parameters.boolean={status:false}
 
-            newContext.engine_parameters.boolean_conditioned={conditions:[]}
+            newFlagContext.engine_parameters.boolean_conditioned={conditions:[]}
 
-            app.module_data.flag_form.flag.contexts.push(newContext)
+            app.module_data.flag_form.flag.contexts.push(newFlagContext)
 
-            document.getElementById('contexts_values_config').insertAdjacentHTML("beforeend",`
-            <div id="context_${contextUuid}_wrapper" style="margin-bottom: 10px;">
-                <sl-details id='bucket_context_value_config_${context.uuid}' summary="${context.name}">
-                    <label style='margin-bottom:7px;font-size:17px'>Engine</label>
-                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineView(this.value,'${contextUuid}')">
-                        <option value="boolean" selected>Boolean</option>
-                        <option value="boolean_conditioned">Boolean: True IF ALL Conditions</option>
-                    </select> 
-                    <div id="engine_container_${contextUuid}" style="padding:5px"></div>
-                </sl-details>
-            </div>
-            `)
-            setEngineView('boolean',contextUuid)
+            addFlagContextsToList()
+
+
         } else {
+            //Remove flag context from the Values list
             app.module_data.flag_form.flag.contexts.splice(getFlagContextIndexByUuId(contextUuid), 1);
             document.getElementById('contexts_values_config').removeChild(
                 document.getElementById(`context_${contextUuid}_wrapper`)
@@ -136,6 +173,7 @@
 
     function setEngineView(engine,contextUuid){
         if (engine === "boolean") {
+            app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine="boolean"
             let checked = ""
             if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean.status){
                 checked = "checked"
@@ -149,16 +187,19 @@
             </div>
             `
         } else if (engine === "boolean_conditioned") {
+            app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine="boolean_conditioned"
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
                 <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedCondition('${contextUuid}')"><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditioned_conditions_${contextUuid}'></div>
-            `            
+            `  
+            app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.forEach(condition => {
+                addEngineBooleanConditionedCondition(contextUuid)
+            })          
         }
     }
 
     function addEngineBooleanConditionedCondition(contextUuid){
 
-        
         let conditionsContainer = document.getElementById(`boolean_conditioned_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
@@ -170,18 +211,24 @@
 
         let html =`
             <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
-                <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('boolean_conditioned_conditions_${contextUuid}').removeChild(document.getElementById('boolean_condition_${contextUuid}_${newConditionNumber}'))"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedCondition('${contextUuid}',${newConditionNumber})"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
                 <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})">
                     <option value="equal">= Equal</option>
                     <option value="different">!= Different</option>
-                    <option value="less_tha">< Less than</option>
+                    <option value="less_than">< Less than</option>
                     <option value="greater_than">> Greater than</option>
                 </select>                        
                 <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
             </fieldset>
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
+    }
+
+    function deleteEngineBooleanConditionedCondition(contextUuid,conditionIndex){
+        document.getElementById(`boolean_conditioned_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_condition_${contextUuid}_${conditionIndex}`))
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.splice(conditionIndex, 1);
+        addFlagContextsToList()
     }
 
 </script>
@@ -210,12 +257,17 @@
         <br>
         Bucket Context Visibility:<br>
         <br>
-        <% bucket.contexts.forEach(context => { %>
-
+        <% let bucketSelectedContextCounter = 0;bucket.contexts.forEach(context => { %>
             <div class="alert alert-light" role="alert">
-                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setContextValueConfig('<%= context.uuid %>')" > <%= context.name %>
-            </div>          
-        <% }) %>
+                <% let checked=""; if (flagContextsUuids.includes(context.uuid)) checked="checked" %>
+                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %> > <%= context.name %>
+            </div>
+            <% if (checked) { %>
+                <script>
+                     addFlagContextToList(getBucketContextByUuId('<%= context.uuid %>'),bucketSelectedContextCounter)
+                </script>          
+            <% } %>
+        <% bucketSelectedContextCounter++ }) %>
 
     </sl-tab-panel>
     <sl-tab-panel id="contexts_values_config" name="values"></sl-tab-panel>

@@ -57,6 +57,11 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                     flag.bucket_uuid=bucketUuid
                     viewVars.editing = false
                 }
+
+                viewVars.flagContextsUuids = []
+                flag.contexts.forEach(flagContext => {
+                    viewVars.flagContextsUuids.push(flagContext.bucket_context_uuid)
+                });
     
                 viewVars.flag = flag
                 viewVars.flagMetadata = FlagDataObjectSpecs.metadata

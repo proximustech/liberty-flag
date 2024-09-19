@@ -3,6 +3,7 @@ import { FlagService } from "../services/FlagService";
 import { BucketService } from "../services/BucketService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
 import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
+import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
 
 import koaBody from 'koa-body';
 
@@ -78,7 +79,12 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                 viewVars.engineBooleanFieldRender = EngineBooleanDataObjectSpecs.htmlDataObjectFieldRender
                 viewVars.engineBooleanValidateSchema = EngineBooleanDataObjectValidator.validateSchema
                 viewVars.engineBooleanValidateFunction = "app.module_data.flag_form.engineBooleanValidateFunction=" + EngineBooleanDataObjectValidator.validateFunction                
-    
+                                
+                viewVars.engineBooleanConditioned = new EngineBooleanConditionedDataObject()
+                viewVars.engineBooleanConditionedCondition = new EngineBooleanConditionedConditionDataObject()
+                viewVars.engineBooleanConditionedConditionValidateShema = EngineBooleanConditionedConditionDataObjectValidator.validateSchema
+                viewVars.engineBooleanConditionedConditionValidateFunction = "app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction=" + EngineBooleanConditionedConditionDataObjectValidator.validateFunction                
+
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 
             } else {

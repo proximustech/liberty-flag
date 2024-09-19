@@ -7,11 +7,33 @@
     app.module_data.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
     app.module_data.flag_form.engineBoolean=JSON.parse(`<%- JSON.stringify(engineBoolean) %>`)
 
+    app.module_data.flag_form.engineBooleanConditioned=JSON.parse(`<%- JSON.stringify(engineBooleanConditioned) %>`)
+    app.module_data.flag_form.engineBooleanConditionedCondition=JSON.parse(`<%- JSON.stringify(engineBooleanConditionedCondition) %>`)
+    app.module_data.flag_form.engineBooleanConditionedConditionValidateShema = JSON.parse(`<%- JSON.stringify(engineBooleanConditionedConditionValidateShema) %>`)    
+    eval(`<%- engineBooleanConditionedConditionValidateFunction %>`)
+
     app.module_data.flag_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
 
     function submitFlag(triggerElement) {
         let flag = app.module_data.flag_form.flag
         let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
+
+        let engineBooleanConditionedConditionsValidationResult = true
+        for (let flagContextIndex = 0; flagContextIndex < flag.contexts.length; flagContextIndex++) {
+            const flagContext = flag.contexts[flagContextIndex];
+            for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned.conditions.length; conditionIndex++) {
+                const condition = flagContext.engine_parameters.boolean_conditioned.conditions[conditionIndex];
+                debugger
+                let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
+                if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                    flagValidationResult.isValid = false
+                    flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                    break
+                }
+                
+            }
+            
+        }
        
         if (flagValidationResult.isValid) {
             app.setElementForPendingOperation(triggerElement)
@@ -163,11 +185,12 @@
         let secondParameterElement=document.getElementById(`engine_boolean_conditioned_second_paramenter_${contextUuid}_${conditionNumber}`)
         let operatorParameterElement=document.getElementById(`engine_boolean_conditioned_operator_parameter_${contextUuid}_${conditionNumber}`)
 
-        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[conditionNumber]={
-            firstParameter : firstParameterElement.value,
-            secondParameter : secondParameterElement.value,
-            operatorParameter : operatorParameterElement.value,
-        }
+        let condition = JSON.parse(JSON.stringify(app.module_data.flag_form.engineBooleanConditionedCondition))
+        condition.first_parameter=firstParameterElement.value
+        condition.second_parameter=secondParameterElement.value
+        condition.operator_parameter=operatorParameterElement.value
+
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[conditionNumber]=condition
         
     }    
 
@@ -199,7 +222,7 @@
         }
     }
 
-    function addEngineBooleanConditionedCondition(contextUuid,condition={firstParameter : "",secondParameter : "",operatorParameter : "",}){
+    function addEngineBooleanConditionedCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.module_data.flag_form.engineBooleanConditionedCondition)) ){
 
         app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions
           
@@ -213,27 +236,27 @@
         let selectedLessThan = ""
         let selectedGreaterThan = ""
 
-        if (condition.operatorParameter==="equal") {
+        if (condition.operator_parameter==="equal") {
             selectedEqual="selected"
-        } else if(condition.operatorParameter==="different") {
+        } else if(condition.operator_parameter==="different") {
             selectedDifferent="selected"
-        } else if(condition.operatorParameter==="less_than") {
+        } else if(condition.operator_parameter==="less_than") {
             selectedLessThan="selected"
-        } else if(condition.operatorParameter==="greater_than") {
+        } else if(condition.operator_parameter==="greater_than") {
             selectedGreaterThan="selected"
         }
 
         let html =`
             <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedCondition('${contextUuid}',${newConditionNumber})"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.firstParameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
+                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' />
                 <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})">
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                 </select>                        
-                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.secondParameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" />
+                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' />
             </fieldset>
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
@@ -271,13 +294,13 @@
         <br>
         Bucket Context Visibility:<br>
         <br>
-        <% let bucketSelectedContextCounter = 0;bucket.contexts.forEach(context => { %>
+        <% bucket.contexts.forEach(context => { %>
             <div class="alert alert-light" role="alert">
                 <% let checked=""; if (flagContextsUuids.includes(context.uuid)) checked="checked" %>
                 <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %> > <%= context.name %>
             </div>
         
-        <% bucketSelectedContextCounter++ }) %>
+        <% }) %>
 
     </sl-tab-panel>
     <sl-tab-panel id="contexts_values_config" name="values"></sl-tab-panel>

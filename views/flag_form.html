@@ -23,7 +23,6 @@
             const flagContext = flag.contexts[flagContextIndex];
             for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned.conditions.length; conditionIndex++) {
                 const condition = flagContext.engine_parameters.boolean_conditioned.conditions[conditionIndex];
-                debugger
                 let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
                 if (!engineBooleanConditionedConditionValidationResult.isValid) {
                     flagValidationResult.isValid = false
@@ -191,6 +190,8 @@
         condition.operator_parameter=operatorParameterElement.value
 
         app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions[conditionNumber]=condition
+        engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
         
     }    
 
@@ -250,6 +251,7 @@
             <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedCondition('${contextUuid}',${newConditionNumber})"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' />
+                <label id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
                 <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})">
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
@@ -257,14 +259,39 @@
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                 </select>                        
                 <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' />
+                <label id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
             </fieldset>
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
+        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}`,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}`,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
     }
+
+    function engineBooleanConditionedCondition_ValidationListener(conditionIndex,elementId,validateSchema){
+        let element = document.getElementById(elementId)
+        if(element.value===""){
+            if(validateSchema.required){
+                document.getElementById(`${elementId}_validation_message`).innerHTML=validateSchema.requiredMessage
+
+            }
+            else{
+                document.getElementById(`${elementId}_validation_message`).innerHTML=""
+            }               
+        } else {
+            regexpValidator = new RegExp(validateSchema.regexp)
+            if(!regexpValidator.test(element.value)){
+                document.getElementById(`${elementId}_validation_message`).innerHTML=validateSchema.message
+            }
+            else {
+                document.getElementById(`${elementId}_validation_message`).innerHTML=""
+            }
+        }
+    }     
 
     function deleteEngineBooleanConditionedCondition(contextUuid,conditionIndex){
         document.getElementById(`boolean_conditioned_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_condition_${contextUuid}_${conditionIndex}`))
         app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.splice(conditionIndex, 1);
+        //TODO: Refresh only conditions list
         addFlagContextsToList()
     }
 

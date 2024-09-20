@@ -1,5 +1,4 @@
 import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
-import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../services/dataObjectHtmlGenerator";
 
 export class EngineBooleanConditionedDataObject {
     conditions:Array<EngineBooleanConditionedConditionDataObject> = []
@@ -18,7 +17,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
             regexp:"^.+$",
             message:"",
             required:true,
-            requiredMessage : "Boolean condition (True IF ALL): Key is required."
+            requiredMessage : "Boolean condition: Key is required."
         },       
         second_parameter : {
             regexp:"^.*$",
@@ -34,6 +33,6 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
         },         
 
     },
-
+    //TODO: Make specific validation function for boolean conditioned conditions
     validateFunction : DataObjectValidateFunction
 }

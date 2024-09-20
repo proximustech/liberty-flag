@@ -106,6 +106,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
 
         let flagValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
+        //TODO: Validate boolean conditioned conditions
         if (flagValidationResult.isValid) {
             if (flag.uuid !== "") {
                 flagService.updateOne(flag) 

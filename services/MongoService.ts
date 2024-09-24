@@ -10,11 +10,11 @@ export class MongoService {
     constructor(){
         // @ts-ignore
         this.client = new MongoClient(env.LIBERTY_FLAG_PLUGIN_MONGO_URI, {
-            serverApi: {
-                version: ServerApiVersion.v1,
-                strict: true,
-                deprecationErrors: true,
-            }
+            //serverApi: {
+            //    version: ServerApiVersion.v1,
+            //    strict: true,
+            //    deprecationErrors: true,
+            //}
         });        
     }
 

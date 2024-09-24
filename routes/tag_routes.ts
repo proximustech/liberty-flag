@@ -1,3 +1,4 @@
+import { Context } from "koa";
 import Router from "koa-router"
 import { TagService } from "../services/TagService";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
@@ -7,7 +8,7 @@ import koaBody from 'koa-body';
 module.exports = function(router:Router,viewVars:any,prefix:string){
 
 
-    router.get('/tags', async (ctx) => {
+    router.get('/tags', async (ctx:Context) => {
         try {
             const tagService = new TagService()
             viewVars.tags = await tagService.getAll()
@@ -17,7 +18,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
     })
 
-    router.get('/tag_form', async (ctx) => {
+    router.get('/tag_form', async (ctx:Context) => {
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -45,7 +46,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
     })
 
-    router.post('/tag',koaBody(), async (ctx) => {
+    router.post('/tag',koaBody(), async (ctx:Context) => {
         const tagService = new TagService()
         let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
 
@@ -71,7 +72,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     })
 
-    router.delete('/tag',koaBody(), async (ctx) => {
+    router.delete('/tag',koaBody(), async (ctx:Context) => {
         const tagService = new TagService()
 
         let uuid:any = ctx.request.query.uuid || ""

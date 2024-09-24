@@ -1,4 +1,5 @@
 import Router from "koa-router"
+import { Context } from "koa";
 import { FlagService } from "../services/FlagService";
 import { BucketService } from "../services/BucketService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
@@ -10,7 +11,7 @@ import koaBody from 'koa-body';
 module.exports = function(router:Router,viewVars:any,prefix:string){
 
 
-    router.get('/flags', async (ctx) => {
+    router.get('/flags', async (ctx:Context) => {
         try {
 
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
@@ -36,7 +37,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
     })
 
-    router.get('/flag_form', async (ctx) => {
+    router.get('/flag_form', async (ctx:Context) => {
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -101,7 +102,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
     })
 
-    router.post('/flag',koaBody(), async (ctx) => {
+    router.post('/flag',koaBody(), async (ctx:Context) => {
         const flagService = new FlagService()
         let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
 
@@ -128,7 +129,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     })
 
-    router.delete('/flag',koaBody(), async (ctx) => {
+    router.delete('/flag',koaBody(), async (ctx:Context) => {
         const flagService = new FlagService()
 
         let uuid:any = ctx.request.query.uuid || ""

@@ -1,3 +1,4 @@
+import { Context } from "koa";
 import Router from "koa-router"
 import { Uuid } from "../../../services/utilities";
 import { BucketService } from "../services/BucketService";
@@ -10,7 +11,7 @@ import koaBody from 'koa-body';
 module.exports = function(router:Router,viewVars:any,prefix:string){
 
 
-    router.get('/buckets', async (ctx) => {
+    router.get('/buckets', async (ctx:Context) => {
         try {
             const bucketService = new BucketService()
             viewVars.buckets = await bucketService.getAll()
@@ -20,7 +21,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
     })
 
-    router.get('/bucket_form', async (ctx) => {
+    router.get('/bucket_form', async (ctx:Context) => {
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -69,7 +70,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         }
     })
 
-    router.post('/bucket',koaBody(), async (ctx) => {
+    router.post('/bucket',koaBody(), async (ctx:Context) => {
         const bucketService = new BucketService()
         let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
 
@@ -114,7 +115,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     })
 
-    router.delete('/bucket',koaBody(), async (ctx) => {
+    router.delete('/bucket',koaBody(), async (ctx:Context) => {
         const bucketService = new BucketService()
 
         let uuid:any = ctx.request.query.uuid || ""

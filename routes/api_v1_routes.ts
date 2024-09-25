@@ -44,7 +44,6 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         let contextKey = ctx.request.body["context-key"] || ""
 
         if (contextKey !== "") {
-            console.log(contextKey)
 
             const flagService = new FlagService()
 

@@ -41,6 +41,9 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
     */
 
     router.post(apiPrefix+'/get_context_flags_data',koaBody(), async (ctx:Context) => {
+
+        console.log("API Requested.")
+
         let contextKey = ctx.request.body["context-key"] || ""
 
         if (contextKey !== "") {
@@ -61,7 +64,6 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                             parameters:context.engine_parameters[context.engine]
                         })
                         */
-                        console.log("Requested...")
                         responseFlags.push({
                             name:flag.name,
                             value:context.engine_parameters.boolean.status
@@ -72,7 +74,6 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                 });
     
             });
-
 
             ctx.body = {
                 status: 'success',

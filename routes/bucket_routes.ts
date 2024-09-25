@@ -130,7 +130,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             ctx.status=400
             ctx.body = {
                 status: 'error',
-                messate: "Invalid Uuid"
+                message: "Invalid Uuid"
             }
 
         }

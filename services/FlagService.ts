@@ -62,7 +62,11 @@ export class FlagService {
         const cursor = this.collection.find({bucket_uuid: bucketUuId});
         return (await cursor.toArray() as FlagDataObject[])
     }
-    
+
+    async getAllByContextUuid(contextUuId:string) : Promise<FlagDataObject[]> {
+        const cursor = this.collection.find({"contexts.bucket_context_uuid": contextUuId});
+        return (await cursor.toArray() as FlagDataObject[])
+    }        
 
     private async processTest(){
         /**

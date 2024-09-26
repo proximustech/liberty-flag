@@ -2,6 +2,7 @@ import Router from "koa-router"
 import { Context } from "koa";
 import { FlagService } from "../services/FlagService";
 import { BucketService } from "../services/BucketService";
+import { TagService } from "../services/TagService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
 import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
@@ -47,6 +48,8 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 
                 let flag:FlagDataObject = new FlagDataObject()
+                const tagService = new TagService()
+                viewVars.tags = await tagService.getAll()
 
                 if (uuid !=="") {
     

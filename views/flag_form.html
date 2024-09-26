@@ -15,6 +15,15 @@
     app.module_data.flag_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
 
     function submitFlag(triggerElement) {
+
+        let tags=[]
+
+        for(let i=0 ;i<document.getElementById("flag_tags").selectedOptions.length;i++){
+            tags.push(document.getElementById("flag_tags").selectedOptions[i].value)
+        }
+        
+        app.module_data.flag_form.flag.tags=tags
+
         let flag = app.module_data.flag_form.flag
         let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
 
@@ -318,6 +327,13 @@
     <sl-tab-panel name="general">
         <%- flagFieldRender("flag","name",flag.name,flagMetadata.name) %>
         <%- flagFieldRender("flag","description",flag.description,flagMetadata.description) %>
+        <label style='margin-bottom:7px;font-size:17px'>Tags</label>
+        <select id="flag_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%" >
+            <% tags.forEach(tag => { %>
+                <option value="<%= tag.uuid %>" <% if(flag.tags.includes(tag.uuid)){ %> selected <% } %> ><%= tag.name %></option>
+             
+            <% }) %>
+        </select>          
         <br>
         Bucket Context Visibility:<br>
         <br>
@@ -356,4 +372,7 @@
 <script>
     document.getElementById('flag_form_tab_group').show('general')
     addFlagContextsToList()
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
+    });    
 </script>

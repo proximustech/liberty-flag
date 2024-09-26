@@ -7,6 +7,7 @@ export class FlagDataObject {
     uuid:string = ""
     
     name:string = ""
+    tags:Array<string> = []
     description:string = ""
 
     contexts:Array<FlagContextDataObject> = []

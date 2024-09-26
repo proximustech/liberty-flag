@@ -13,6 +13,8 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/buckets', async (ctx:Context) => {
         try {
+            const tagService = new TagService()
+            viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
             const bucketService = new BucketService()
             viewVars.buckets = await bucketService.getAll()
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);

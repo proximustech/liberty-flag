@@ -1,6 +1,7 @@
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { TagDataObject } from "../dataObjects/TagDataObject";
+import { isTemplateExpression } from "typescript";
 
 export class TagService {
     
@@ -63,6 +64,16 @@ export class TagService {
         return (await cursor.toArray() as TagDataObject[])
     }
     
+    getUuidMapFromList(list:TagDataObject[]) : Map<string, string> {
+        //let result:any = {}
+        const result = new Map<string, string>();
+        list.forEach(tag => {
+            //result[tag.name]=tag.uuid
+            result.set(tag.uuid,tag.name)
+        });
+
+        return result
+    }
 
     private async processTest(){
         /**

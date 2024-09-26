@@ -18,6 +18,10 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
 
             if (bucketUuid !=="") {
+
+                const tagService = new TagService()
+                viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+
                 const flagService = new FlagService()
                 const bucketService = new BucketService()
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)

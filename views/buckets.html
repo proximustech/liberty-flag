@@ -36,6 +36,11 @@
                 </button>
             </span>
             <%= bucket.name %>
+            <div style="margin-top: 7px;">
+                <% bucket.tags.forEach(tagUuid=> { %>
+                    <span class="badge text-bg-success"><%= tagUuidMap.get(tagUuid) %></span>
+                <% }) %>
+            </div>
         </td>
     </tr>
     <% }) %>

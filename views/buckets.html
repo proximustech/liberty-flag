@@ -35,12 +35,14 @@
                     <i class="bi bi-flag"></i>
                 </button>
             </span>
-            <%= bucket.name %>
-            <div style="margin-top: 7px;">
+            <%= bucket.name %>             
+
+            <div class="alert" role="alert" style="margin-top: 7px;background-color: cornflowerblue;">
                 <% bucket.tags.forEach(tagUuid=> { %>
-                    <span class="badge text-bg-success"><%= tagUuidMap.get(tagUuid) %></span>
+                    <span class="badge text-bg-warning"><%= tagUuidMap.get(tagUuid) %></span>
                 <% }) %>
             </div>
+
         </td>
     </tr>
     <% }) %>

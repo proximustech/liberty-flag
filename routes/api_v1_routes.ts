@@ -29,18 +29,20 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
     
                 flag.contexts.forEach(context => {
                     if(context.bucket_context_uuid === contextKey ){
-                        /*
                         responseFlags.push({
                             name:flag.name,
-                            engine:context.engine,
-                            parameters:context.engine_parameters[context.engine]
+                            configuration:{
+                                engine:context.engine,
+                                parameters:context.engine_parameters[context.engine]
+                            }
                         })
-                        */
+                        /*
                         responseFlags.push({
                             name:flag.name,
                             value:context.engine_parameters.boolean.status
                         })
-    
+                        */
+                        
                     }
                     
                 });

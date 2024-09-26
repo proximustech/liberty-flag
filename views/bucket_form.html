@@ -33,6 +33,7 @@
                 <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
                 <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="context_listener(${contextIndex},this)" value='${bucketContext.name}' />
                 <label id='context_${contextIndex}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                Context Key:<label style='font-style:italic;font-size:small'>${bucketContext.uuid}</label>
                 <br>
                 <br>
                 <!-- <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button> -->

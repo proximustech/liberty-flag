@@ -1,10 +1,7 @@
 import Router from "koa-router"
 import { Context } from "koa";
 import { FlagService } from "../services/FlagService";
-import { BucketService } from "../services/BucketService";
-import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
-//import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
-//import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
+import { FlagDataObject } from "../dataObjects/FlagDataObject";
 
 import koaBody from 'koa-body';
 
@@ -36,12 +33,6 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                                 parameters:context.engine_parameters[context.engine]
                             }
                         })
-                        /*
-                        responseFlags.push({
-                            name:flag.name,
-                            value:context.engine_parameters.boolean.status
-                        })
-                        */
                         
                     }
                     

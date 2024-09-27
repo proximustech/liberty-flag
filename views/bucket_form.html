@@ -29,7 +29,11 @@
 
         let contextKeyLabel =``
         if (bucketContext.uuid !== "") {
-            contextKeyLabel = `Context Key:<label style='font-style:italic;font-size:small'>${bucketContext.uuid}</label>`
+            contextKeyLabel = `
+            <div class="alert alert-warning" role="alert" style="margin-top: 7px">
+                <label style='font-size:small'>Context Key: </label><label style='font-style:italic;font-size:small;font-weight:bold'>${bucketContext.uuid}</label>
+            </div>
+            `
         }
         
         html = `

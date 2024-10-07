@@ -28,7 +28,7 @@
             })
             .fail(function(data) {
                 try {
-                    for (messageData of data.responseJSON.messages) {
+                    for (messageData of JSON.parse(data.responseText).messages) {
                         app.toastShow('Form data Error',messageData.message,{type:"error"})
                         break;
                     }

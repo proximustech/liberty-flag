@@ -18,13 +18,13 @@ export const FlagDataObjectValidator:any = {
 
     validateSchema : {
         name : {
-            regexp:"^.{5,30}$",
+            regexp:/^.{5,30}$/,
             message:"Flag name must be in the range of 5 and 30 characters.",
             required:true,
             requiredMessage : "Flag name is required."
         },
         description : {
-            regexp:"^(.|\\n){30,200}$$",
+            regexp:/^(.|\\n){30,200}$/,
             message:"Flag description must be in the range of 30 and 200 characters.",
             required:false,
             requiredMessage : ""

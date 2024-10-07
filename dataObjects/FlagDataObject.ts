@@ -24,7 +24,7 @@ export const FlagDataObjectValidator:any = {
             requiredMessage : "Flag name is required."
         },
         description : {
-            regexp:"^(.|\\n){30,200}$$",
+            regexp:"^(.|\\n){30,200}$",
             message:"Flag description must be in the range of 30 and 200 characters.",
             required:false,
             requiredMessage : ""

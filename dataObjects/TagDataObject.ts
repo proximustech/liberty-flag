@@ -18,7 +18,7 @@ export const TagDataObjectValidator:any = {
             requiredMessage : "Tag name is required."
         },
         description : {
-            regexp:"^(.|\\n){30,200}$$",
+            regexp:"^(.|\\n){30,200}$",
             message:"Tag description must be in the range of 30 and 200 characters.",
             required:false,
             requiredMessage : ""

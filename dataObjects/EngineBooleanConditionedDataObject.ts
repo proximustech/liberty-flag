@@ -14,19 +14,19 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
 
     validateSchema : {
         first_parameter : {
-            regexp:/^.+$/,
+            regexp:"^.+$",
             message:"",
             required:true,
             requiredMessage : "Boolean condition: Key is required."
         },       
         second_parameter : {
-            regexp:/^.*$/,
+            regexp:"^.*$",
             message:"",
             required:false,
             requiredMessage : ""
         },
         operator_parameter : {
-            regexp:/^(equal|different|less_than|greater_than)$/,
+            regexp:"^(equal|different|less_than|greater_than)$",
             message:"The operator_parameter MUST be one of: equal,different,less_than,greater_than",
             required:true,
             requiredMessage : "Boolean condition (True IF ALL): Operator is required."

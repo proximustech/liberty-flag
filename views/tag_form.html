@@ -28,6 +28,7 @@
             })
             .fail(function(data) {
                 try {
+                    app.unsetElementForPendingOperation(triggerElement)
                     for (messageData of JSON.parse(data.responseText).messages) {
                         app.toastShow('Form data Error',messageData.message,{type:"error"})
                         break;

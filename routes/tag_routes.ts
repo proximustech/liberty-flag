@@ -10,6 +10,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/tags', async (ctx:Context) => {
         try {
+            viewVars.prefix=prefix
             const tagService = new TagService()
             viewVars.tags = await tagService.getAll()
             return ctx.render('plugins/_'+prefix+'/views/tags', viewVars);
@@ -20,7 +21,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/tag_form', async (ctx:Context) => {
         try {
-
+            viewVars.prefix=prefix
             let uuid:any = ctx.request.query.uuid || ""
             let tag:TagDataObject = new TagDataObject()
 

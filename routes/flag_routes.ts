@@ -14,7 +14,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/flags', async (ctx:Context) => {
         try {
-
+            viewVars.prefix=prefix
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
 
             if (bucketUuid !=="") {
@@ -45,6 +45,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
     router.get('/flag_form', async (ctx:Context) => {
         try {
 
+            viewVars.prefix=prefix
             let uuid:any = ctx.request.query.uuid || ""
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
             if (bucketUuid !== "") {

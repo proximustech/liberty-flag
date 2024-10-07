@@ -13,6 +13,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/buckets', async (ctx:Context) => {
         try {
+            viewVars.prefix=prefix
             const tagService = new TagService()
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
             const bucketService = new BucketService()
@@ -25,7 +26,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/bucket_form', async (ctx:Context) => {
         try {
-
+            viewVars.prefix=prefix
             let uuid:any = ctx.request.query.uuid || ""
             let bucket:BucketDataObject = new BucketDataObject()
 

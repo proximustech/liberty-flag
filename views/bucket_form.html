@@ -1,11 +1,11 @@
 <script>
     app.module_data.bucket_form={}
     app.module_data.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
-    app.module_data.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema) %>`)
+    app.module_data.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- bucketValidateFunction %>`)
 
     app.module_data.bucket_form.bucketContext=JSON.parse(`<%- JSON.stringify(bucketContext) %>`)
-    app.module_data.bucket_form.bucketContextValidateSchema = JSON.parse(`<%- JSON.stringify(bucketContextValidateSchema) %>`)
+    app.module_data.bucket_form.bucketContextValidateSchema = JSON.parse(`<%- JSON.stringify(bucketContextValidateSchema).replaceAll("\\","\\\\") %>`)
     app.module_data.bucket_form.bucketContext.name='New Context Name'
     eval(`<%- bucketContextValidateFunction %>`)
 

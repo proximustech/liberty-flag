@@ -1,7 +1,7 @@
 <script>
     app.module_data.tag_form={}
     app.module_data.tag_form.tag=JSON.parse(`<%- JSON.stringify(tag) %>`)
-    app.module_data.tag_form.tagValidateSchema = JSON.parse(`<%- JSON.stringify(tagValidateSchema) %>`)
+    app.module_data.tag_form.tagValidateSchema = JSON.parse(`<%- JSON.stringify(tagValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- tagValidateFunction %>`)
    
     function submitTag(triggerElement) {

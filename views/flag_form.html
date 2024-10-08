@@ -1,7 +1,7 @@
 <script>
     app.module_data.flag_form={}
     app.module_data.flag_form.flag=JSON.parse(`<%- JSON.stringify(flag) %>`)
-    app.module_data.flag_form.flagValidateSchema = JSON.parse(`<%- JSON.stringify(flagValidateSchema) %>`)
+    app.module_data.flag_form.flagValidateSchema = JSON.parse(`<%- JSON.stringify(flagValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- flagValidateFunction %>`)
 
     app.module_data.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
@@ -9,7 +9,7 @@
 
     app.module_data.flag_form.engineBooleanConditioned=JSON.parse(`<%- JSON.stringify(engineBooleanConditioned) %>`)
     app.module_data.flag_form.engineBooleanConditionedCondition=JSON.parse(`<%- JSON.stringify(engineBooleanConditionedCondition) %>`)
-    app.module_data.flag_form.engineBooleanConditionedConditionValidateShema = JSON.parse(`<%- JSON.stringify(engineBooleanConditionedConditionValidateShema) %>`)    
+    app.module_data.flag_form.engineBooleanConditionedConditionValidateShema = JSON.parse(`<%- JSON.stringify(engineBooleanConditionedConditionValidateShema).replaceAll("\\","\\\\") %>`)    
     eval(`<%- engineBooleanConditionedConditionValidateFunction %>`)
 
     app.module_data.flag_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)

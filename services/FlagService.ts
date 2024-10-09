@@ -30,6 +30,7 @@ export class FlagService {
         flag.uuid = this.mongoService.createMongoUuId()
         flag._id = new ObjectId(flag.uuid)        
         const result = await this.collection.insertOne(flag)
+        //TODO: Confirm database operations
     }
 
     async updateOne(flag:FlagDataObject){

@@ -1,15 +1,10 @@
-<ul class="list-unstyled ps-0" id="libertyFlag_module_menu_content" style="display: none;">
-  <li class="mb-1">
-    <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
-      Modules
-    </button>
-    <div class="collapse show" id="home-collapse">
-      <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-        <li><a hx-get="/liberty_flag/buckets" hx-target="#content_view" href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" onclick="app.setViewForPendingOperation('content_view')">Buckets</a></li>
-        <li><a hx-get="/liberty_flag/tags" hx-target="#content_view" href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" onclick="app.setViewForPendingOperation('content_view')">Tags</a></li>
-      </ul>
-    </div>
-</ul>
+<sl-tree id="libertyFlag_module_menu_content" style="display: none;--indent-size:7px">
+  <sl-tree-item>
+    Modules
+    <sl-tree-item hx-get="/liberty_flag/buckets" hx-target="#content_view" onclick="app.setViewForPendingOperation('content_view')" >Buckets</sl-tree-item>
+    <sl-tree-item hx-get="/liberty_flag/tags" hx-target="#content_view" onclick="app.setViewForPendingOperation('content_view')" >Tags</sl-tree-item>
+  </sl-tree-item>
+</sl-tree>
 
 <script>
   app.modules_menu.s_appendItem("Liberty Flag","libertyFlag",document.getElementById("libertyFlag_module_menu_content").outerHTML)

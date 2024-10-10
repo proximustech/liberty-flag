@@ -7,12 +7,12 @@
   </button>
   <ul class="dropdown-menu">
     <li>
-        <a class="dropdown-item" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
+        <a class="dropdown-item" style="height:40px" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
             <i class="bi bi-arrow-left-circle"></i> Back to Buckets
         </a>        
     </li>
     <li>
-        <a class="dropdown-item" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
+        <a class="dropdown-item" style="height:40px" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
             <i class="bi bi-plus-circle"></i> Add Flag
         </a>        
     </li>

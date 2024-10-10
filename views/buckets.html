@@ -1,19 +1,15 @@
-<div class="alert alert-light" role="alert" style="text-align: center;">
-    <div style="position: absolute;left: 10;top:7px">
-        <button class="btn btn-primary" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});" style="border-radius: 24px;height: 42px;background-color: cornflowerblue" >
-            <i class="bi bi-plus-circle"></i>
-        </button>
-     </div>       
+<div class="alert alert-light" role="alert" style="text-align: center;">   
     <strong>Buckets</strong>
 </div>
-
-<center>
-    <div style="margin-top: 25px;width: 75%">
-        <sl-input id="bucket_search_box" placeholder="Search..." size="medium" pill>
-            <sl-icon name="search" slot="prefix"></sl-icon>
-        </sl-input>    
-    </div>    
-</center>    
+<button class="btn btn-primary" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">
+    <i class="bi bi-plus-circle"></i>Add
+</button>
+<div style="width: 50%;position: absolute;right: 23px;top:93px">
+    <sl-input id="bucket_search_box" placeholder="Search..." size="medium" pill>
+        <sl-icon name="search" slot="prefix"></sl-icon>
+    </sl-input>    
+</div>
+   
 
 <br>
 <br>

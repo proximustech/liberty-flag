@@ -1,15 +1,27 @@
 <div class="alert alert-light" role="alert" style="text-align: center;">
     <strong>Flags</strong> - Bucket: <%= bucket.name %>
 </div>
-<button type="button" class="btn btn-secondary" style="margin-top: 25px;" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
-    <i class="bi bi-arrow-left-circle"></i> Back
-</button>
-<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
-    <i class="bi bi-plus-circle"></i> Add
-</button>
-<div class="btn-group" role="group" style="margin-top: 25px;">
-    <button class="btn btn-primary"><i class="bi bi-search"></i></button>
-    <input class="form-control" id="flag_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >
+<span class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Options
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+        <a class="dropdown-item" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
+            <i class="bi bi-arrow-left-circle"></i> Back to Buckets
+        </a>        
+    </li>
+    <li>
+        <a class="dropdown-item" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
+            <i class="bi bi-plus-circle"></i> Add Flag
+        </a>        
+    </li>
+  </ul>
+</span>
+<div style="width: 50%;position: absolute;right: 23px;top:93px">
+    <sl-input id="flag_search_box" placeholder="Search..." size="medium" pill>
+        <sl-icon name="search" slot="prefix"></sl-icon>
+    </sl-input>    
 </div>
 <br>
 <br>

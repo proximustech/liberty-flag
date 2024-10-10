@@ -1,12 +1,13 @@
 <div class="alert alert-light" role="alert" style="text-align: center;">
     <strong>Tags</strong>
 </div>
-<button type="button" class="btn btn-primary" style="margin-top: 25px;" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
+<button type="button" class="btn btn-primary" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
     <i class="bi bi-plus-circle"></i> Add
 </button>
-<div class="btn-group" role="group" style="margin-top: 25px;">
-    <button class="btn btn-primary"><i class="bi bi-search"></i></button>
-    <input class="form-control" id="tag_search_box" style="border-top-left-radius: 0;border-bottom-left-radius: 0;" type="text" >
+<div style="width: 50%;position: absolute;right: 23px;top:93px">
+    <sl-input id="tag_search_box" placeholder="Search..." size="medium" pill>
+        <sl-icon name="search" slot="prefix"></sl-icon>
+    </sl-input>    
 </div>
 <br>
 <br>

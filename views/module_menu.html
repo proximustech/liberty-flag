@@ -1,8 +1,14 @@
 <sl-tree id="libertyFlag_module_menu_content" style="display: none;--indent-size:7px">
   <sl-tree-item>
     Modules
-    <sl-tree-item hx-get="/liberty_flag/buckets" hx-target="#content_view" onclick="app.setViewForPendingOperation('content_view')" >Buckets</sl-tree-item>
-    <sl-tree-item hx-get="/liberty_flag/tags" hx-target="#content_view" onclick="app.setViewForPendingOperation('content_view')" >Tags</sl-tree-item>
+    <sl-tree-item hx-get="/liberty_flag/buckets" hx-target="#content_view" onclick="app.setViewForPendingOperation('content_view')" >
+      <sl-icon name="bucket" label="Settings"></sl-icon>
+      Buckets
+    </sl-tree-item>
+    <sl-tree-item hx-get="/liberty_flag/tags" hx-target="#content_view" onclick="app.setViewForPendingOperation('content_view')" >
+      <sl-icon name="tag" label="Settings"></sl-icon>
+      Tags
+    </sl-tree-item>
   </sl-tree-item>
 </sl-tree>
 

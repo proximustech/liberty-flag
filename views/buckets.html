@@ -34,7 +34,7 @@
                 <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button class="list_button" onclick="app.setViewForPendingOperation('content_view');htmx.ajax('GET', '/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>', {target:'#content_view', swap:'innerHTML'});">
+                <button class="list_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>');">
                     <i class="bi bi-flag"></i>
                 </button>
             </span>

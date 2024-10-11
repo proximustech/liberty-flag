@@ -7,7 +7,7 @@
   </button>
   <ul class="dropdown-menu">
     <li>
-        <a class="dropdown-item" style="height:40px" onclick="htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'});">
+        <a class="dropdown-item" style="height:40px" onclick="app.ajax('content_view','/<%= prefix %>/buckets');">
             <i class="bi bi-arrow-left-circle"></i> Back to Buckets
         </a>        
     </li>

@@ -40,7 +40,7 @@
             </span>
             <%= bucket.name %>             
 
-            <div class="alert" role="alert" style="margin-top: 7px;background-color: cornflowerblue;">
+            <div class="alert alert-light" role="alert" style="margin-top: 7px;">
                 <% bucket.tags.forEach(tagUuid=> { %>
                     <span class="badge text-bg-warning"><%= tagUuidMap.get(tagUuid) %></span>
                 <% }) %>

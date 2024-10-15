@@ -1,4 +1,4 @@
-<div class="alert alert-light" role="alert" style="text-align: center;">   
+<div class="alert alert-light" role="alert" style="text-align: left;">   
     <strong>Buckets</strong>
 </div>
 <button class="btn btn-primary" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">

@@ -1,0 +1,5 @@
+<script>
+    //Feed the app.module_data.permissionsSchema object in the "users_control" plugin -> role_form.html view
+    app.module_data.libertyFlag_permissionsSchema = JSON.parse(`<%- JSON.stringify(libertyFlag_permissionsSchema) %>`)
+    app.module_data.permissionsSchema = {...app.module_data.permissionsSchema, ...app.module_data.libertyFlag_permissionsSchema}
+</script>

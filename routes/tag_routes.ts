@@ -2,6 +2,7 @@ import { Context } from "koa";
 import Router from "koa-router"
 import { TagService } from "../services/TagService";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
+import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 
 import koaBody from 'koa-body';
 
@@ -40,6 +41,10 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             viewVars.tagFieldRender = TagDataObjectSpecs.htmlDataObjectFieldRender
             viewVars.tagValidateSchema = TagDataObjectValidator.validateSchema
             viewVars.tagValidateFunction = "app.module_data.tag_form.tagValidateFunction=" + TagDataObjectValidator.validateFunction
+
+            viewVars.userPermissions = [].concat(await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.role_uuid),await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.uuid))
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.module_data.tag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement            
 
             return ctx.render('plugins/_'+prefix+'/views/tag_form', viewVars);
         } catch (error) {

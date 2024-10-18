@@ -1,9 +1,13 @@
 <script>
     app.module_data.tag_form={}
+    app.module_data.tag_form.prefix=<%- JSON.stringify(prefix) %>
     app.module_data.tag_form.tag=JSON.parse(`<%- JSON.stringify(tag) %>`)
     app.module_data.tag_form.tagValidateSchema = JSON.parse(`<%- JSON.stringify(tagValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- tagValidateFunction %>`)
    
+    app.module_data.tag_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
+    eval(`<%- userHasPermissionOnElement %>`) 
+
     function submitTag(triggerElement) {
         let tag = app.module_data.tag_form.tag
         let tagValidationResult = app.module_data.tag_form.tagValidateFunction(tag,app.module_data.tag_form.tagValidateSchema)
@@ -78,7 +82,7 @@
     <sl-tab-group id="tag_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
 
-        <% if (editing) { %>
+        <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { %>
             <sl-tab slot="nav" panel="operations">Operations</sl-tab>
          
         <% } %>
@@ -88,7 +92,7 @@
             <%- tagFieldRender("tag","description",tag.description,tagMetadata.description) %>
         </sl-tab-panel>
 
-        <% if (editing) { %>
+        <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { %>
             <sl-tab-panel name="operations">
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
@@ -108,7 +112,9 @@
 
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
+        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])){ %>
         <button type="button" class="btn btn-primary" onclick="submitTag(this)">Save</sl-button>
+        <% } %>
     </div>
 
 <script>

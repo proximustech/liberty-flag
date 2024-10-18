@@ -26,6 +26,7 @@ export const EngineBooleanDataObjectValidator:any = {
 export const EngineBooleanDataObjectSpecs:any = {
 
     metadata : {
+        //TODO: Check Unused status metadata
         status : {
             label:"Status",
             validationRequired: EngineBooleanDataObjectValidator.validateSchema.status.required,

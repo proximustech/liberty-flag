@@ -1,3 +1,8 @@
+<script>
+    app.module_data.buckets_list.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
+    eval(`<%- userHasPermissionOnElement %>`)       
+</script>
+
 <div class="alert alert-light" role="alert" style="text-align: left;">   
     <strong>Buckets</strong>
 </div>
@@ -34,9 +39,11 @@
                 <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button class="list_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>');">
-                    <i class="bi bi-flag"></i>
-                </button>
+                <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['read','write'])) { %>
+                    <button class="list_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>');">
+                        <i class="bi bi-flag"></i>
+                    </button>
+                <% } %>
             </span>
             <%= bucket.name %>             
 

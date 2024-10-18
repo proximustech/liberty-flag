@@ -19,6 +19,11 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
             const bucketService = new BucketService()
             viewVars.buckets = await bucketService.getAll()
+
+            viewVars.userPermissions = [].concat(await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.role_uuid),await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.uuid))
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.module_data.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
             console.error(error)

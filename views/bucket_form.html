@@ -1,5 +1,6 @@
 <script>
     app.module_data.bucket_form={}
+    app.module_data.bucket_form.prefix=<%- JSON.stringify(prefix) %>
     app.module_data.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
     app.module_data.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- bucketValidateFunction %>`)
@@ -8,6 +9,9 @@
     app.module_data.bucket_form.bucketContextValidateSchema = JSON.parse(`<%- JSON.stringify(bucketContextValidateSchema).replaceAll("\\","\\\\") %>`)
     app.module_data.bucket_form.bucketContext.name='New Context Name'
     eval(`<%- bucketContextValidateFunction %>`)
+
+    app.module_data.bucket_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
+    eval(`<%- userHasPermissionOnElement %>`)    
 
     function createContext(){
         let newContext = JSON.parse(JSON.stringify(app.module_data.bucket_form.bucketContext))
@@ -36,6 +40,10 @@
             `
         }
         
+        let deleteButton = ""
+        if (app.module_data.bucket_form.userHasPermissionOnElement(app.module_data.bucket_form.userPermissions,[app.module_data.bucket_form.prefix+'.bucket'],['write'])) {
+            deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
+        }
         html = `
         <div id="context_${contextIndex}_wrapper" style="margin-bottom: 10px;">
             <sl-details id="context_${contextIndex}" summary="${bucketContext.name}">
@@ -45,8 +53,7 @@
                 ${contextKeyLabel}
                 <br>
                 <br>
-                <!-- <button type="button" class="btn btn-outline-danger" onclick="app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList()"><i class="bi bi-trash-fill"></i> Delete Context</button> -->
-                <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList();app.dialog.hide()')"><i class="bi bi-trash-fill"></i> Delete Context</button>
+                ${deleteButton}
             </sl-details>
         </div>  
         `
@@ -171,7 +178,7 @@
     <sl-tab-group id="bucket_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
         <sl-tab slot="nav" panel="contexts">Contexts</sl-tab>
-        <% if (editing) { %>
+        <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
             <sl-tab slot="nav" panel="operations">Operations</sl-tab>
          
         <% } %>
@@ -191,14 +198,16 @@
         </sl-tab-panel>
         <sl-tab-panel name="contexts">
             <div style="text-align: right;">
-                <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 9px;"  onclick="createContext()">
-                    <i class="bi bi-plus-circle"></i> Add Context
-                </button>            
+                <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
+                    <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 9px;"  onclick="createContext()">
+                        <i class="bi bi-plus-circle"></i> Add Context
+                    </button>            
+                <% } %>
             </div>
             <div id="bucket_form_context_list"></div>
 
         </sl-tab-panel>
-        <% if (editing) { %>
+        <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
             <sl-tab-panel name="operations">
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
@@ -218,7 +227,9 @@
 
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-        <button type="button" class="btn btn-primary" onclick="submitBucket(this)">Save</sl-button>
+        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])){ %>
+            <button type="button" class="btn btn-primary" onclick="submitBucket(this)">Save</sl-button>
+        <% } %>        
     </div>
 
 <script>

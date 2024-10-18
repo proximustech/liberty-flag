@@ -1,4 +1,7 @@
-import { permissions as p } from "../../users_control/values/permissions";
+let p = {
+    read:"read",
+    write:"write"
+}
 export let LibertyFlag_permissionsSchema = {
     /*
     "plugin_name": {
@@ -24,6 +27,10 @@ export let LibertyFlag_permissionsSchema = {
             },
             {
                 "resource":"flag",
+                "permissions":[p.read,p.write]
+            },
+            {
+                "resource":"tag",
                 "permissions":[p.read,p.write]
             },
         ]

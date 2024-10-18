@@ -5,6 +5,7 @@ import { BucketService } from "../services/BucketService";
 import { TagService } from "../services/TagService";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
+import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 
 import koaBody from 'koa-body';
 
@@ -66,6 +67,10 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             viewVars.bucketValidateSchema = BucketDataObjectValidator.validateSchema
             viewVars.bucketValidateFunction = "app.module_data.bucket_form.bucketValidateFunction=" + BucketDataObjectValidator.validateFunction
             //viewVars.bucketFieldsHtml = BucketDataObjectSpecs.htmlDataObjectRender(bucket,BucketDataObjectSpecs.metadata)
+
+            viewVars.userPermissions = [].concat(await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.role_uuid),await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.uuid))
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.module_data.bucket_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {

@@ -184,8 +184,11 @@
         <% } %>
     
         <sl-tab-panel name="general">
-            <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name) %>
-            <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description) %>
+
+            <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { fieldsEnabled = true }%>
+
+            <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name,fieldsEnabled) %>
+            <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description,fieldsEnabled) %>
         
             <label style='margin-bottom:7px;font-size:17px'>Tags</label>
             <select id="bucket_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%" >

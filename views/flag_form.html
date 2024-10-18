@@ -227,6 +227,7 @@
             if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean.status){
                 checked = "checked"
             }
+            //TODO: Check id="engine_boolean_status" duplication
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
             <div class="form-check form-switch">
                 <label class="form-check-label" for="flexCheckChecked">
@@ -346,8 +347,11 @@
     <% } %>
 
     <sl-tab-panel name="general">
-        <%- flagFieldRender("flag","name",flag.name,flagMetadata.name) %>
-        <%- flagFieldRender("flag","description",flag.description,flagMetadata.description) %>
+                
+        <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { fieldsEnabled = true }%>
+
+        <%- flagFieldRender("flag","name",flag.name,flagMetadata.name,fieldsEnabled) %>
+        <%- flagFieldRender("flag","description",flag.description,flagMetadata.description,fieldsEnabled) %>
         <label style='margin-bottom:7px;font-size:17px'>Tags</label>
         <select id="flag_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%" >
             <% tags.forEach(tag => { %>

@@ -82,14 +82,16 @@
     <sl-tab-group id="tag_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
 
+        <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { fieldsEnabled = true }%>
+
         <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { %>
             <sl-tab slot="nav" panel="operations">Operations</sl-tab>
          
         <% } %>
     
         <sl-tab-panel name="general">
-            <%- tagFieldRender("tag","name",tag.name,tagMetadata.name) %>
-            <%- tagFieldRender("tag","description",tag.description,tagMetadata.description) %>
+            <%- tagFieldRender("tag","name",tag.name,tagMetadata.name,fieldsEnabled) %>
+            <%- tagFieldRender("tag","description",tag.description,tagMetadata.description,fieldsEnabled) %>
         </sl-tab-panel>
 
         <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { %>

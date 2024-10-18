@@ -1,14 +1,18 @@
 <sl-tree id="libertyFlag_module_menu_content" style="display: none;--indent-size:7px">
   <sl-tree-item>
     Modules
+    <% if (UserHasPermissionOnElement(userPermissions,['liberty_flag.bucket'],['read'])) { %>
     <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/buckets');app.app_menu_inteligentClose()" >
       <sl-icon name="bucket" label="Settings"></sl-icon>
       Buckets
     </sl-tree-item>
-    <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/tags');app.app_menu_inteligentClose()" >
-      <sl-icon name="tag" label="Settings"></sl-icon>
-      Tags
-    </sl-tree-item>
+    <% } %>
+    <% if (UserHasPermissionOnElement(userPermissions,['liberty_flag.tag'],['read'])) { %>
+      <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/tags');app.app_menu_inteligentClose()" >
+        <sl-icon name="tag" label="Settings"></sl-icon>
+        Tags
+      </sl-tree-item>
+    <% } %>
   </sl-tree-item>
 </sl-tree>
 

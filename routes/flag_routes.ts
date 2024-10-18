@@ -6,6 +6,7 @@ import { TagService } from "../services/TagService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
 import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
+import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 
 import koaBody from 'koa-body';
 
@@ -93,6 +94,10 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                 viewVars.engineBooleanConditionedCondition = new EngineBooleanConditionedConditionDataObject()
                 viewVars.engineBooleanConditionedConditionValidateShema = EngineBooleanConditionedConditionDataObjectValidator.validateSchema
                 viewVars.engineBooleanConditionedConditionValidateFunction = "app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction=" + EngineBooleanConditionedConditionDataObjectValidator.validateFunction                
+
+                viewVars.userPermissions = [].concat(await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.role_uuid),await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.uuid))
+                viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+                viewVars.userHasPermissionOnElement = "app.module_data.flag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement                            
 
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 

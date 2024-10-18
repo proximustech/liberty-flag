@@ -1,8 +1,12 @@
 <script>
     app.module_data.flag_form={}
+    app.module_data.flag_form.prefix=<%- JSON.stringify(prefix) %>
     app.module_data.flag_form.flag=JSON.parse(`<%- JSON.stringify(flag) %>`)
     app.module_data.flag_form.flagValidateSchema = JSON.parse(`<%- JSON.stringify(flagValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- flagValidateFunction %>`)
+
+    app.module_data.flag_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
+    eval(`<%- userHasPermissionOnElement %>`)    
 
     app.module_data.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
     app.module_data.flag_form.engineBoolean=JSON.parse(`<%- JSON.stringify(engineBoolean) %>`)
@@ -137,11 +141,16 @@
             booleanConditionedIsSelected = "selected"
         }
 
+        let disabled = "disabled='disabled'"
+        if (app.module_data.flag_form.userHasPermissionOnElement(app.module_data.flag_form.userPermissions,[app.module_data.flag_form.prefix+'.flag'],['write'])) {
+            disabled=""
+        }
+
         document.getElementById('contexts_values_config').insertAdjacentHTML("beforeend",`
             <div id="context_${bucketContext.uuid}_wrapper" style="margin-bottom: 10px;">
                 <sl-details id='bucket_context_value_config_${bucketContext.uuid}' summary="${bucketContext.name}">
                     <label style='margin-bottom:7px;font-size:17px'>Engine</label>
-                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')">
+                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
                         <option value="boolean" ${booleanIsSelected}>Boolean</option>
                         <option value="boolean_conditioned" ${booleanConditionedIsSelected} >Boolean: True IF ALL Conditions</option>
                     </select> 
@@ -206,6 +215,12 @@
     }    
 
     function setEngineView(engine,contextUuid){
+
+        let disabled = "disabled='disabled'"
+        if (app.module_data.flag_form.userHasPermissionOnElement(app.module_data.flag_form.userPermissions,[app.module_data.flag_form.prefix+'.flag'],['write'])) {
+            disabled=""
+        }
+
         if (engine === "boolean") {
             app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine="boolean"
             let checked = ""
@@ -217,13 +232,13 @@
                 <label class="form-check-label" for="flexCheckChecked">
                     Boolean Status
                 </label>
-                <input id="engine_boolean_status" class="form-check-input" type="checkbox" role="switch" style="font-size:large" ${checked} onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}">
+                <input id="engine_boolean_status" class="form-check-input" type="checkbox" role="switch" style="font-size:large" ${checked} onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}" ${disabled}>
             </div>
             `
         } else if (engine === "boolean_conditioned") {
             app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine="boolean_conditioned"
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedCondition('${contextUuid}')"><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditioned_conditions_${contextUuid}'></div>
             `  
             for (let index = 0; index < app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.length; index++) {
@@ -234,6 +249,11 @@
     }
 
     function addEngineBooleanConditionedCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.module_data.flag_form.engineBooleanConditionedCondition)) ){
+
+        let disabled='disabled="disabled"'
+        if (app.module_data.flag_form.userHasPermissionOnElement(app.module_data.flag_form.userPermissions,[app.module_data.flag_form.prefix+'.flag'],['write'])) {
+            disabled=""
+        }
 
         app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions
           
@@ -259,16 +279,16 @@
 
         let html =`
             <fieldset id="boolean_condition_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
-                <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedCondition('${contextUuid}',${newConditionNumber})"><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' />
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                <input id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                 <label id='engine_boolean_conditioned_first_paramenter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})">
+                <select id="engine_boolean_conditioned_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                 </select>                        
-                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' />
+                <input id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanContitionatedConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                 <label id='engine_boolean_conditioned_second_paramenter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
             </fieldset>
         `
@@ -320,7 +340,7 @@
     <sl-tab slot="nav" panel="general">General</sl-tab>
     <sl-tab slot="nav" panel="values">Context Values</sl-tab>
 
-    <% if (editing) { %>
+    <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write']) ) { %>
         <sl-tab slot="nav" panel="operations">Operations</sl-tab>
         
     <% } %>
@@ -338,10 +358,14 @@
         <br>
         Bucket Context Visibility:<br>
         <br>
+        <% let disabled="disabled='disabled'" %>        
         <% bucket.contexts.forEach(context => { %>
+
+            <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { disabled="" } else { let disabled="disabled='disabled'" }%>
+
             <div class="alert alert-light" role="alert">
                 <% let checked=""; if (flagContextsUuids.includes(context.uuid)) checked="checked" %>
-                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %> > <%= context.name %>
+                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %>  <%= disabled %> > <%= context.name %>
             </div>
         
         <% }) %>
@@ -349,7 +373,7 @@
     </sl-tab-panel>
     <sl-tab-panel id="contexts_values_config" name="values"></sl-tab-panel>
 
-    <% if (editing) { %>
+    <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
         <sl-tab-panel name="operations">
             <sl-details summary="Delete">
                 <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
@@ -367,7 +391,9 @@
 
 <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-    <button type="button" class="btn btn-primary" onclick="submitFlag(this)">Save</sl-button>
+    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+        <button type="button" class="btn btn-primary" onclick="submitFlag(this)">Save</sl-button>
+    <% } %>
 </div>
 
 <script>

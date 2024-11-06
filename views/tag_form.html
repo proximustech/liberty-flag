@@ -17,7 +17,7 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/tag",
-                data:"json="+escape(JSON.stringify(tag)),
+                data:"json="+JSON.stringify(tag),
                 processData: false,
                 dataType:"text"
             })

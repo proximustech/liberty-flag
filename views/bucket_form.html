@@ -112,7 +112,7 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/bucket",
-                data:"json="+escape(JSON.stringify(bucket)),
+                data:"json="+JSON.stringify(bucket),
                 processData: false,
                 dataType:"text"
             })

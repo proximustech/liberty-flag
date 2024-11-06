@@ -52,7 +52,7 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/flag",
-                data:"json="+escape(JSON.stringify(flag)),
+                data:"json="+JSON.stringify(flag),
                 processData: false,
                 dataType:"text"
             })

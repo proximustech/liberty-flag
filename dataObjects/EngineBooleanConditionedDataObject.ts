@@ -33,6 +33,65 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
         },         
 
     },
-    //TODO: Make specific validation function for boolean conditioned conditions
-    validateFunction : DataObjectValidateFunction
+    validateFunction : (data:any,validateSchema:any) => {
+        let fieldRegexp = ""
+        let fieldValue:any = ""
+        let regexpValidator = undefined
+        let result:any = {
+            isValid :true,
+            messages:[]
+        }
+    
+        result.isValid = true
+
+        let secondParameterMustBeNumeric = false
+        for (const [fieldName, fieldValue] of Object.entries(data)) {
+            if (fieldName === "operator_parameter") {
+                if (fieldValue === "less_than" || fieldValue === "greater_than") {
+                    secondParameterMustBeNumeric = true
+                }
+            }
+        }
+
+
+        for (const [fieldName, fieldSchema] of Object.entries(validateSchema)) {
+
+            fieldRegexp = validateSchema[fieldName]["regexp"]
+            fieldValue = data[fieldName].toString()
+    
+            if (fieldValue === "") {
+                if (validateSchema[fieldName]["required"]) {
+                    result.isValid=false
+                    result.messages.push({
+                        field:fieldName,
+                        message:validateSchema[fieldName]["requiredMessage"]
+                    })                
+                } 
+                
+            } else {
+                regexpValidator = new RegExp(fieldRegexp);
+                if (!regexpValidator.test(fieldValue)) {
+                    result.isValid=false
+                    result.messages.push({
+                        field:fieldName,
+                        message:validateSchema[fieldName]["message"]
+                    })
+                }
+                
+                if ( fieldName==="second_parameter" && secondParameterMustBeNumeric) {
+                    if (!(!isNaN(parseFloat(fieldValue)) && isFinite(fieldValue))) {
+                        result.isValid=false
+                        result.messages.push({
+                            field:fieldName,
+                            message: "Engine 'True IF ALL Conditions': Value MUST be numeric for the 'Less than' or 'Greater than' comparison operators."
+                        })
+                    }                    
+                }
+                
+                
+            }
+    
+        }
+        return result
+    }
 }

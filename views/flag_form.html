@@ -131,6 +131,9 @@
         });
     }
 
+    /**
+     * Render Context in the "Context Values" Tab
+     */
     function addFlagContextToList(bucketContext,counter) {
         let booleanIsSelected = ""
         let booleanConditionedIsSelected = ""
@@ -322,8 +325,7 @@
     function deleteEngineBooleanConditionedCondition(contextUuid,conditionIndex){
         document.getElementById(`boolean_conditioned_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_condition_${contextUuid}_${conditionIndex}`))
         app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned.conditions.splice(conditionIndex, 1);
-        //TODO: Refresh only conditions list
-        addFlagContextsToList()
+        setEngineView(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
     }
 
 </script>

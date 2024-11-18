@@ -66,7 +66,14 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                         field:fieldName,
                         message:validateSchema[fieldName]["requiredMessage"]
                     })                
-                } 
+                }
+                else if(fieldName==="second_parameter" && secondParameterMustBeNumeric){
+                    result.isValid=false
+                    result.messages.push({
+                        field:fieldName,
+                        message: "Conditioned Boolean Engine : Value MUST NOT be empty for the 'Less than' or 'Greater than' comparison operators."
+                    })                    
+                }
                 
             } else {
                 regexpValidator = new RegExp(fieldRegexp);
@@ -83,7 +90,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                         result.isValid=false
                         result.messages.push({
                             field:fieldName,
-                            message: "Engine 'True IF ALL Conditions': Value MUST be numeric for the 'Less than' or 'Greater than' comparison operators."
+                            message: "Conditioned Boolean Engine: Value MUST be numeric for the 'Less than' or 'Greater than' comparison operators."
                         })
                     }                    
                 }

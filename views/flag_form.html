@@ -29,6 +29,7 @@
         app.module_data.flag_form.flag.tags=tags
 
         let flag = app.module_data.flag_form.flag
+        flag.name = flag.name.trim()
         let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
 
         let engineBooleanConditionedConditionsValidationResult = true

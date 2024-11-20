@@ -1,4 +1,5 @@
 <script>
+    app.module_data.buckets_list = {}
     app.module_data.buckets_list.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
     eval(`<%- userHasPermissionOnElement %>`)       
 </script>

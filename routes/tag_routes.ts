@@ -14,6 +14,11 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             viewVars.prefix=prefix
             const tagService = new TagService()
             viewVars.tags = await tagService.getAll()
+
+            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.module_data.tags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
+
             return ctx.render('plugins/_'+prefix+'/views/tags', viewVars);
         } catch (error) {
             console.error(error)

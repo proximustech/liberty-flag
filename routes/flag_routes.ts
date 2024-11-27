@@ -27,6 +27,11 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
                 const bucketService = new BucketService()
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 viewVars.flags = await flagService.getAllByBucketUuid(bucketUuid)
+
+                viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+                viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+                viewVars.userHasPermissionOnElement = "app.module_data.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
+
                 return ctx.render('plugins/_'+prefix+'/views/flags', viewVars);
             }
             else {

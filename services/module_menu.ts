@@ -4,7 +4,7 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 export class ModuleMenu implements IDynamicView {
     async getPluginData(ctx:any,viewVars:any){
 
-        viewVars.userPermissions = [].concat(await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.role_uuid),await ctx.authorizer.enforcer.getPermissionsForUser(ctx.session.passport.user.uuid))
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
 
         return await ctx.render('plugins/_liberty_flag/views/module_menu', viewVars);

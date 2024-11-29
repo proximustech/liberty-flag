@@ -107,7 +107,14 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
             
         });
 
-        if (bucketValidationResult.isValid) {
+        if (await bucketService.fieldValueExists(bucket.uuid,"name",bucket.name)){
+            ctx.status=409
+            ctx.body = {
+                status: 'error',
+                messages: [{field:"name",message:"Name already exists"}]
+            }              
+        }        
+        else if (bucketValidationResult.isValid) {
             if (bucket.uuid !== "") {
                 bucketService.updateOne(bucket) 
             } else {

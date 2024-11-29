@@ -125,8 +125,14 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
 
         let flagValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
-        //TODO: Validate boolean conditioned conditions
-        if (flagValidationResult.isValid) {
+        if (await flagService.fieldValueExists(flag.uuid,"name",flag.name)){
+            ctx.status=409
+            ctx.body = {
+                status: 'error',
+                messages: [{field:"name",message:"Name already exists"}]
+            }              
+        }
+        else if (flagValidationResult.isValid) {
             if (flag.uuid !== "") {
                 flagService.updateOne(flag) 
             } else {

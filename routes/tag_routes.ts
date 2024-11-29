@@ -62,7 +62,14 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
         let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
 
         let tagValidationResult=TagDataObjectValidator.validateFunction(tag,TagDataObjectValidator.validateSchema)
-        if (tagValidationResult.isValid) {
+        if (await tagService.fieldValueExists(tag.uuid,"name",tag.name)){
+            ctx.status=409
+            ctx.body = {
+                status: 'error',
+                messages: [{field:"tag",message:"Name already exists"}]
+            }              
+        }        
+        else if (tagValidationResult.isValid) {
             if (tag.uuid !== "") {
                 tagService.updateOne(tag) 
             } else {

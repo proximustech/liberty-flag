@@ -74,6 +74,19 @@ export class TagService {
         return result
     }
 
+    async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
+        let filter:any = {}
+        filter[fieldName] = fieldValue
+        const cursor = this.collection.find(filter);
+        while (await cursor.hasNext()) {
+            let document:any = await cursor.next();
+            if (document.uuid !== processedDocumentUuid) {
+                return true
+            }
+        }
+        return false
+    }      
+
     private async processTest(){
         /**
          * Some process

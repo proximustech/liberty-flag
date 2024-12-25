@@ -6,7 +6,10 @@ import { env } from 'node:process';
 
 import koaBody from 'koa-body';
 
-module.exports = function(router:Router,viewVars:any,prefix:string){
+module.exports = function(router:Router,appViewVars:any,prefix:string){
+
+    let viewVars = {...appViewVars};
+    viewVars.prefix = prefix
 
     let apiPrefix = "/api/v1"
 

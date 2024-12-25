@@ -9,12 +9,14 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 
 import koaBody from 'koa-body';
 
-module.exports = function(router:Router,viewVars:any,prefix:string){
+module.exports = function(router:Router,appViewVars:any,prefix:string){
 
+    let viewVars = {...appViewVars};
+    viewVars.prefix = prefix
 
     router.get('/buckets', async (ctx:Context) => {
         try {
-            viewVars.prefix=prefix
+
             const tagService = new TagService()
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
             const bucketService = new BucketService()
@@ -32,7 +34,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/bucket_form', async (ctx:Context) => {
         try {
-            viewVars.prefix=prefix
+
             let uuid:any = ctx.request.query.uuid || ""
             let bucket:BucketDataObject = new BucketDataObject()
 

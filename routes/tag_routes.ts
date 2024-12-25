@@ -6,12 +6,14 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 
 import koaBody from 'koa-body';
 
-module.exports = function(router:Router,viewVars:any,prefix:string){
+module.exports = function(router:Router,appViewVars:any,prefix:string){
 
+    let viewVars = {...appViewVars};
+    viewVars.prefix = prefix
 
     router.get('/tags', async (ctx:Context) => {
         try {
-            viewVars.prefix=prefix
+
             const tagService = new TagService()
             viewVars.tags = await tagService.getAll()
 
@@ -27,7 +29,7 @@ module.exports = function(router:Router,viewVars:any,prefix:string){
 
     router.get('/tag_form', async (ctx:Context) => {
         try {
-            viewVars.prefix=prefix
+
             let uuid:any = ctx.request.query.uuid || ""
             let tag:TagDataObject = new TagDataObject()
 

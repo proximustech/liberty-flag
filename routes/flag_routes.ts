@@ -122,60 +122,90 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.post('/flag',koaBody(), async (ctx:Context) => {
-        const flagService = new FlagService()
-        let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
 
-        let flagValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
-        if (await flagService.fieldValueExists(flag.uuid,"name",flag.name)){
-            ctx.status=409
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])
+        if (!processAllowed) {
+
+            ctx.status=401
             ctx.body = {
                 status: 'error',
-                messages: [{field:"name",message:"Name already exists"}]
-            }              
+                messages: [{message:"Operation NOT Allowed"}]
+            }         
+            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
+
         }
-        else if (flagValidationResult.isValid) {
-            if (flag.uuid !== "") {
-                flagService.updateOne(flag) 
+        else {
+
+            const flagService = new FlagService()
+            let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
+
+            let flagValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
+            if (await flagService.fieldValueExists(flag.uuid,"name",flag.name)){
+                ctx.status=409
+                ctx.body = {
+                    status: 'error',
+                    messages: [{field:"name",message:"Name already exists"}]
+                }              
+            }
+            else if (flagValidationResult.isValid) {
+                if (flag.uuid !== "") {
+                    flagService.updateOne(flag) 
+                } else {
+                    flagService.create(flag)
+                }
+                ctx.body = {
+                    status: 'success',
+                }
+                
             } else {
-                flagService.create(flag)
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    messages: flagValidationResult.messages
+                }
+                
             }
-            ctx.body = {
-                status: 'success',
-            }
-            
-        } else {
-            ctx.status=400
-            ctx.body = {
-                status: 'error',
-                messages: flagValidationResult.messages
-            }
-            
         }
 
     })
 
     router.delete('/flag',koaBody(), async (ctx:Context) => {
-        const flagService = new FlagService()
 
-        let uuid:any = ctx.request.query.uuid || ""
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])
+        if (!processAllowed) {
 
-        if (uuid !=="") {
-            await flagService.deleteByUuId(uuid)    
-            ctx.body = {
-                status: 'success',
-            }
-        }
-        else {
-            ctx.status=400
+            ctx.status=401
             ctx.body = {
                 status: 'error',
-                message: "Invalid Uuid"
-            }
+                messages: [{message:"Operation NOT Allowed"}]
+            }         
+            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
 
+        }
+        else {
+
+            const flagService = new FlagService()
+            let uuid:any = ctx.request.query.uuid || ""
+
+            if (uuid !=="") {
+                await flagService.deleteByUuId(uuid)    
+                ctx.body = {
+                    status: 'success',
+                }
+            }
+            else {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    message: "Invalid Uuid"
+                }
+
+            }
         }
 
     })
-
 
     return router
 }

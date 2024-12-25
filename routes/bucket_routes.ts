@@ -86,75 +86,107 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.post('/bucket',koaBody(), async (ctx:Context) => {
-        const bucketService = new BucketService()
-        let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
 
-        let bucketValidationResult=BucketDataObjectValidator.validateFunction(bucket,BucketDataObjectValidator.validateSchema)
-        bucket.contexts.forEach(context => {
-            //Validation
-            let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
-            if (!contextValidationResult.isValid) {
-                bucketValidationResult.isValid = false
-                bucketValidationResult.messages = bucketValidationResult.messages.concat(contextValidationResult.messages)
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])
+        if (!processAllowed) {
 
-            }
+            ctx.status=401
+            ctx.body = {
+                status: 'error',
+                messages: [{message:"Operation NOT Allowed"}]
+            }         
+            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
 
-            //Assign uuid to new contexts
-            if (context.uuid ==="") {
-                context.uuid = Uuid.createMongoUuId()
+        }
+        else {
+
+            const bucketService = new BucketService()
+            let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
+
+            let bucketValidationResult=BucketDataObjectValidator.validateFunction(bucket,BucketDataObjectValidator.validateSchema)
+            bucket.contexts.forEach(context => {
+                //Validation
+                let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
+                if (!contextValidationResult.isValid) {
+                    bucketValidationResult.isValid = false
+                    bucketValidationResult.messages = bucketValidationResult.messages.concat(contextValidationResult.messages)
+
+                }
+
+                //Assign uuid to new contexts
+                if (context.uuid ==="") {
+                    context.uuid = Uuid.createMongoUuId()
+                } else {
+                    //TODO: the uuid already exists
+                    
+                }
+                
+            });
+
+            if (await bucketService.fieldValueExists(bucket.uuid,"name",bucket.name)){
+                ctx.status=409
+                ctx.body = {
+                    status: 'error',
+                    messages: [{field:"name",message:"Name already exists"}]
+                }              
+            }        
+            else if (bucketValidationResult.isValid) {
+                if (bucket.uuid !== "") {
+                    bucketService.updateOne(bucket) 
+                } else {
+                    bucketService.create(bucket)
+                }
+                ctx.body = {
+                    status: 'success',
+                }
+                
             } else {
-                //TODO: the uuid already exists
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    messages: bucketValidationResult.messages
+                }
                 
             }
-            
-        });
-
-        if (await bucketService.fieldValueExists(bucket.uuid,"name",bucket.name)){
-            ctx.status=409
-            ctx.body = {
-                status: 'error',
-                messages: [{field:"name",message:"Name already exists"}]
-            }              
-        }        
-        else if (bucketValidationResult.isValid) {
-            if (bucket.uuid !== "") {
-                bucketService.updateOne(bucket) 
-            } else {
-                bucketService.create(bucket)
-            }
-            ctx.body = {
-                status: 'success',
-            }
-            
-        } else {
-            ctx.status=400
-            ctx.body = {
-                status: 'error',
-                messages: bucketValidationResult.messages
-            }
-            
         }
 
     })
 
     router.delete('/bucket',koaBody(), async (ctx:Context) => {
-        const bucketService = new BucketService()
 
-        let uuid:any = ctx.request.query.uuid || ""
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])
+        if (!processAllowed) {
 
-        if (uuid !=="") {
-            await bucketService.deleteByUuId(uuid)    
-            ctx.body = {
-                status: 'success',
-            }
-        }
-        else {
-            ctx.status=400
+            ctx.status=401
             ctx.body = {
                 status: 'error',
-                message: "Invalid Uuid"
-            }
+                messages: [{message:"Operation NOT Allowed"}]
+            }         
+            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
 
+        }
+        else {
+
+            const bucketService = new BucketService()
+
+            let uuid:any = ctx.request.query.uuid || ""
+
+            if (uuid !=="") {
+                await bucketService.deleteByUuId(uuid)    
+                ctx.body = {
+                    status: 'success',
+                }
+            }
+            else {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    message: "Invalid Uuid"
+                }
+
+            }
         }
 
     })

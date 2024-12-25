@@ -60,60 +60,90 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.post('/tag',koaBody(), async (ctx:Context) => {
-        const tagService = new TagService()
-        let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
 
-        let tagValidationResult=TagDataObjectValidator.validateFunction(tag,TagDataObjectValidator.validateSchema)
-        if (await tagService.fieldValueExists(tag.uuid,"name",tag.name)){
-            ctx.status=409
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])
+        if (!processAllowed) {
+
+            ctx.status=401
             ctx.body = {
                 status: 'error',
-                messages: [{field:"tag",message:"Name already exists"}]
-            }              
-        }        
-        else if (tagValidationResult.isValid) {
-            if (tag.uuid !== "") {
-                tagService.updateOne(tag) 
+                messages: [{message:"Operation NOT Allowed"}]
+            }         
+            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+
+        }
+        else {
+
+            const tagService = new TagService()
+            let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
+
+            let tagValidationResult=TagDataObjectValidator.validateFunction(tag,TagDataObjectValidator.validateSchema)
+            if (await tagService.fieldValueExists(tag.uuid,"name",tag.name)){
+                ctx.status=409
+                ctx.body = {
+                    status: 'error',
+                    messages: [{field:"tag",message:"Name already exists"}]
+                }              
+            }        
+            else if (tagValidationResult.isValid) {
+                if (tag.uuid !== "") {
+                    tagService.updateOne(tag) 
+                } else {
+                    tagService.create(tag)
+                }
+                ctx.body = {
+                    status: 'success',
+                }
+                
             } else {
-                tagService.create(tag)
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    messages: tagValidationResult.messages
+                }
+                
             }
-            ctx.body = {
-                status: 'success',
-            }
-            
-        } else {
-            ctx.status=400
-            ctx.body = {
-                status: 'error',
-                messages: tagValidationResult.messages
-            }
-            
         }
 
     })
 
     router.delete('/tag',koaBody(), async (ctx:Context) => {
-        const tagService = new TagService()
 
-        let uuid:any = ctx.request.query.uuid || ""
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])
+        if (!processAllowed) {
 
-        if (uuid !=="") {
-            await tagService.deleteByUuId(uuid)    
-            ctx.body = {
-                status: 'success',
-            }
-        }
-        else {
-            ctx.status=400
+            ctx.status=401
             ctx.body = {
                 status: 'error',
-                message: "Invalid Uuid"
-            }
+                messages: [{message:"Operation NOT Allowed"}]
+            }         
+            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
 
+        }
+        else {
+
+            const tagService = new TagService()
+            let uuid:any = ctx.request.query.uuid || ""
+
+            if (uuid !=="") {
+                await tagService.deleteByUuId(uuid)    
+                ctx.body = {
+                    status: 'success',
+                }
+            }
+            else {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    message: "Invalid Uuid"
+                }
+
+            }
         }
 
     })
-
 
     return router
 }

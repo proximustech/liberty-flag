@@ -1,3 +1,4 @@
+/*
 import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
 import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../services/dataObjectHtmlGenerator";
 
@@ -26,7 +27,6 @@ export const EngineBooleanDataObjectValidator:any = {
 export const EngineBooleanDataObjectSpecs:any = {
 
     metadata : {
-        //TODO: Check Unused status metadata
         status : {
             label:"Status",
             validationRequired: EngineBooleanDataObjectValidator.validateSchema.status.required,
@@ -40,3 +40,4 @@ export const EngineBooleanDataObjectSpecs:any = {
     htmlDataObjectRender:HtmlDataObjectRender,
     htmlDataObjectFieldRender:HtmlDataObjectFieldRender
 }
+*/

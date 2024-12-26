@@ -4,7 +4,7 @@ import { FlagService } from "../services/FlagService";
 import { BucketService } from "../services/BucketService";
 import { TagService } from "../services/TagService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
-import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
+//import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 
@@ -89,12 +89,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 let flagContext = new FlagContextDataObject()
                 viewVars.flagContext = flagContext
 
-                viewVars.engineBoolean = new EngineBooleanDataObject(false)
-
-                viewVars.engineBooleanMetadata = EngineBooleanDataObjectSpecs.metadata
-                viewVars.engineBooleanFieldRender = EngineBooleanDataObjectSpecs.htmlDataObjectFieldRender
-                viewVars.engineBooleanValidateSchema = EngineBooleanDataObjectValidator.validateSchema
-                viewVars.engineBooleanValidateFunction = "app.module_data.flag_form.engineBooleanValidateFunction=" + EngineBooleanDataObjectValidator.validateFunction                
+                //viewVars.engineBoolean = new EngineBooleanDataObject(false)
+                //viewVars.engineBooleanMetadata = EngineBooleanDataObjectSpecs.metadata
+                //viewVars.engineBooleanFieldRender = EngineBooleanDataObjectSpecs.htmlDataObjectFieldRender
+                //viewVars.engineBooleanValidateSchema = EngineBooleanDataObjectValidator.validateSchema
+                //viewVars.engineBooleanValidateFunction = "app.module_data.flag_form.engineBooleanValidateFunction=" + EngineBooleanDataObjectValidator.validateFunction
                                 
                 viewVars.engineBooleanConditioned = new EngineBooleanConditionedDataObject()
                 viewVars.engineBooleanConditionedCondition = new EngineBooleanConditionedConditionDataObject()
@@ -141,6 +140,48 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
 
             let flagValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
+
+            for (let flagContextIndex = 0; flagContextIndex < flag.contexts.length; flagContextIndex++) {
+                const flagContext = flag.contexts[flagContextIndex];         
+                if ('boolean_conditioned_true' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            flagValidationResult.isValid = false
+                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    }
+                }
+                if ('boolean_conditioned_false' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_false.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditioned_false.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            flagValidationResult.isValid = false
+                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    } 
+                }
+                if ('boolean_conditionedor_true' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_true.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditionedor_true.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            flagValidationResult.isValid = false
+                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    }
+                }            
+                
+            }
+
             if (await flagService.fieldValueExists(flag.uuid,"name",flag.name)){
                 ctx.status=409
                 ctx.body = {

@@ -1,6 +1,7 @@
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { FlagDataObject } from "../dataObjects/FlagDataObject";
+import { Uuid } from "../../../services/utilities";
 
 export class FlagService {
     
@@ -19,7 +20,7 @@ export class FlagService {
     }
 
     async create(flag:FlagDataObject){
-        flag.uuid = this.mongoService.createMongoUuId()
+        flag.uuid = Uuid.createMongoUuId()
         flag._id = new ObjectId(flag.uuid)        
         const result = await this.collection.insertOne(flag)
         //TODO: Confirm database operations

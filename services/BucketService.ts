@@ -1,6 +1,7 @@
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { BucketDataObject } from "../dataObjects/BucketDataObject";
+import { Uuid } from "../../../services/utilities";
 
 export class BucketService {
     
@@ -19,7 +20,7 @@ export class BucketService {
     }
 
     async create(bucket:BucketDataObject){
-        bucket.uuid = this.mongoService.createMongoUuId()
+        bucket.uuid = Uuid.createMongoUuId()
         bucket._id = new ObjectId(bucket.uuid)
         const result = await this.collection.insertOne(bucket)
     }

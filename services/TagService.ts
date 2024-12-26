@@ -1,6 +1,7 @@
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { TagDataObject } from "../dataObjects/TagDataObject";
+import { Uuid } from "../../../services/utilities";
 
 export class TagService {
     
@@ -19,7 +20,7 @@ export class TagService {
     }
 
     async create(tag:TagDataObject){
-        tag.uuid = this.mongoService.createMongoUuId()
+        tag.uuid = Uuid.createMongoUuId()
         tag._id = new ObjectId(tag.uuid)        
         const result = await this.collection.insertOne(tag)
     }

@@ -117,9 +117,6 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 //Assign uuid to new contexts
                 if (context.uuid ==="") {
                     context.uuid = Uuid.createMongoUuId()
-                } else {
-                    //TODO: the uuid already exists
-                    
                 }
                 
             });

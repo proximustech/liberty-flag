@@ -319,13 +319,12 @@
             if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean.status){
                 checked = "checked"
             }
-            //TODO: Check id="engine_boolean_status" duplication
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
             <div class="form-check form-switch">
                 <label class="form-check-label" for="flexCheckChecked">
                     Boolean Status
                 </label>
-                <input id="engine_boolean_status" class="form-check-input" type="checkbox" role="switch" style="font-size:large" ${checked} onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}" ${disabled}>
+                <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" ${checked} onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}" ${disabled}>
             </div>
             `
         } else if (engine === "boolean_conditioned_true" ) {

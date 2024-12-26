@@ -18,14 +18,6 @@ export class FlagService {
         this.collection = this.dataBase.collection(this.collectionName);
     }
 
-    getNew(){
-        let flag = new FlagDataObject()
-        flag.uuid = this.mongoService.createMongoUuId()
-        flag._id = new ObjectId(flag.uuid)
-
-        return flag
-    }
-
     async create(flag:FlagDataObject){
         flag.uuid = this.mongoService.createMongoUuId()
         flag._id = new ObjectId(flag.uuid)        
@@ -80,25 +72,6 @@ export class FlagService {
             }
         }
         return false
-    } 
-
-    private async processTest(){
-        /**
-         * Some process
-         */
-
-        let flagFirst = this.getNew()
-        flagFirst.name = "First Name"
-        flagFirst.bucket_uuid = "ABCDEFG"
-        await this.create(flagFirst)
-
-        let flag = await this.getByUuId(flagFirst.uuid)
-
-        flag.name = "Other Name";
-        await this.updateOne(flag)
-
-        await this.deleteByUuId(flag.uuid)
-
-    }         
+    }      
 
 }

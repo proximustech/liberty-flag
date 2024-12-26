@@ -18,14 +18,6 @@ export class TagService {
         this.collection = this.dataBase.collection(this.collectionName);
     }
 
-    getNew(){
-        let tag = new TagDataObject()
-        tag.uuid = this.mongoService.createMongoUuId()
-        tag._id = new ObjectId(tag.uuid)
-
-        return tag
-    }
-
     async create(tag:TagDataObject){
         tag.uuid = this.mongoService.createMongoUuId()
         tag._id = new ObjectId(tag.uuid)        
@@ -85,25 +77,6 @@ export class TagService {
             }
         }
         return false
-    }      
-
-    private async processTest(){
-        /**
-         * Some process
-         */
-
-        let tagFirst = this.getNew()
-        tagFirst.name = "First Name"
-
-        await this.create(tagFirst)
-
-        let tag = await this.getByUuId(tagFirst.uuid)
-
-        tag.name = "Other Name";
-        await this.updateOne(tag)
-
-        await this.deleteByUuId(tag.uuid)
-
     }
 
 }

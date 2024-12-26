@@ -18,16 +18,6 @@ export class BucketService {
         this.collection = this.dataBase.collection(this.collectionName);
     }
 
-    //TODO: Remove
-    getNew(){
-        let bucket = new BucketDataObject()
-        bucket.uuid = this.mongoService.createMongoUuId()
-        bucket._id = new ObjectId(bucket.uuid)
-        bucket.subBuckets = []
-
-        return bucket
-    }
-
     async create(bucket:BucketDataObject){
         bucket.uuid = this.mongoService.createMongoUuId()
         bucket._id = new ObjectId(bucket.uuid)
@@ -76,24 +66,6 @@ export class BucketService {
             }
         }
         return false
-    }     
-
-    private async processTest(){
-        /**
-         * Some process
-         */
-
-        let bucketFirst = this.getNew()
-        bucketFirst.name = "First Name"
-        await this.create(bucketFirst)
-
-        let bucket = await this.getByUuId(bucketFirst.uuid)
-
-        bucket.name = "Other Name";
-        await this.updateOne(bucket)
-
-        //await this.deleteByUuId(bucket.uuid)
-
-    }     
+    } 
 
 }

@@ -46,7 +46,7 @@ export class FlagService {
 
     async deleteByUuId(flagUuId:string){
         const result = await this.collection.deleteOne({ uuid: flagUuId },{writeConcern: {w: 1, j: true}})
-        if (result.deletedCount == 1) {
+        if (result.deletedCount == 1 && result.acknowledged) {
             return true
         }
         else return false

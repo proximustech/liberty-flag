@@ -44,7 +44,7 @@ export class BucketService {
 
     async deleteByUuId(bucketUuId:string){
         const result = await this.collection.deleteOne({ uuid: bucketUuId },{writeConcern: {w: 1, j: true}})
-        if (result.deletedCount == 1) {
+        if (result.deletedCount == 1 && result.acknowledged) {
             return true
         }
         else return false             

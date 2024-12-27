@@ -179,6 +179,18 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         
                     }
                 }            
+                if ('boolean_conditionedor_false' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            flagValidationResult.isValid = false
+                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    }
+                }            
                 
             }
 

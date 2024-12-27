@@ -70,7 +70,19 @@
                     }
                     
                 }
-            }            
+            }
+            if ('boolean_conditionedor_false' in flagContext.engine_parameters){
+                for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
+                    const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
+                    let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
+                    if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                        flagValidationResult.isValid = false
+                        flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                        break
+                    }
+                    
+                }
+            }                        
             
         }
        
@@ -169,6 +181,7 @@
         let booleanConditionedTrueIsSelected = ""
         let booleanConditionedFalseIsSelected = ""
         let booleanConditionedOrTrueIsSelected = ""
+        let booleanConditionedOrFalseIsSelected = ""
 
         if (app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean") {
             booleanIsSelected="selected"
@@ -178,6 +191,8 @@
             booleanConditionedFalseIsSelected = "selected"
         } else if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_true") {
             booleanConditionedOrTrueIsSelected = "selected"
+        } else if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_false") {
+            booleanConditionedOrFalseIsSelected = "selected"
         }
 
         let disabled = "disabled='disabled'"
@@ -194,6 +209,7 @@
                         <option value="boolean_conditioned_true" ${booleanConditionedTrueIsSelected} >True (AND OPERATOR)</option>
                         <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND OPERATOR)</option>
                         <option value="boolean_conditionedor_true" ${booleanConditionedOrTrueIsSelected} >True (OR OPERATOR)</option>
+                        <option value="boolean_conditionedor_false" ${booleanConditionedOrFalseIsSelected} >False (OR OPERATOR)</option>
                     </select> 
                     <div id="engine_container_${bucketContext.uuid}" style="padding:5px"></div>
                 </sl-details>
@@ -225,6 +241,7 @@
             newFlagContext.engine_parameters.boolean_conditioned_true={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditioned_false={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditionedor_true={conditions:[]}
+            newFlagContext.engine_parameters.boolean_conditionedor_false={conditions:[]}
 
             app.module_data.flag_form.flag.contexts.push(newFlagContext)
 
@@ -303,6 +320,26 @@
     } 
 
     /**
+     * Saves a condition (conditionedFalse (OR) engine) data inside the flag data structure and sets the listeners for validation
+     */
+     function setEngineBooleanConditionatedOrFalseConditionValueConfig(contextUuid,conditionNumber){
+
+        let firstParameterElement=document.getElementById(`engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${conditionNumber}`)
+        let secondParameterElement=document.getElementById(`engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${conditionNumber}`)
+        let operatorParameterElement=document.getElementById(`engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${conditionNumber}`)
+
+        let condition = JSON.parse(JSON.stringify(app.module_data.flag_form.engineBooleanConditionedCondition))
+        condition.first_parameter=firstParameterElement.value
+        condition.second_parameter=secondParameterElement.value
+        condition.operator_parameter=operatorParameterElement.value
+
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[conditionNumber]=condition
+        engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        
+    }     
+
+    /**
      * Renders the html template for the selected engine and updates the flag data structure
      */
     function setEngineView(engine,contextUuid){
@@ -353,6 +390,15 @@
             `  
             for (let index = 0; index < app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions.length; index++) {
                 addEngineBooleanConditionedOrTrueCondition(contextUuid,app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[index])
+                
+            }        
+        } else if (engine === "boolean_conditionedor_false" ) {
+            document.getElementById('engine_container_'+contextUuid).innerHTML = `
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedOrFalseCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <div id='boolean_conditionedor_false_conditions_${contextUuid}'></div>
+            `  
+            for (let index = 0; index < app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions.length; index++) {
+                addEngineBooleanConditionedOrFalseCondition(contextUuid,app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[index])
                 
             }        
         }
@@ -503,7 +549,54 @@
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
         engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}`,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
         engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}`,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
-    }    
+    }
+
+    function addEngineBooleanConditionedOrFalseCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.module_data.flag_form.engineBooleanConditionedCondition)) ){
+
+        let disabled='disabled="disabled"'
+        if (app.module_data.flag_form.userHasPermissionOnElement(app.module_data.flag_form.userPermissions,[app.module_data.flag_form.prefix+'.flag'],['write'])) {
+            disabled=""
+        }
+          
+        let conditionsContainer = document.getElementById(`boolean_conditionedor_false_conditions_${contextUuid}`)
+        let newConditionNumber = conditionsContainer.childElementCount
+
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[newConditionNumber]=condition
+
+        let selectedEqual = ""
+        let selectedDifferent = ""
+        let selectedLessThan = ""
+        let selectedGreaterThan = ""
+
+        if (condition.operator_parameter==="equal") {
+            selectedEqual="selected"
+        } else if(condition.operator_parameter==="different") {
+            selectedDifferent="selected"
+        } else if(condition.operator_parameter==="less_than") {
+            selectedLessThan="selected"
+        } else if(condition.operator_parameter==="greater_than") {
+            selectedGreaterThan="selected"
+        }
+
+        let html =`
+            <fieldset id="boolean_conditionor_false_${contextUuid}_${newConditionNumber}" style="margin-top:7px;padding:8px;border-style:solid;border-width:2px;border-radius:13px;border-color:lightblue">
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedOrFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                <input id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
+                <label id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <select id="engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                    <option value="equal" ${selectedEqual} > (=) Equal</option>
+                    <option value="different" ${selectedDifferent} > (!=) Different</option>
+                    <option value="less_than" ${selectedLessThan} > (<) Less than</option>
+                    <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
+                </select>                        
+                <input id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
+                <label id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+            </fieldset>
+        `
+        conditionsContainer.insertAdjacentHTML('afterbegin',html)
+        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}`,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}`,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+    }
 
     /**
      * Validation listener for both TRUE and FALSE boolean conditioned engines
@@ -544,6 +637,12 @@
     function deleteEngineBooleanConditionedOrTrueCondition(contextUuid,conditionIndex){
         document.getElementById(`boolean_conditionedor_true_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_conditionor_true_${contextUuid}_${conditionIndex}`))
         app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions.splice(conditionIndex, 1);
+        setEngineView(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
+    }
+
+    function deleteEngineBooleanConditionedOrFalseCondition(contextUuid,conditionIndex){
+        document.getElementById(`boolean_conditionedor_false_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_conditionor_false_${contextUuid}_${conditionIndex}`))
+        app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions.splice(conditionIndex, 1);
         setEngineView(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
     }    
 

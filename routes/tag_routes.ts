@@ -87,13 +87,24 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }              
             }        
             else if (tagValidationResult.isValid) {
+                let dbResultOk=false
                 if (tag.uuid !== "") {
-                    tagService.updateOne(tag) 
+                    dbResultOk = await tagService.updateOne(tag) 
                 } else {
-                    tagService.create(tag)
+                    dbResultOk = await tagService.create(tag)
                 }
-                ctx.body = {
-                    status: 'success',
+                if (dbResultOk) {
+                    ctx.body = {
+                        status: 'success',
+                    }
+                }
+                else {
+                    ctx.status=500
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message: "Data Unexpected Error"}]
+                    }
+                    console.log("DATABASE ERROR writing tag "+tag.uuid)                        
                 }
                 
             } else {
@@ -128,10 +139,21 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
-                await tagService.deleteByUuId(uuid)    
-                ctx.body = {
-                    status: 'success',
+                let dbResultOk=false
+                dbResultOk = await tagService.deleteByUuId(uuid)    
+                if (dbResultOk) {
+                    ctx.body = {
+                        status: 'success',
+                    }
                 }
+                else {
+                    ctx.status=500
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message: "Data Unexpected Error"}]
+                    }
+                    console.log("DATABASE ERROR deleting tag "+uuid)                    
+                } 
             }
             else {
                 ctx.status=400

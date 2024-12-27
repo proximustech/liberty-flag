@@ -22,7 +22,11 @@ export class BucketService {
     async create(bucket:BucketDataObject){
         bucket.uuid = Uuid.createMongoUuId()
         bucket._id = new ObjectId(bucket.uuid)
-        const result = await this.collection.insertOne(bucket)
+        const result = await this.collection.insertOne(bucket,{writeConcern: {w: 1, j: true}})
+        if (result.insertedId == bucket._id && result.acknowledged) {
+            return true
+        }
+        else return false        
     }
 
     async updateOne(bucket:BucketDataObject){
@@ -30,12 +34,20 @@ export class BucketService {
         const result = await this.collection.replaceOne(
             {uuid: bucket.uuid }, 
             bucket,
-            {upsert: false}
+            {upsert: false,writeConcern: {w: 1, j: true}}
         )
+        if (result.acknowledged && result.matchedCount == 1) {
+            return true
+        }
+        else return false          
     }
 
     async deleteByUuId(bucketUuId:string){
-        const result = await this.collection.deleteOne({ uuid: bucketUuId })
+        const result = await this.collection.deleteOne({ uuid: bucketUuId },{writeConcern: {w: 1, j: true}})
+        if (result.deletedCount == 1) {
+            return true
+        }
+        else return false             
     }
 
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
@@ -51,7 +63,6 @@ export class BucketService {
     }
 
     async getAll() : Promise<BucketDataObject[]> {
-        //await this.processTest()
         const cursor = this.collection.find({});
         return (await cursor.toArray() as BucketDataObject[])
     }

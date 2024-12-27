@@ -22,8 +22,12 @@ export class FlagService {
     async create(flag:FlagDataObject){
         flag.uuid = Uuid.createMongoUuId()
         flag._id = new ObjectId(flag.uuid)        
-        const result = await this.collection.insertOne(flag)
-        //TODO: Confirm database operations
+        const result = await this.collection.insertOne(flag,{writeConcern: {w: 1, j: true}})
+        if (result.insertedId == flag._id && result.acknowledged) {
+            return true
+        }
+        else return false
+        
     }
 
     async updateOne(flag:FlagDataObject){
@@ -31,12 +35,21 @@ export class FlagService {
         const result = await this.collection.replaceOne(
             {uuid: flag.uuid }, 
             flag,
-            {upsert: false}
-        )        
+            {upsert: false,writeConcern: {w: 1, j: true}}
+        )
+
+        if (result.acknowledged && result.matchedCount == 1 ) {
+            return true
+        }
+        else return false     
     }
 
     async deleteByUuId(flagUuId:string){
-        const result = await this.collection.deleteOne({ uuid: flagUuId })
+        const result = await this.collection.deleteOne({ uuid: flagUuId },{writeConcern: {w: 1, j: true}})
+        if (result.deletedCount == 1) {
+            return true
+        }
+        else return false
     }
 
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
@@ -52,7 +65,6 @@ export class FlagService {
     }
 
     async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
-        //await this.processTest()
         const cursor = this.collection.find({bucket_uuid: bucketUuId});
         return (await cursor.toArray() as FlagDataObject[])
     }

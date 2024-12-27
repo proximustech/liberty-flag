@@ -190,14 +190,26 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }              
             }
             else if (flagValidationResult.isValid) {
+                let dbResultOk = false
                 if (flag.uuid !== "") {
-                    flagService.updateOne(flag) 
+                    dbResultOk = await flagService.updateOne(flag) 
                 } else {
-                    flagService.create(flag)
+                    dbResultOk = await flagService.create(flag)
                 }
-                ctx.body = {
-                    status: 'success',
+                if (dbResultOk) {
+                    ctx.body = {
+                        status: 'success',
+                    }                    
                 }
+                else {
+                    ctx.status=500
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message: "Data Unexpected Error"}]
+                    }
+                    console.log("DATABASE ERROR writing flag "+flag.uuid)
+                }
+
                 
             } else {
                 ctx.status=400
@@ -205,7 +217,6 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: flagValidationResult.messages
                 }
-                
             }
         }
 
@@ -231,10 +242,21 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
-                await flagService.deleteByUuId(uuid)    
-                ctx.body = {
-                    status: 'success',
+                let dbResultOk = false
+                dbResultOk = await flagService.deleteByUuId(uuid)
+                if (dbResultOk) {
+                    ctx.body = {
+                        status: 'success',
+                    }
                 }
+                else {
+                    ctx.status=500
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message: "Data Unexpected Error"}]
+                    }
+                    console.log("DATABASE ERROR deleting flag "+uuid)                    
+                }  
             }
             else {
                 ctx.status=400

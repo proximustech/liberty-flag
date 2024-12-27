@@ -22,7 +22,11 @@ export class TagService {
     async create(tag:TagDataObject){
         tag.uuid = Uuid.createMongoUuId()
         tag._id = new ObjectId(tag.uuid)        
-        const result = await this.collection.insertOne(tag)
+        const result = await this.collection.insertOne(tag,{writeConcern: {w: 1, j: true}})
+        if (result.insertedId == tag._id && result.acknowledged) {
+            return true
+        }
+        else return false           
     }
 
     async updateOne(tag:TagDataObject){
@@ -30,12 +34,20 @@ export class TagService {
         const result = await this.collection.replaceOne(
             {uuid: tag.uuid }, 
             tag,
-            {upsert: false}
-        )        
+            {upsert: false,writeConcern: {w: 1, j: true}}
+        ) 
+        if (result.acknowledged && result.matchedCount == 1) {
+            return true
+        }
+        else return false                  
     }
 
     async deleteByUuId(tagUuId:string){
-        const result = await this.collection.deleteOne({ uuid: tagUuId })
+        const result = await this.collection.deleteOne({ uuid: tagUuId },{writeConcern: {w: 1, j: true}})
+        if (result.deletedCount == 1) {
+            return true
+        }
+        else return false           
     }
 
     async getByUuId(uuid:string) : Promise<TagDataObject> {

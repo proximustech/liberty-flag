@@ -129,14 +129,26 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }              
             }        
             else if (bucketValidationResult.isValid) {
+                let dbResultOk = false
                 if (bucket.uuid !== "") {
-                    bucketService.updateOne(bucket) 
+                    dbResultOk = await bucketService.updateOne(bucket)
                 } else {
-                    bucketService.create(bucket)
+                    dbResultOk = await bucketService.create(bucket)
                 }
-                ctx.body = {
-                    status: 'success',
+                if (dbResultOk) {
+                    ctx.body = {
+                        status: 'success',
+                    }
                 }
+                else {
+                    ctx.status=500
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message: "Data Unexpected Error"}]
+                    }
+                    console.log("DATABASE ERROR writing bucket "+bucket.uuid)                    
+                }
+
                 
             } else {
                 ctx.status=400
@@ -171,10 +183,21 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
-                await bucketService.deleteByUuId(uuid)    
-                ctx.body = {
-                    status: 'success',
+                let dbResultOk=false
+                dbResultOk = await bucketService.deleteByUuId(uuid)    
+                if (dbResultOk) {
+                    ctx.body = {
+                        status: 'success',
+                    }
                 }
+                else {
+                    ctx.status=500
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message: "Data Unexpected Error"}]
+                    }
+                    console.log("DATABASE ERROR deleting bucket "+uuid)                    
+                } 
             }
             else {
                 ctx.status=400

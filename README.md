@@ -1,3 +1,5 @@
-Liberty Flag program for controlling external apps from one console.
+# Liberty Flag
 
-Liberty Flag is an application that runs inside the Liberty Platform (https://github.com/proximustech/liberty-platform)
+Web application for controlling external applications from one console.
+
+Liberty Flag runs inside the Liberty Platform (https://github.com/proximustech/liberty-platform)

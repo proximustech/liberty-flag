@@ -20,4 +20,8 @@ export class MongoService {
         return this.client
     }
 
+    dispose(){
+        this.client.close()
+    }   
+    
 }

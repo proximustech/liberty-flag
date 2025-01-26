@@ -8,9 +8,6 @@ import koaBody from 'koa-body';
 
 module.exports = function(router:Router,appViewVars:any,prefix:string){
 
-    let viewVars = {...appViewVars};
-    viewVars.prefix = prefix
-
     let apiPrefix = "/api/v1"
 
     router.post(apiPrefix+'/get_context_flags_data',koaBody(), async (ctx:Context) => {
@@ -53,6 +50,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'success',
                     flags: responseFlags
                 }
+
+                flagService.dispose()
                 
             } else {
                 console.log('API - get_context_flags_data - No valid Context Key: "'+ contextKey + '"' )

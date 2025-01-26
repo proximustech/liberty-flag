@@ -21,6 +21,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.tags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
 
+            tagService.dispose()
             return ctx.render('plugins/_'+prefix+'/views/tags', viewVars);
         } catch (error) {
             console.error(error)
@@ -37,6 +38,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 const tagService = new TagService()
                 tag = await tagService.getByUuId(uuid) 
                 viewVars.editing = true
+                tagService.dispose()
                 
             }
             else {
@@ -115,6 +117,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
                 
             }
+            tagService.dispose()
         }
 
     })
@@ -163,6 +166,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
 
             }
+            tagService.dispose()
         }
 
     })

@@ -92,4 +92,8 @@ export class TagService {
         return false
     }
 
+    dispose(){
+        this.mongoService.dispose()
+    }      
+
 }

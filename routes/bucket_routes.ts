@@ -26,6 +26,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
+            bucketService.dispose()
+            tagService.dispose()
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
             console.error(error)
@@ -45,6 +47,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 const bucketService = new BucketService()
                 bucket = await bucketService.getByUuId(uuid) 
                 viewVars.editing = true
+                bucketService.dispose()
                 
             }
             else {
@@ -79,6 +82,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.bucket_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
+            tagService.dispose()
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {
             console.error(error)
@@ -158,6 +162,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
                 
             }
+            bucketService.dispose()
         }
 
     })
@@ -207,6 +212,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
 
             }
+            bucketService.dispose()
         }
 
     })

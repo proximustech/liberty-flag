@@ -78,6 +78,10 @@ export class BucketService {
             }
         }
         return false
-    } 
+    }
+
+    dispose(){
+        this.mongoService.dispose()
+    }      
 
 }

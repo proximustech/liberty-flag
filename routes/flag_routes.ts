@@ -34,6 +34,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.module_data.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
 
+                bucketService.dispose()
+                flagService.dispose()
+                tagService.dispose()
+
                 return ctx.render('plugins/_'+prefix+'/views/flags', viewVars);
             }
             else {
@@ -68,6 +72,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     const flagService = new FlagService()
                     flag = await flagService.getByUuId(uuid) 
                     viewVars.editing = true
+                    flagService.dispose()
                     
                 }
                 else {
@@ -104,6 +109,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.module_data.flag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement                            
 
+                bucketService.dispose()
+                tagService.dispose()
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 
             } else {
@@ -230,6 +237,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     messages: flagValidationResult.messages
                 }
             }
+            flagService.dispose()
         }
 
     })
@@ -278,6 +286,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
 
             }
+            flagService.dispose()
         }
 
     })

@@ -85,6 +85,10 @@ export class FlagService {
             }
         }
         return false
-    }      
+    }  
+
+    dispose(){
+        this.mongoService.dispose()
+    }        
 
 }

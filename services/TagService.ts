@@ -1,9 +1,11 @@
+import { IDisposable } from "../../../interfaces/disposable_interface";
+
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { TagDataObject } from "../dataObjects/TagDataObject";
 import { Uuid } from "../../../services/utilities";
 
-export class TagService {
+export class TagService implements IDisposable {
     
     private dataBaseName = "lf_plugin"
     private collectionName = "tags"

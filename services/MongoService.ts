@@ -1,7 +1,9 @@
+import { IDisposable } from "../../../interfaces/disposable_interface";
+
 import { env } from 'node:process';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
-export class MongoService {
+export class MongoService implements IDisposable {
 
     private client:MongoClient
 

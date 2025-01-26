@@ -1,9 +1,11 @@
+import { IDisposable } from "../../../interfaces/disposable_interface";
+
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { BucketDataObject } from "../dataObjects/BucketDataObject";
 import { Uuid } from "../../../services/utilities";
 
-export class BucketService {
+export class BucketService implements IDisposable {
     
     private dataBaseName = "lf_plugin"
     private collectionName = "buckets"

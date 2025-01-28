@@ -10,7 +10,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     let apiPrefix = "/api/v1"
 
-    router.post(apiPrefix+'/get_context_flags_data',koaBody(), async (ctx:Context) => {
+    router.post(apiPrefix+'/flags-config',koaBody(), async (ctx:Context) => {
 
         console.log("API Requested.")
 

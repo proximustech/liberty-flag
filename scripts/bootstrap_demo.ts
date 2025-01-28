@@ -50,6 +50,9 @@ async function main() {
         },
         "boolean_conditionedor_false": {
           "conditions": []
+        },
+        "string": {
+          "value": ""
         }
       }
 

@@ -182,6 +182,7 @@
         let booleanConditionedFalseIsSelected = ""
         let booleanConditionedOrTrueIsSelected = ""
         let booleanConditionedOrFalseIsSelected = ""
+        let stringIsSelected = ""
 
         if (app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean") {
             booleanIsSelected="selected"
@@ -193,6 +194,8 @@
             booleanConditionedOrTrueIsSelected = "selected"
         } else if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_false") {
             booleanConditionedOrFalseIsSelected = "selected"
+        } else if(app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="string") {
+            stringIsSelected = "selected"
         }
 
         let disabled = "disabled='disabled'"
@@ -210,6 +213,7 @@
                         <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND OPERATOR)</option>
                         <option value="boolean_conditionedor_true" ${booleanConditionedOrTrueIsSelected} >True (OR OPERATOR)</option>
                         <option value="boolean_conditionedor_false" ${booleanConditionedOrFalseIsSelected} >False (OR OPERATOR)</option>
+                        <option value="string" ${stringIsSelected} >String</option>
                     </select> 
                     <div id="engine_container_${bucketContext.uuid}" style="padding:5px"></div>
                 </sl-details>
@@ -242,6 +246,7 @@
             newFlagContext.engine_parameters.boolean_conditioned_false={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditionedor_true={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditionedor_false={conditions:[]}
+            newFlagContext.engine_parameters.string={value:""}
 
             app.module_data.flag_form.flag.contexts.push(newFlagContext)
 
@@ -401,6 +406,12 @@
                 addEngineBooleanConditionedOrFalseCondition(contextUuid,app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[index])
                 
             }        
+        } else if (engine === "string" ) {
+            let stringValue = app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
+            document.getElementById('engine_container_'+contextUuid).innerHTML = `
+                <label style='margin-bottom:4px'>String Value</label>
+                <input type='text' class='form-control' id='string_engine_${contextUuid}' value='${stringValue}' onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string={value:this.value}" ${disabled} />
+            `        
         }
     }
 

@@ -28,6 +28,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 const flagService = new FlagService()
                 const bucketService = new BucketService()
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
+                viewVars.getUuidMapFromBucketContextsList = BucketService.getUuidMapFromContextsList
                 viewVars.flags = await flagService.getAllByBucketUuid(bucketUuid)
 
                 viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)

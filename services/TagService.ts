@@ -70,17 +70,6 @@ export class TagService implements IDisposable {
         return (await cursor.toArray() as TagDataObject[])
     }
     
-    getUuidMapFromList(list:TagDataObject[]) : Map<string, string> {
-        //let result:any = {}
-        const result = new Map<string, string>();
-        list.forEach(tag => {
-            //result[tag.name]=tag.uuid
-            result.set(tag.uuid,tag.name)
-        });
-
-        return result
-    }
-
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
         let filter:any = {}
         filter[fieldName] = fieldValue
@@ -96,6 +85,17 @@ export class TagService implements IDisposable {
 
     dispose(){
         this.mongoService.dispose()
+    }      
+
+    getUuidMapFromList(list:TagDataObject[]) : Map<string, string> {
+        //let result:any = {}
+        const result = new Map<string, string>();
+        list.forEach(tag => {
+            //result[tag.name]=tag.uuid
+            result.set(tag.uuid,tag.name)
+        });
+
+        return result
     }      
 
 }

@@ -2,7 +2,7 @@ import { IDisposable } from "../../../interfaces/disposable_interface";
 
 import { MongoService } from "./MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
-import { BucketDataObject } from "../dataObjects/BucketDataObject";
+import { BucketContextDataObject, BucketDataObject } from "../dataObjects/BucketDataObject";
 import { Uuid } from "../../../services/utilities";
 
 export class BucketService implements IDisposable {
@@ -85,5 +85,16 @@ export class BucketService implements IDisposable {
     dispose(){
         this.mongoService.dispose()
     }      
+
+    public static getUuidMapFromContextsList(list:BucketContextDataObject[]) : Map<string, string> {
+        //let result:any = {}
+        const result = new Map<string, string>();
+        list.forEach(context => {
+            //result[context.name]=context.uuid
+            result.set(context.uuid,context.name)
+        });
+
+        return result
+    }     
 
 }

@@ -36,31 +36,62 @@ async function main() {
     flagContext.engine = "boolean"
     flagContext.bucket_context_uuid = bucket.contexts[2].uuid
     flagContext.engine_parameters = {
-        "boolean": {
-          "status": false
-        },
-        "boolean_conditioned_true": {
-          "conditions": []
-        },
-        "boolean_conditioned_false": {
-          "conditions": []
-        },
-        "boolean_conditionedor_true": {
-          "conditions": []
-        },
-        "boolean_conditionedor_false": {
-          "conditions": []
-        },
-        "string": {
-          "value": ""
-        }
+      "boolean": {
+        "status": false
+      },
+      "boolean_conditioned_true": {
+        "conditions": []
+      },
+      "boolean_conditioned_false": {
+        "conditions": []
+      },
+      "boolean_conditionedor_true": {
+        "conditions": []
+      },
+      "boolean_conditionedor_false": {
+        "conditions": []
+      },
+      "string": {
+        "value": ""
       }
+    }
 
     let flag = new FlagDataObject()
     flag.bucket_uuid = bucket.uuid
     flag.name = "images.show-avatar-field"
     flag.contexts.push(flagContext)
     await flagService.create(flag)
+
+
+    flagContext = new FlagContextDataObject()
+    flagContext.engine = "string"
+    flagContext.bucket_context_uuid = bucket.contexts[2].uuid
+    flagContext.engine_parameters = {
+      "boolean": {
+        "status": false
+      },
+      "boolean_conditioned_true": {
+        "conditions": []
+      },
+      "boolean_conditioned_false": {
+        "conditions": []
+      },
+      "boolean_conditionedor_true": {
+        "conditions": []
+      },
+      "boolean_conditionedor_false": {
+        "conditions": []
+      },
+      "string": {
+        "value": "Light"
+      }
+    }
+
+    flag = new FlagDataObject()
+    flag.bucket_uuid = bucket.uuid
+    flag.name = "app.theme"
+    flag.contexts.push(flagContext)
+    await flagService.create(flag)        
 
     console.log(bucket.contexts[2].uuid)   
 

@@ -6,6 +6,7 @@ import { TagService } from "../services/TagService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
 //import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
+import { EngineStringDataObjectValidator } from "../dataObjects/EngineStringDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 
 import koaBody from 'koa-body';
@@ -198,6 +199,16 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         }
                         
                     }
+                }            
+                if ('string' in flagContext.engine_parameters && flagContext.engine==="string"){
+                                            
+                    let engineStringValidationResult = EngineStringDataObjectValidator.validateFunction(flagContext.engine_parameters.string,EngineStringDataObjectValidator.validateSchema)
+                    if (!engineStringValidationResult.isValid) {
+                        flagValidationResult.isValid = false
+                        flagValidationResult.messages = flagValidationResult.messages.concat(engineStringValidationResult.messages)
+                        break
+                    }
+
                 }            
                 
             }

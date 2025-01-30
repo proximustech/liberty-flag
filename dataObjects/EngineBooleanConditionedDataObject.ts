@@ -1,4 +1,4 @@
-import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
+import { IllegalCharacters as IllegalCharactersRegexp, IllegalCharactersValidationMessage } from "../../../values/regular_expressions";
 
 export class EngineBooleanConditionedDataObject {
     conditions:Array<EngineBooleanConditionedConditionDataObject> = []
@@ -36,7 +36,6 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
     validateFunction : (data:any,validateSchema:any) => {
         let fieldRegexp = ""
         let fieldValue:any = ""
-        let regexpValidator = undefined
         let result:any = {
             isValid :true,
             messages:[]
@@ -76,7 +75,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                 }
                 
             } else {
-                regexpValidator = new RegExp(fieldRegexp);
+                let regexpValidator = new RegExp(fieldRegexp);
                 if (!regexpValidator.test(fieldValue)) {
                     result.isValid=false
                     result.messages.push({
@@ -84,6 +83,20 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                         message:validateSchema[fieldName]["message"]
                     })
                 }
+                else {
+                    try {
+                        //This code executes well in the backend but not in the brower. Leaving this validation section to the backend
+                        let illegalCharactersRegexp = new RegExp(IllegalCharactersRegexp)                
+                        if(illegalCharactersRegexp.test(fieldValue)){
+                            result.isValid=false
+                            result.messages.push({
+                                field:fieldName,
+                                message:IllegalCharactersValidationMessage
+                            })
+                        }                                       
+                    } catch (error) {}
+    
+                }                 
                 
                 if ( fieldName==="second_parameter" && secondParameterMustBeNumeric) {
                     if (!(!isNaN(parseFloat(fieldValue)) && isFinite(fieldValue))) {

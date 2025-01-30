@@ -50,6 +50,7 @@
             </span>
             <%= flag.name %>
             <div class="alert alert-light" role="alert" style="margin-top: 7px;">
+                <p>Description: <%= flag.description %></p>
                 <div class="row">
                     <% flag.contexts.forEach(context=> { %>
                         <span class="card" style="width: 230px;margin:10px">

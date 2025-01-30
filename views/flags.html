@@ -52,7 +52,7 @@
             <div class="alert alert-light" role="alert" style="margin-top: 7px;">
                 <div class="row">
                     <% flag.contexts.forEach(context=> { %>
-                        <span class="card" style="width: 18rem;margin:10px">
+                        <span class="card" style="width: 230px;margin:10px">
                             <div class="card-body">
                                 <h6 class="card-title"><%= bucketContextsMap.get(context.bucket_context_uuid) %></h6>
                                 <% if (context.engine == "string") { %>
@@ -64,16 +64,16 @@
                                         <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" <% if(context.engine_parameters.boolean.status){ %> checked <% } %>  disabled="disabled">
                                     </div>                                    
                                 <% } else if (context.engine == "boolean_conditioned_false") { %>
-                                    <p class="card-text">Engine: False (AND OPERATOR)</p>
+                                    <p class="card-text">Engine: False (AND)</p>
                                     <p class="card-text"><%= context.engine_parameters.boolean_conditioned_false.conditions.length %> Conditions</p>
                                 <% } else if (context.engine == "boolean_conditioned_true") { %>
-                                    <p class="card-text">Engine: True (AND OPERATOR)</p>
+                                    <p class="card-text">Engine: True (AND)</p>
                                     <p class="card-text"><%= context.engine_parameters.boolean_conditioned_true.conditions.length %> Conditions</p>
                                 <% } else if (context.engine == "boolean_conditionedor_false") { %>
-                                    <p class="card-text">Engine: False (OR OPERATOR)</p>
+                                    <p class="card-text">Engine: False (OR)</p>
                                     <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_false.conditions.length %> Conditions</p>
                                 <% } else if (context.engine == "boolean_conditionedor_true") { %>
-                                    <p class="card-text">Engine: True (OR OPERATOR)</p>
+                                    <p class="card-text">Engine: True (OR)</p>
                                     <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
                                 <% } %>
 

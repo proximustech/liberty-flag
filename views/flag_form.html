@@ -209,10 +209,10 @@
                     <label style='margin-bottom:7px;font-size:17px'>Engine</label>
                     <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
                         <option value="boolean" ${booleanIsSelected}>True/False</option>
-                        <option value="boolean_conditioned_true" ${booleanConditionedTrueIsSelected} >True (AND OPERATOR)</option>
-                        <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND OPERATOR)</option>
-                        <option value="boolean_conditionedor_true" ${booleanConditionedOrTrueIsSelected} >True (OR OPERATOR)</option>
-                        <option value="boolean_conditionedor_false" ${booleanConditionedOrFalseIsSelected} >False (OR OPERATOR)</option>
+                        <option value="boolean_conditioned_true" ${booleanConditionedTrueIsSelected} >True (AND)</option>
+                        <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND)</option>
+                        <option value="boolean_conditionedor_true" ${booleanConditionedOrTrueIsSelected} >True (OR)</option>
+                        <option value="boolean_conditionedor_false" ${booleanConditionedOrFalseIsSelected} >False (OR)</option>
                         <option value="string" ${stringIsSelected} >String</option>
                     </select> 
                     <div id="engine_container_${bucketContext.uuid}" style="padding:5px"></div>

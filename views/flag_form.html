@@ -207,7 +207,7 @@
             <div id="context_${bucketContext.uuid}_wrapper" style="margin-bottom: 10px;">
                 <sl-details id='bucket_context_value_config_${bucketContext.uuid}' summary="${bucketContext.name}">
                     <label style='margin-bottom:7px;font-size:17px'>Engine</label>
-                    <select id="engine" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
+                    <select style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
                         <option value="boolean" ${booleanIsSelected}>True/False</option>
                         <option value="boolean_conditioned_true" ${booleanConditionedTrueIsSelected} >True (AND)</option>
                         <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND)</option>

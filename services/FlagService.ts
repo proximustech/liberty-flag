@@ -1,96 +1,125 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
+import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
+import { FlagDataObject,FlagDataObjectValidator } from "../dataObjects/FlagDataObject";
+import { FlagModel } from "../models/FlagModel";
 
-import { MongoService } from "./MongoService";
-import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
-import { FlagDataObject } from "../dataObjects/FlagDataObject";
-import { Uuid } from "../../../services/utilities";
 
 export class FlagService implements IDisposable {
     
-    private dataBaseName = "lf_plugin"
-    private collectionName = "flags"
-    private mongoClient:MongoClient
-    private mongoService:MongoService
-    private dataBase:Db
-    private collection:Collection
+    private flagModel:FlagModel
+    private userPermissions:any
+    private serviceSecurityElement:string
+    private userCanRead:boolean
+    private userCanWrite:boolean
 
-    constructor(){
-        this.mongoService = new MongoService()
-        this.mongoClient = this.mongoService.getMongoClient()
-        this.dataBase = this.mongoClient.db(this.dataBaseName);
-        this.collection = this.dataBase.collection(this.collectionName);
+    constructor(serviceSecurityElementPrefix:string,userPermissions:any){
+
+        this.flagModel= new FlagModel()
+        this.serviceSecurityElement=serviceSecurityElementPrefix+".flag"
+        this.userPermissions=userPermissions
+        this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])
+        this.userCanWrite = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["write"])        
+
     }
 
     async create(flag:FlagDataObject){
-        flag.uuid = Uuid.createMongoUuId()
-        flag._id = new ObjectId(flag.uuid)        
-        const result = await this.collection.insertOne(flag,{writeConcern: {w: 1, j: true}})
-        if (result.insertedId == flag._id && result.acknowledged) {
-            return true
+
+        let userValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
+
+        if (!userValidationResult.isValid) {
+            throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
-        else return false
+
+        if (await this.fieldValueExists(flag.uuid,"name",flag.name)) {
+            throw new ExceptionRecordAlreadyExists("Name already exists")
+        }        
+
+        if (this.userCanWrite) {
+            return await this.flagModel.create(flag)            
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }
         
     }
 
     async updateOne(flag:FlagDataObject){
-        flag._id = new ObjectId(flag.uuid)
-        const result = await this.collection.replaceOne(
-            {uuid: flag.uuid }, 
-            flag,
-            {upsert: false,writeConcern: {w: 1, j: true}}
-        )
+        let userValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
 
-        if (result.acknowledged && result.matchedCount == 1 ) {
-            return true
+        if (!userValidationResult.isValid) {
+            throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
+        }        
+        
+        if (await this.fieldValueExists(flag.uuid,"name",flag.name)) {
+            throw new ExceptionRecordAlreadyExists("Name already exists")
+        }  
+
+        if (this.userCanWrite) {
+            return await this.flagModel.updateOne(flag)
+            
         }
-        else return false     
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }            
+
     }
 
     async deleteByUuId(flagUuId:string){
-        const result = await this.collection.deleteOne({ uuid: flagUuId },{writeConcern: {w: 1, j: true}})
-        if (result.deletedCount == 1 && result.acknowledged) {
-            return true
+        if (this.userCanWrite) {
+            return await this.flagModel.deleteByUuId(flagUuId) 
+           
         }
-        else return false
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }     
     }
 
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
 
-        const cursor = this.collection.find({uuid : uuid});
+        if (this.userCanRead) {
+            return await this.flagModel.getByUuId(uuid)
 
-        while (await cursor.hasNext()) {
-            let document = (await cursor.next() as FlagDataObject);
-            return document
         }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }            
 
-        return new FlagDataObject()
     }
 
     async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
-        const cursor = this.collection.find({bucket_uuid: bucketUuId});
-        return (await cursor.toArray() as FlagDataObject[])
+        if (this.userCanRead) {
+            return await this.flagModel.getAllByBucketUuid(bucketUuId)
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        } 
     }
 
     async getAllByContextUuid(contextUuId:string) : Promise<FlagDataObject[]> {
-        const cursor = this.collection.find({"contexts.bucket_context_uuid": contextUuId});
-        return (await cursor.toArray() as FlagDataObject[])
+        if (this.userCanRead) {
+            return await this.flagModel.getAllByContextUuid(contextUuId)
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        } 
     }        
 
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
-        let filter:any = {}
-        filter[fieldName] = fieldValue
-        const cursor = this.collection.find(filter);
-        while (await cursor.hasNext()) {
-            let document:any = await cursor.next();
-            if (document.uuid !== processedDocumentUuid) {
-                return true
-            }
+
+        if (this.userCanRead) {
+            return await this.flagModel.fieldValueExists(processedDocumentUuid,fieldName,fieldValue)
         }
-        return false
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }                    
+
     }  
 
     dispose(){
-        this.mongoService.dispose()
+        this.flagModel.dispose()
     }        
 
 }

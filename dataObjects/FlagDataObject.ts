@@ -1,5 +1,8 @@
 import { DataObjectValidateFunction } from "../../../services/dataObjectValidateService";
 import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../services/dataObjectHtmlGenerator";
+import { IllegalCharacters as IllegalCharactersRegexp, IllegalCharactersValidationMessage } from "../../../values/regular_expressions";
+import { EngineBooleanConditionedConditionDataObjectValidator } from "./EngineBooleanConditionedDataObject";
+import { EngineStringDataObjectValidator } from "./EngineStringDataObject";
 
 export class FlagDataObject {
     _id:any = ""
@@ -32,7 +35,131 @@ export const FlagDataObjectValidator:any = {
 
     },
 
-    validateFunction : DataObjectValidateFunction
+    validateFunction : (data:any,validateSchema:any) => {
+        let fieldRegexp = ""
+        let fieldValue = ""
+        let result:any = {
+            isValid :true,
+            messages:[]
+        }
+    
+        result.isValid = true
+    
+        for (const [fieldName, fieldSchema] of Object.entries(validateSchema)) {
+            fieldRegexp = validateSchema[fieldName]["regexp"]
+            fieldValue = data[fieldName].toString()
+    
+            if (fieldValue === "") {
+                if (validateSchema[fieldName]["required"]) {
+                    result.isValid=false
+                    result.messages.push({
+                        field:fieldName,
+                        message:validateSchema[fieldName]["requiredMessage"]
+                    })                
+                } 
+                
+            } else {
+                let regexpValidator = new RegExp(fieldRegexp);
+                if (!regexpValidator.test(fieldValue)) {
+                    result.isValid=false
+                    result.messages.push({
+                        field:fieldName,
+                        message:validateSchema[fieldName]["message"]
+                    })
+                }
+                else {
+                    try {
+                        //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
+                        let illegalCharactersRegexp = new RegExp(IllegalCharactersRegexp)                
+                        if(illegalCharactersRegexp.test(fieldValue)){
+                            result.isValid=false
+                            result.messages.push({
+                                field:fieldName,
+                                message:IllegalCharactersValidationMessage
+                            })
+                        }                                       
+                    } catch (error) {}
+    
+                }         
+                
+            }
+    
+        }
+        //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
+        try {
+            for (let flagContextIndex = 0; flagContextIndex < data.contexts.length; flagContextIndex++) {
+                const flagContext = data.contexts[flagContextIndex];         
+                if ('boolean_conditioned_true' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    }
+                }
+                if ('boolean_conditioned_false' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_false.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditioned_false.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    } 
+                }
+                if ('boolean_conditionedor_true' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_true.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditionedor_true.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    }
+                }            
+                if ('boolean_conditionedor_false' in flagContext.engine_parameters){
+                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
+                        const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
+                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                            break
+                        }
+                        
+                    }
+                }            
+                if ('string' in flagContext.engine_parameters && flagContext.engine==="string"){
+                    //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
+                    try {
+                        let engineStringValidationResult = EngineStringDataObjectValidator.validateFunction(flagContext.engine_parameters.string,EngineStringDataObjectValidator.validateSchema)
+                        if (!engineStringValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineStringValidationResult.messages)                   
+                            break
+                        }                    
+                    } catch (error) {
+                        
+                    }                      
+    
+                }            
+                
+            }            
+        } catch (error) {
+            
+        }
+
+
+        return result
+    }
 }
 
 export const FlagDataObjectSpecs:any = {

@@ -4,10 +4,9 @@ import { FlagService } from "../services/FlagService";
 import { BucketService } from "../services/BucketService";
 import { TagService } from "../services/TagService";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
-//import { EngineBooleanDataObject,EngineBooleanDataObjectSpecs,EngineBooleanDataObjectValidator } from "../dataObjects/EngineBooleanDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
-import { EngineStringDataObjectValidator } from "../dataObjects/EngineStringDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
+import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 import koaBody from 'koa-body';
 
@@ -17,28 +16,24 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     viewVars.prefix = prefix
 
     router.get('/flags', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const flagService = new FlagService(prefix,viewVars.userPermissions)
+        const bucketService = new BucketService()
+        const tagService = new TagService()
         try {
 
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
 
             if (bucketUuid !=="") {
 
-                const tagService = new TagService()
                 viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
 
-                const flagService = new FlagService()
-                const bucketService = new BucketService()
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 viewVars.getUuidMapFromBucketContextsList = BucketService.getUuidMapFromContextsList
                 viewVars.flags = await flagService.getAllByBucketUuid(bucketUuid)
 
-                viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.module_data.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
-
-                bucketService.dispose()
-                flagService.dispose()
-                tagService.dispose()
 
                 return ctx.render('plugins/_'+prefix+'/views/flags', viewVars);
             }
@@ -52,29 +47,44 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             }
 
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.flag')
+                
+            }
+            else {
+                console.error(error)
+            }
+        } finally{
+            bucketService.dispose()
+            flagService.dispose()
+            tagService.dispose()
         }
     })
 
     router.get('/flag_form', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const bucketService = new BucketService()
+        const tagService = new TagService()
+        const flagService = new FlagService(prefix,viewVars.userPermissions)
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
             if (bucketUuid !== "") {
-                const bucketService = new BucketService()
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 
                 let flag:FlagDataObject = new FlagDataObject()
-                const tagService = new TagService()
                 viewVars.tags = await tagService.getAll()
 
                 if (uuid !=="") {
     
-                    const flagService = new FlagService()
                     flag = await flagService.getByUuId(uuid) 
                     viewVars.editing = true
-                    flagService.dispose()
                     
                 }
                 else {
@@ -107,12 +117,9 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.engineBooleanConditionedConditionValidateShema = EngineBooleanConditionedConditionDataObjectValidator.validateSchema
                 viewVars.engineBooleanConditionedConditionValidateFunction = "app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction=" + EngineBooleanConditionedConditionDataObjectValidator.validateFunction                
 
-                viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.module_data.flag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement                            
 
-                bucketService.dispose()
-                tagService.dispose()
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 
             } else {
@@ -125,152 +132,97 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             }
 
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.flag')
+                
+            }
+            else {
+                console.error(error)
+            }
+        } finally{
+            bucketService.dispose()
+            tagService.dispose()
+            flagService.dispose()
         }
     })
 
     router.post('/flag',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])
-        if (!processAllowed) {
+        const flagService = new FlagService(prefix,userPermissions)
 
-            ctx.status=401
-            ctx.body = {
-                status: 'error',
-                messages: [{message:"Operation NOT Allowed"}]
-            }         
-            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
-
-        }
-        else {
-
-            const flagService = new FlagService()
+        try {
             let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
-
-            let flagValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
-
-            for (let flagContextIndex = 0; flagContextIndex < flag.contexts.length; flagContextIndex++) {
-                const flagContext = flag.contexts[flagContextIndex];         
-                if ('boolean_conditioned_true' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            flagValidationResult.isValid = false
-                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
-                        }
-                        
-                    }
+    
+            let dbResultOk = false
+            if (flag.uuid !== "") {
+                dbResultOk = await flagService.updateOne(flag) 
+            } else {
+                dbResultOk = await flagService.create(flag)
+            }
+            if (dbResultOk) {
+                ctx.body = {
+                    status: 'success',
+                }                    
+            }
+            else {
+                ctx.status=500
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message: "Data Unexpected Error"}]
                 }
-                if ('boolean_conditioned_false' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_false.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditioned_false.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            flagValidationResult.isValid = false
-                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
-                        }
-                        
-                    } 
-                }
-                if ('boolean_conditionedor_true' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_true.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditionedor_true.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            flagValidationResult.isValid = false
-                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
-                        }
-                        
-                    }
-                }            
-                if ('boolean_conditionedor_false' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            flagValidationResult.isValid = false
-                            flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
-                        }
-                        
-                    }
-                }            
-                if ('string' in flagContext.engine_parameters && flagContext.engine==="string"){
-                                            
-                    let engineStringValidationResult = EngineStringDataObjectValidator.validateFunction(flagContext.engine_parameters.string,EngineStringDataObjectValidator.validateSchema)
-                    if (!engineStringValidationResult.isValid) {
-                        flagValidationResult.isValid = false
-                        flagValidationResult.messages = flagValidationResult.messages.concat(engineStringValidationResult.messages)
-                        break
-                    }
-
-                }            
+                console.log("DATABASE ERROR writing flag "+flag.uuid)
+            }  
+                         
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
                 
             }
-
-            if (await flagService.fieldValueExists(flag.uuid,"name",flag.name)){
+            else if (error instanceof ExceptionRecordAlreadyExists) {
                 ctx.status=409
                 ctx.body = {
                     status: 'error',
-                    messages: [{field:"name",message:"Name already exists"}]
-                }              
-            }
-            else if (flagValidationResult.isValid) {
-                let dbResultOk = false
-                if (flag.uuid !== "") {
-                    dbResultOk = await flagService.updateOne(flag) 
-                } else {
-                    dbResultOk = await flagService.create(flag)
-                }
-                if (dbResultOk) {
-                    ctx.body = {
-                        status: 'success',
-                    }                    
-                }
-                else {
-                    ctx.status=500
-                    ctx.body = {
-                        status: 'error',
-                        messages: [{message: "Data Unexpected Error"}]
-                    }
-                    console.log("DATABASE ERROR writing flag "+flag.uuid)
-                }
-
+                    messages: [{field:"email",message:"Name already exists"}]
+                }   
                 
-            } else {
+            }
+            else if (error instanceof ExceptionInvalidObject) {
                 ctx.status=400
                 ctx.body = {
                     status: 'error',
-                    messages: flagValidationResult.messages
+                    //@ts-ignore
+                    messages: error.errorMessages
                 }
+                
             }
-            flagService.dispose()
+            else {
+                console.error(error)
+
+            }              
+        } finally{
+            flagService.dispose() 
         }
+  
 
     })
 
     router.delete('/flag',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])
-        if (!processAllowed) {
+        const flagService = new FlagService(prefix,userPermissions)
 
-            ctx.status=401
-            ctx.body = {
-                status: 'error',
-                messages: [{message:"Operation NOT Allowed"}]
-            }         
-            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
-
-        }
-        else {
-
-            const flagService = new FlagService()
+        try {
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
@@ -296,9 +248,25 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     message: "Invalid Uuid"
                 }
-
+    
             }
-            flagService.dispose()
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
+                
+            }
+            else {
+                console.error(error)
+
+            }              
+        } finally {
+            flagService.dispose()            
+
         }
 
     })

@@ -31,60 +31,6 @@
         let flag = app.module_data.flag_form.flag
         flag.name = flag.name.trim()
         let flagValidationResult = app.module_data.flag_form.flagValidateFunction(flag,app.module_data.flag_form.flagValidateSchema)
-
-        let engineBooleanConditionedConditionsValidationResult = true
-        for (let flagContextIndex = 0; flagContextIndex < flag.contexts.length; flagContextIndex++) {
-            const flagContext = flag.contexts[flagContextIndex];
-            if ('boolean_conditioned_true' in flagContext.engine_parameters){
-                for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
-                    const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];
-                    let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
-                    if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                        flagValidationResult.isValid = false
-                        flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                        break
-                    }
-                    
-                }
-            }
-            if ('boolean_conditioned_false' in flagContext.engine_parameters){
-                for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_false.conditions.length; conditionIndex++) {
-                    const condition = flagContext.engine_parameters.boolean_conditioned_false.conditions[conditionIndex];
-                    let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
-                    if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                        flagValidationResult.isValid = false
-                        flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                        break
-                    }
-                    
-                } 
-            }
-            if ('boolean_conditionedor_true' in flagContext.engine_parameters){
-                for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_true.conditions.length; conditionIndex++) {
-                    const condition = flagContext.engine_parameters.boolean_conditionedor_true.conditions[conditionIndex];
-                    let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
-                    if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                        flagValidationResult.isValid = false
-                        flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                        break
-                    }
-                    
-                }
-            }
-            if ('boolean_conditionedor_false' in flagContext.engine_parameters){
-                for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
-                    const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
-                    let engineBooleanConditionedConditionValidationResult = app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction(condition,app.module_data.flag_form.engineBooleanConditionedConditionValidateShema)
-                    if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                        flagValidationResult.isValid = false
-                        flagValidationResult.messages = flagValidationResult.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                        break
-                    }
-                    
-                }
-            }                        
-            
-        }
        
         if (flagValidationResult.isValid) {
             app.setElementForPendingOperation(triggerElement)

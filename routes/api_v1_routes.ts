@@ -3,7 +3,7 @@ import { Context } from "koa";
 import { FlagService } from "../services/FlagService";
 import { FlagDataObject } from "../dataObjects/FlagDataObject";
 import { env } from 'node:process';
-import { ExceptionNotAuthorized } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 import koaBody from 'koa-body';
 
@@ -179,7 +179,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 console.log("SECURITY WARNING: unauthorized user traying to READ on " + prefix +'.flag')
                 
             }
-
+            else if (error instanceof ExceptionInvalidObject) {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    //@ts-ignore
+                    messages: error.errorMessages
+                }
+                
+            }
             else {
                 console.error(error)
 

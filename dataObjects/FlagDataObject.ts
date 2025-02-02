@@ -3,6 +3,7 @@ import { HtmlDataObjectFieldRender,HtmlDataObjectRender } from "../../../service
 import { IllegalCharacters as IllegalCharactersRegexp, IllegalCharactersValidationMessage } from "../../../values/regular_expressions";
 import { EngineBooleanConditionedConditionDataObjectValidator } from "./EngineBooleanConditionedDataObject";
 import { EngineStringDataObjectValidator } from "./EngineStringDataObject";
+import { EngineBooleanDataObjectValidator } from "./EngineBooleanDataObject";
 
 export class FlagDataObject {
     _id:any = ""
@@ -88,69 +89,83 @@ export const FlagDataObjectValidator:any = {
         //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
         try {
             for (let flagContextIndex = 0; flagContextIndex < data.contexts.length; flagContextIndex++) {
-                const flagContext = data.contexts[flagContextIndex];         
-                if ('boolean_conditioned_true' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            result.isValid = false
-                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
+                const flagContext = data.contexts[flagContextIndex];
+
+                let flagContextValidationResult = FlagContextDataObjectValidator.validateFunction(flagContext,FlagContextDataObjectValidator.validateSchema)
+
+                if (flagContextValidationResult.isValid) {
+                    if ('boolean_conditioned_true' in flagContext.engine_parameters){
+                        for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
+                            const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];
+                            let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                            if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                                result.isValid = false
+                                result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                                break
+                            }
+                            
                         }
-                        
                     }
-                }
-                if ('boolean_conditioned_false' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_false.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditioned_false.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            result.isValid = false
-                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
-                        }
-                        
-                    } 
-                }
-                if ('boolean_conditionedor_true' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_true.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditionedor_true.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            result.isValid = false
-                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
-                        }
-                        
+                    if ('boolean_conditioned_false' in flagContext.engine_parameters){
+                        for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_false.conditions.length; conditionIndex++) {
+                            const condition = flagContext.engine_parameters.boolean_conditioned_false.conditions[conditionIndex];
+                            let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                            if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                                result.isValid = false
+                                result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                                break
+                            }
+                            
+                        } 
                     }
-                }            
-                if ('boolean_conditionedor_false' in flagContext.engine_parameters){
-                    for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
-                        const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
-                        let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
-                        if (!engineBooleanConditionedConditionValidationResult.isValid) {
-                            result.isValid = false
-                            result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
-                            break
+                    if ('boolean_conditionedor_true' in flagContext.engine_parameters){
+                        for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_true.conditions.length; conditionIndex++) {
+                            const condition = flagContext.engine_parameters.boolean_conditionedor_true.conditions[conditionIndex];
+                            let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                            if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                                result.isValid = false
+                                result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                                break
+                            }
+                            
                         }
-                        
-                    }
-                }            
-                if ('string' in flagContext.engine_parameters && flagContext.engine==="string"){
-                    //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
-                    try {
+                    }            
+                    if ('boolean_conditionedor_false' in flagContext.engine_parameters){
+                        for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditionedor_false.conditions.length; conditionIndex++) {
+                            const condition = flagContext.engine_parameters.boolean_conditionedor_false.conditions[conditionIndex];
+                            let engineBooleanConditionedConditionValidationResult = EngineBooleanConditionedConditionDataObjectValidator.validateFunction(condition,EngineBooleanConditionedConditionDataObjectValidator.validateSchema)
+                            if (!engineBooleanConditionedConditionValidationResult.isValid) {
+                                result.isValid = false
+                                result.messages = result.messages.concat(engineBooleanConditionedConditionValidationResult.messages)
+                                break
+                            }
+                            
+                        }
+                    }            
+                    if ('string' in flagContext.engine_parameters && flagContext.engine==="string"){
+
                         let engineStringValidationResult = EngineStringDataObjectValidator.validateFunction(flagContext.engine_parameters.string,EngineStringDataObjectValidator.validateSchema)
                         if (!engineStringValidationResult.isValid) {
                             result.isValid = false
                             result.messages = result.messages.concat(engineStringValidationResult.messages)                   
                             break
-                        }                    
-                    } catch (error) {
-                        
-                    }                      
-    
-                }            
+                        }
+                    }                     
+                    if ('boolean' in flagContext.engine_parameters){
+
+                        let engineBooleanValidationResult = EngineBooleanDataObjectValidator.validateFunction(flagContext.engine_parameters.boolean,EngineBooleanDataObjectValidator.validateSchema)
+                        if (!engineBooleanValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineBooleanValidationResult.messages)                   
+                            break
+                        }
+                    }                     
+                } else {
+                    result.isValid = false
+                    result.messages = result.messages.concat(flagContextValidationResult.messages)
+                    break                    
+                }
+                         
                 
             }            
         } catch (error) {
@@ -195,4 +210,25 @@ export class FlagContextDataObject {
     //Each key is the engine name, and the value is an object with the parameters
     engine_parameters:any = {}
 
+}
+
+export const FlagContextDataObjectValidator:any = {
+
+    validateSchema : {
+        bucket_context_uuid : {
+            regexp:"^.{24}$",
+            message:"Bucket context format is invalid",
+            required:true,
+            requiredMessage : "Tag name is required."
+        },
+        engine : {
+            regexp:"^(string|boolean|boolean_conditioned_true|boolean_conditioned_false|boolean_conditionedor_true|boolean_conditionedor_false)$",
+            message:"Invalid context engine",
+            required:true,
+            requiredMessage : "The context engine is required."
+        },        
+
+    },
+
+    validateFunction : DataObjectValidateFunction
 }

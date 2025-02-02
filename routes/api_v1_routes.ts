@@ -105,36 +105,18 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
                     let flagContextConfig = ctx.request.body["flag-config"] || ""
                     if (flagContextConfig !== "") {
-                        let flag = await flagService.getByName(flagContextConfig.name)
-                        let contextFound = false
-                        flag.contexts.forEach(context => {
-                            if (context.bucket_context_uuid === contextKey) {
-                                contextFound=true
-                                context.engine=flagContextConfig.engine
-                                context.engine_parameters=flagContextConfig.engine_parameters
-                            }
-                        });
-                        if (contextFound) {
-                            let dbResultOk = await flagService.updateOne(flag)
-                            if (dbResultOk) {
-                                ctx.body = {
-                                    status: 'success',
-                                }                    
-                            }
-                            else {
-                                ctx.status=500
-                                ctx.body = {
-                                    status: 'error',
-                                    messages: [{message: "Data Unexpected Error"}]
-                                }
-                                console.log("DATABASE ERROR writing flag "+flag.name)
-                            }                             
-                        } else {
+                        let contextConfigUpdated = await flagService.updateFlagContextConfig(contextKey,flagContextConfig)
+                        if (!contextConfigUpdated) {
                             console.log('API - set-flag-config - '+flagContextConfig.name+' - No match for flag and context storage' )
                             ctx.status=400
                             ctx.body = {
                                 status: 'error',
                                 message: 'No match for flag and context storage'
+                            }
+                        }
+                        else{
+                            ctx.body = {
+                                status: 'success'
                             }
                         }
 
@@ -145,10 +127,6 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                             status: 'error',
                             message: 'No valid Flag Definition'
                         }
-                    }
-        
-                    ctx.body = {
-                        status: 'success'
                     }
                     
                 } else {

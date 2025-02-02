@@ -1,5 +1,5 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject,ExceptionDataBaseUnExpectedResult } from "../../../types/exception_custom_errors";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { FlagDataObject,FlagDataObjectValidator } from "../dataObjects/FlagDataObject";
 import { FlagModel } from "../models/FlagModel";
@@ -44,25 +44,55 @@ export class FlagService implements IDisposable {
         
     }
 
-    async updateOne(flag:FlagDataObject){
-        let userValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
+    async updateOne(newFlag:FlagDataObject,oldFlag:any = false){
+
+        if (oldFlag === false) {
+            oldFlag = await this.getByName(newFlag.name)
+        }     
+        let userValidationResult=FlagDataObjectValidator.validateFunction(newFlag,FlagDataObjectValidator.validateSchema,oldFlag)
 
         if (!userValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
-        }        
+        }
         
-        if (await this.fieldValueExists(flag.uuid,"name",flag.name)) {
+        if (await this.fieldValueExists(newFlag.uuid,"name",newFlag.name)) {
             throw new ExceptionRecordAlreadyExists("Name already exists")
         }  
 
         if (this.userCanWrite) {
-            return await this.flagModel.updateOne(flag)
+            return await this.flagModel.updateOne(newFlag)
             
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
         }            
 
+    }
+
+    async updateFlagContextConfig(contextKey:any,flagContextConfig:any){
+        let oldFlag = await this.getByName(flagContextConfig.flag_name)
+        let newFlag = JSON.parse(JSON.stringify(oldFlag)) as FlagDataObject
+        let contextFound = false
+        let result = false
+        newFlag.contexts.forEach(context => {
+            if (context.bucket_context_uuid === contextKey) {
+                contextFound=true
+                context.engine=flagContextConfig.engine
+                context.engine_parameters=flagContextConfig.engine_parameters
+            }
+        });
+        if (contextFound) {
+            let dbResultOk = await this.updateOne(newFlag,oldFlag)
+            if (dbResultOk) {
+                result = true                   
+            }
+            else {
+                throw new ExceptionDataBaseUnExpectedResult(ExceptionDataBaseUnExpectedResult.databaseUnexpectedResult)
+            }                             
+        } else {
+            result = false
+        }
+        return result    
     }
 
     async deleteByUuId(flagUuId:string){

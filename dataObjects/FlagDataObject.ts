@@ -36,7 +36,7 @@ export const FlagDataObjectValidator:any = {
 
     },
 
-    validateFunction : (data:any,validateSchema:any) => {
+    validateFunction : (data:any,validateSchema:any,oldData:any=false) => {
         let fieldRegexp = ""
         let fieldValue = ""
         let result:any = {
@@ -94,6 +94,25 @@ export const FlagDataObjectValidator:any = {
                 let flagContextValidationResult = FlagContextDataObjectValidator.validateFunction(flagContext,FlagContextDataObjectValidator.validateSchema)
 
                 if (flagContextValidationResult.isValid) {
+                    if (oldData !== false) {
+                        if (data.contexts[flagContextIndex].engine==="string" || oldData.contexts[flagContextIndex].engine==="string") {
+                            if (data.contexts[flagContextIndex].engine==="string" && oldData.contexts[flagContextIndex].engine==="string") {
+                                //Allowed
+                            }
+                            else{
+                                result.isValid=false
+                                result.messages.push({
+                                    field:"engine",
+                                    message:"Can NOT change type of engine between string and boolean"
+                                })
+                            }
+    
+                            
+                        }
+                        
+                    }
+                }
+                if (result.isValid && flagContextValidationResult.isValid) {
                     if ('boolean_conditioned_true' in flagContext.engine_parameters){
                         for (let conditionIndex = 0; conditionIndex < flagContext.engine_parameters.boolean_conditioned_true.conditions.length; conditionIndex++) {
                             const condition = flagContext.engine_parameters.boolean_conditioned_true.conditions[conditionIndex];

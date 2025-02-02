@@ -69,29 +69,37 @@ export class FlagService implements IDisposable {
 
     }
 
-    async updateFlagContextConfig(contextKey:any,flagContextConfig:any){
-        let oldFlag = await this.getByName(flagContextConfig.flag_name)
-        let newFlag = JSON.parse(JSON.stringify(oldFlag)) as FlagDataObject
+    async updateFlagsContextConfig(contextKey:any,flagsContextConfig:any){
+
         let contextFound = false
         let result = false
-        newFlag.contexts.forEach(context => {
-            if (context.bucket_context_uuid === contextKey) {
-                contextFound=true
-                context.engine=flagContextConfig.engine
-                context.engine_parameters=flagContextConfig.engine_parameters
+
+        for (let flagsContextConfigIndex = 0; flagsContextConfigIndex < flagsContextConfig.length; flagsContextConfigIndex++) {
+            const flagContextConfig = flagsContextConfig[flagsContextConfigIndex];
+
+            let oldFlag = await this.getByName(flagContextConfig.flag_name)
+            let newFlag = JSON.parse(JSON.stringify(oldFlag)) as FlagDataObject
+            newFlag.contexts.forEach(context => {
+                if (context.bucket_context_uuid === contextKey) {
+                    contextFound=true
+                    context.engine=flagContextConfig.engine
+                    context.engine_parameters=flagContextConfig.engine_parameters
+                }
+            });            
+
+            if (contextFound) {
+                let dbResultOk = await this.updateOne(newFlag,oldFlag)
+                if (dbResultOk) {
+                    result = true                   
+                }
+                else {
+                    throw new ExceptionDataBaseUnExpectedResult(ExceptionDataBaseUnExpectedResult.databaseUnexpectedResult + " setting flag:" + newFlag.name)
+                }                             
+            } else {
+                result = false
             }
-        });
-        if (contextFound) {
-            let dbResultOk = await this.updateOne(newFlag,oldFlag)
-            if (dbResultOk) {
-                result = true                   
-            }
-            else {
-                throw new ExceptionDataBaseUnExpectedResult(ExceptionDataBaseUnExpectedResult.databaseUnexpectedResult)
-            }                             
-        } else {
-            result = false
         }
+
         return result    
     }
 

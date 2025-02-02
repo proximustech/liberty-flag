@@ -92,7 +92,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     })
 
-    router.post(apiPrefix+'/set-flag-config',koaBody(), async (ctx:Context) => {
+    router.post(apiPrefix+'/set-flags-config',koaBody(), async (ctx:Context) => {
 
         let userPermissions:any = [['','liberty_flag.flag','read'],['','liberty_flag.flag','write']]
         const flagService = new FlagService(apiSecurityPrefix,userPermissions)
@@ -103,15 +103,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             if (accessToken === env.LIBERTY_FLAG_ACCESS_TOKEN) {
                 if (contextKey !== "") {
 
-                    let flagContextConfig = ctx.request.body["flag-config"] || ""
-                    if (flagContextConfig !== "") {
-                        let contextConfigUpdated = await flagService.updateFlagContextConfig(contextKey,flagContextConfig)
+                    let flagsContextConfig = ctx.request.body["flags-config"] || ""
+                    if (flagsContextConfig !== "") {
+                        let contextConfigUpdated = await flagService.updateFlagsContextConfig(contextKey,flagsContextConfig)
                         if (!contextConfigUpdated) {
-                            console.log('API - set-flag-config - '+flagContextConfig.name+' - No match for flag and context storage' )
+                            console.log('API - set-flags-config - '+flagsContextConfig.name+' - No match for flags and context storage' )
                             ctx.status=400
                             ctx.body = {
                                 status: 'error',
-                                message: 'No match for flag and context storage'
+                                message: 'No match for flags and context storage'
                             }
                         }
                         else{

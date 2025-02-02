@@ -8,8 +8,11 @@ import { Uuid } from "../../../services/utilities";
 
 async function main() {
 
+  let userPermissions:any = [['','liberty_flag.flag','read'],['','liberty_flag.flag','write']]
+  const flagService = new FlagService('liberty_flag',userPermissions)
+
     let bucketService = new BucketService()
-    let flagService = new FlagService()
+
 
     let bucketContext_dev = new BucketContextDataObject()
     bucketContext_dev.name = "Dev"

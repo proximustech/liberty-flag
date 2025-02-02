@@ -54,6 +54,18 @@ export class FlagModel implements IDisposable {
         else return false
     }
 
+    async getByName(name:string) : Promise<FlagDataObject> {
+
+        const cursor = this.collection.find({name : name});
+
+        while (await cursor.hasNext()) {
+            let document = (await cursor.next() as FlagDataObject);
+            return document
+        }
+
+        return new FlagDataObject()
+    }
+
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
 
         const cursor = this.collection.find({uuid : uuid});

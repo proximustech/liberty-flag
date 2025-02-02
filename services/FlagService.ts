@@ -75,6 +75,18 @@ export class FlagService implements IDisposable {
         }     
     }
 
+    async getByName(name:string) : Promise<FlagDataObject> {
+
+        if (this.userCanRead) {
+            return await this.flagModel.getByName(name)
+
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }            
+
+    }
+
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
 
         if (this.userCanRead) {

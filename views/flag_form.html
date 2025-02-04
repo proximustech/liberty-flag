@@ -391,7 +391,7 @@
         }
 
         let html =`
-            <span id="boolean_condition_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px">
+            <span id="boolean_condition_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
                 <div class="card-body">
                     <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                     <input id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
@@ -443,7 +443,7 @@
         }
 
         let html =`
-            <span id="boolean_condition_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px">
+            <span id="boolean_condition_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
                 <div class="card-body">        
                     <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                     <input id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
@@ -494,7 +494,7 @@
         }
 
         let html =`
-        <span id="boolean_conditionor_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px">
+        <span id="boolean_conditionor_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
             <div class="card-body">        
                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedOrTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
@@ -543,7 +543,7 @@
         }
 
         let html =`
-        <span id="boolean_conditionor_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px">
+        <span id="boolean_conditionor_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
             <div class="card-body">        
                 <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedOrFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />

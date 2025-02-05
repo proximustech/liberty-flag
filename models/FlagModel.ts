@@ -78,6 +78,11 @@ export class FlagModel implements IDisposable {
         return new FlagDataObject()
     }
 
+    async getAll() : Promise<FlagDataObject[]> {
+        const cursor = this.collection.find({});
+        return (await cursor.toArray() as FlagDataObject[])
+    }
+
     async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
         const cursor = this.collection.find({bucket_uuid: bucketUuId});
         return (await cursor.toArray() as FlagDataObject[])

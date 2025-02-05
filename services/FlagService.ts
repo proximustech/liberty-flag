@@ -137,6 +137,16 @@ export class FlagService implements IDisposable {
 
     }
 
+    async getAll() : Promise<FlagDataObject[]> {
+        if (this.userCanRead) {
+            return await this.flagModel.getAll()
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        } 
+    }
+
     async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
         if (this.userCanRead) {
             return await this.flagModel.getAllByBucketUuid(bucketUuId)

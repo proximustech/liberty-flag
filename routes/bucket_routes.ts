@@ -2,6 +2,7 @@ import { Context } from "koa";
 import Router from "koa-router"
 import { Uuid } from "../../../services/utilities";
 import { BucketService } from "../services/BucketService";
+import { FlagService } from "../services/FlagService";
 import { TagService } from "../services/TagService";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
@@ -216,6 +217,91 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         }
 
     })
+
+    router.get('/contexts', async (ctx:Context) => {
+        const bucketService = new BucketService()
+        try {
+
+            let buckets = await bucketService.getAll()
+
+            const nameBucketContextMap = new Map<string, string>();
+
+            for (let bucketIndex = 0; bucketIndex < buckets.length; bucketIndex++) {
+                const bucket = buckets[bucketIndex];
+                bucket.contexts.forEach(context => {
+                    nameBucketContextMap.set(context.name,bucket.uuid+","+context.uuid)
+                    
+                });
+                
+            }
+
+            let contexts:any=[]
+            nameBucketContextMap.forEach((value, key, map) => {
+                contexts.push({ name: key,uuids:value})
+            });            
+
+            viewVars.contexts = contexts
+            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.module_data.contexts_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+
+            return ctx.render('plugins/_'+prefix+'/views/contexts', viewVars);
+        } catch (error) {
+            console.error(error)
+        } finally {
+            bucketService.dispose()
+        }
+    })
+
+    router.get('/context', async (ctx:Context) => {
+        let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const flagService = new FlagService(prefix,userPermissions)        
+        const bucketService = new BucketService()
+        const tagService = new TagService()
+        try {
+
+            let uuids:any = ctx.request.query.uuids || ""
+            let bucketUuid = uuids.split(",")[0]
+            let contextUuid = uuids.split(",")[1]
+            let bucket = await bucketService.getByUuId(bucketUuid)
+            let contextName = ""
+            bucket.contexts.forEach(context => {
+                if (context.uuid===contextUuid) {
+                    contextName=context.name
+                    
+                }
+            });
+
+            let buckets = await bucketService.getAll()
+            viewVars.matchedContextsUuids=[]
+
+            for (let bucketIndex = 0; bucketIndex < buckets.length; bucketIndex++) {
+                const bucket = buckets[bucketIndex];
+                bucket.contexts.forEach(context => {
+                    if (context.name===contextName) {
+                        viewVars.matchedContextsUuids.push(context.uuid)
+                    }
+                });
+                
+            }
+
+            viewVars.bucketUuidMap = bucketService.getUuidMapFromList(await bucketService.getAll())
+            viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+            viewVars.contextName = contextName
+            viewVars.flags = await flagService.getAll()
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.module_data.context.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+
+            return ctx.render('plugins/_'+prefix+'/views/context', viewVars);
+        } catch (error) {
+            console.error(error)
+        }
+        finally{
+            tagService.dispose()
+            flagService.dispose()
+            bucketService.dispose()
+        }
+    })    
 
     return router
 }

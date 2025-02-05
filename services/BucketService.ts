@@ -95,6 +95,17 @@ export class BucketService implements IDisposable {
         });
 
         return result
+    }
+    
+    getUuidMapFromList(list:BucketDataObject[]) : Map<string, string> {
+        //let result:any = {}
+        const result = new Map<string, string>();
+        list.forEach(bucket => {
+            //result[tag.name]=tag.uuid
+            result.set(bucket.uuid,bucket.name)
+        });
+
+        return result
     }     
 
 }

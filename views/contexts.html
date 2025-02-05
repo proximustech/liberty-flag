@@ -1,0 +1,43 @@
+<div class="alert alert-light" role="alert" style="text-align: left;">
+    <strong>Contexts</strong>
+</div>
+<% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
+    <div style="width: 50%;position: absolute;right: 23px;top:93px">
+        <sl-input id="context_search_box" placeholder="Search..." size="medium" pill>
+            <sl-icon name="search" slot="prefix"></sl-icon>
+        </sl-input>    
+    </div>
+    <br>
+    <br>
+    <table 
+        id="contexts_table" 
+        data-toggle="table" 
+        data-search="true" 
+        data-search-align="left" 
+        data-search-selector="#context_search_box" 
+        data-search-highlight="true"
+        data-sortable="true"    
+    >
+        <thead>
+            <tr>
+                <th data-sortable="true">Name</th>
+            </tr>
+        </thead>
+        <% contexts.forEach(context => { %>
+        <tr>
+            <td>
+                <span>
+                    <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('content_view');htmx.ajax('GET', '/<%= prefix %>/context?uuids=<%= context.uuids %>', {target:'#content_view', swap:'innerHTML'});"><i class="bi bi-eye"></i></button>
+                </span>
+                <%= context.name %>
+            </td>
+        </tr>
+        <% }) %>
+    </table>
+
+<% } %>
+<script>
+    app.module_data = {}
+    app.module_data.contexts_table = $('#contexts_table')
+    app.module_data.contexts_table.bootstrapTable()
+</script>

@@ -1,0 +1,92 @@
+<div class="alert alert-light" role="alert" style="text-align: left;">
+    <strong>Context:</strong> <%= contextName %>
+</div>
+<span class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Options
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+        <a class="dropdown-item" style="height:40px" onclick="app.ajax('content_view','/<%= prefix %>/contexts');">
+            <i class="bi bi-arrow-left-circle"></i> Back to Contexts
+        </a>        
+    </li>
+  </ul>
+</span>
+<div style="width: 50%;position: absolute;right: 23px;top:93px">
+    <sl-input id="flag_search_box" placeholder="Search..." size="medium" pill>
+        <sl-icon name="search" slot="prefix"></sl-icon>
+    </sl-input>    
+</div>
+<br>
+<br>
+<table 
+    id="flags_table" 
+    data-toggle="table" 
+    data-search="true" 
+    data-search-align="left" 
+    data-search-selector="#flag_search_box" 
+    data-search-highlight="true"
+    data-sortable="true"    
+>
+    <thead>
+        <tr>
+            <th data-sortable="true">Flag Values</th>
+        </tr>
+    </thead>
+    
+    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['read'])) { %>
+        <% flags.forEach(flag => { %>
+            <% flag.contexts.forEach(context=> { %>
+                <% if (matchedContextsUuids.includes(context.bucket_context_uuid)) { %>
+                    <tr>
+                        <td>
+                            <span class="card" style="margin:10px;box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2)">
+                                <div class="card-body">
+                                    <p><strong>Bucket Name:</strong> <%= bucketUuidMap.get(flag.bucket_uuid) %></p>
+                                    <p><strong>Flag Name:</strong> <%= flag.name %></p>
+                                    <p><strong>Description:</strong> <%= flag.description %></p>                                        
+                                    <% if (context.engine == "string") { %>
+                                        <p class="card-text"><strong>Engine:</strong> String</p>
+                                        <input type='text' class="form-control" value='<%= context.engine_parameters.string.value %>' disabled='disabled'>
+                                    <% } else if (context.engine == "boolean") { %>
+                                        <p class="card-text"><strong>Engine:</strong> True/False</p>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" <% if(context.engine_parameters.boolean.status){ %> checked <% } %>  disabled="disabled">
+                                        </div>                                    
+                                    <% } else if (context.engine == "boolean_conditioned_false") { %>
+                                        <p class="card-text"><strong>Engine:</strong> False (AND)</p>
+                                        <p class="card-text"><%= context.engine_parameters.boolean_conditioned_false.conditions.length %> Conditions</p>
+                                    <% } else if (context.engine == "boolean_conditioned_true") { %>
+                                        <p class="card-text"><strong>Engine:</strong> True (AND)</p>
+                                        <p class="card-text"><%= context.engine_parameters.boolean_conditioned_true.conditions.length %> Conditions</p>
+                                    <% } else if (context.engine == "boolean_conditionedor_false") { %>
+                                        <p class="card-text"><strong>Engine:</strong> False (OR)</p>
+                                        <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_false.conditions.length %> Conditions</p>
+                                    <% } else if (context.engine == "boolean_conditionedor_true") { %>
+                                        <p class="card-text"><strong>Engine:</strong> True (OR)</p>
+                                        <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
+                                    <% } %>
+                                    <div class="alert alert-light" role="alert" style="margin-top: 7px;">
+                                        Tags:
+                                        <% flag.tags.forEach(tagUuid=> { %>
+                                            <span class="badge text-bg-warning"><%= tagUuidMap.get(tagUuid) %></span>
+                                        <% }) %>
+                                    </div>                                         
+                                </div>
+                            </span>
+                                                   
+                            <% } %>
+                        </td>
+                    </tr>
+            <% }) %>
+        <% }) %>
+    <% } %>
+
+</table>
+<script>
+    app.module_data = {}
+    app.module_data.flags_list={}
+    app.module_data.flags_table = $('#flags_table')
+    app.module_data.flags_table.bootstrapTable()
+</script>

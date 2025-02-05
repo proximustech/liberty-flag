@@ -31,7 +31,7 @@ export class FlagService implements IDisposable {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
 
-        if (await this.fieldValueExists(flag.uuid,"name",flag.name)) {
+        if (await this.fieldValueExists(flag.bucket_uuid,flag.uuid,"name",flag.name)) {
             throw new ExceptionRecordAlreadyExists("Name already exists")
         }        
 
@@ -55,7 +55,7 @@ export class FlagService implements IDisposable {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
         
-        if (await this.fieldValueExists(newFlag.uuid,"name",newFlag.name)) {
+        if (await this.fieldValueExists(newFlag.bucket_uuid,newFlag.uuid,"name",newFlag.name)) {
             throw new ExceptionRecordAlreadyExists("Name already exists")
         }  
 
@@ -157,10 +157,10 @@ export class FlagService implements IDisposable {
         } 
     }        
 
-    async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
+    async fieldValueExists(processedDocumentBucketUuid:string,processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
 
         if (this.userCanRead) {
-            return await this.flagModel.fieldValueExists(processedDocumentUuid,fieldName,fieldValue)
+            return await this.flagModel.fieldValueExists(processedDocumentBucketUuid,processedDocumentUuid,fieldName,fieldValue)
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            

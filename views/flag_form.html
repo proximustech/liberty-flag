@@ -171,13 +171,6 @@
      * Set display context data inside the "Context Values Tab" and Sets the data inside the flag data structure
      */ 
     function setFlagContextValueConfig(contextUuid){
-        bucketContext = {}
-        app.module_data.flags_list.bucket.contexts.forEach(tempContext => {
-            if (tempContext.uuid === contextUuid) {
-                bucketContext = tempContext
-            }
-
-        });
         let isChecked = document.getElementById("bucket_context_visibility_"+contextUuid).checked
 
         if (isChecked) {

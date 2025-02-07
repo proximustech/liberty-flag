@@ -27,11 +27,12 @@
     data-search-align="left" 
     data-search-selector="#flag_search_box" 
     data-search-highlight="true"
-    data-sortable="true"    
+    data-sortable="true"  
+    style="border-style: hidden;"  
 >
     <thead>
         <tr>
-            <th data-sortable="true">Flag Values</th>
+            <th data-sortable="true">Order by Bucket</th>
         </tr>
     </thead>
     
@@ -41,44 +42,55 @@
                 <% if (matchedContextsUuids.includes(context.bucket_context_uuid)) { %>
                     <tr>
                         <td>
-                            <span class="card" style="margin:10px;box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2)">
-                                <div class="card-body">
-                                    <p><strong>Bucket Name:</strong> <%= bucketUuidMap.get(flag.bucket_uuid) %></p>
-                                    <p><strong>Flag Name:</strong> <%= flag.name %></p>
-                                    <p><strong>Description:</strong> <%= flag.description %></p>                                        
-                                    <% if (context.engine == "string") { %>
-                                        <p class="card-text"><strong>Engine:</strong> String</p>
-                                        <input type='text' class="form-control" value='<%= context.engine_parameters.string.value %>' disabled='disabled'>
-                                    <% } else if (context.engine == "boolean") { %>
-                                        <p class="card-text"><strong>Engine:</strong> True/False</p>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" <% if(context.engine_parameters.boolean.status){ %> checked <% } %>  disabled="disabled">
-                                        </div>                                    
-                                    <% } else if (context.engine == "boolean_conditioned_false") { %>
-                                        <p class="card-text"><strong>Engine:</strong> False (AND)</p>
-                                        <p class="card-text"><%= context.engine_parameters.boolean_conditioned_false.conditions.length %> Conditions</p>
-                                    <% } else if (context.engine == "boolean_conditioned_true") { %>
-                                        <p class="card-text"><strong>Engine:</strong> True (AND)</p>
-                                        <p class="card-text"><%= context.engine_parameters.boolean_conditioned_true.conditions.length %> Conditions</p>
-                                    <% } else if (context.engine == "boolean_conditionedor_false") { %>
-                                        <p class="card-text"><strong>Engine:</strong> False (OR)</p>
-                                        <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_false.conditions.length %> Conditions</p>
-                                    <% } else if (context.engine == "boolean_conditionedor_true") { %>
-                                        <p class="card-text"><strong>Engine:</strong> True (OR)</p>
-                                        <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
-                                    <% } %>
-                                    <div class="alert alert-light" role="alert" style="margin-top: 7px;">
-                                        Tags:
-                                        <% flag.tags.forEach(tagUuid=> { %>
-                                            <span class="badge text-bg-warning"><%= tagUuidMap.get(tagUuid) %></span>
-                                        <% }) %>
-                                    </div>                                         
+                            <div class="lp_container">
+                                <div class="lp_contrast_container">
+                                    <table style="width: 100%;border-style: none;">
+                                        <tr>
+                                            <td style="width: 50%;"><strong>Bucket Name:</strong> <%= bucketUuidMap.get(flag.bucket_uuid) %> <strong>Flag Name:</strong> <%= flag.name %></td>
+                                            <td style="width: 50%;text-align: right;">
+                                                     
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
-                            </span>
-                                                   
-                            <% } %>
+                                <div class="register_container_body">
+                                        <div class="card-body">
+                                            <p></p>
+                                            <p></p>
+                                            <p><strong>Description:</strong> <%= flag.description %></p>                                        
+                                            <% if (context.engine == "string") { %>
+                                                <p class="card-text"><strong>Engine:</strong> String</p>
+                                                <input type='text' class="form-control" value='<%= context.engine_parameters.string.value %>' disabled='disabled'>
+                                            <% } else if (context.engine == "boolean") { %>
+                                                <p class="card-text"><strong>Engine:</strong> True/False</p>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" <% if(context.engine_parameters.boolean.status){ %> checked <% } %>  disabled="disabled">
+                                                </div>                                    
+                                            <% } else if (context.engine == "boolean_conditioned_false") { %>
+                                                <p class="card-text"><strong>Engine:</strong> False (AND)</p>
+                                                <p class="card-text"><%= context.engine_parameters.boolean_conditioned_false.conditions.length %> Conditions</p>
+                                            <% } else if (context.engine == "boolean_conditioned_true") { %>
+                                                <p class="card-text"><strong>Engine:</strong> True (AND)</p>
+                                                <p class="card-text"><%= context.engine_parameters.boolean_conditioned_true.conditions.length %> Conditions</p>
+                                            <% } else if (context.engine == "boolean_conditionedor_false") { %>
+                                                <p class="card-text"><strong>Engine:</strong> False (OR)</p>
+                                                <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_false.conditions.length %> Conditions</p>
+                                            <% } else if (context.engine == "boolean_conditionedor_true") { %>
+                                                <p class="card-text"><strong>Engine:</strong> True (OR)</p>
+                                                <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
+                                            <% } %>
+                                            <div class="alert alert-light" role="alert" style="margin-top: 7px;">
+                                                Tags:
+                                                <% flag.tags.forEach(tagUuid=> { %>
+                                                    <span class="badge text-bg-warning"><%= tagUuidMap.get(tagUuid) %></span>
+                                                <% }) %>
+                                            </div>                                         
+                                        </div>                                
+                                </div>                
+                            </div>                          
                         </td>
                     </tr>
+                <% } %>
             <% }) %>
         <% }) %>
     <% } %>

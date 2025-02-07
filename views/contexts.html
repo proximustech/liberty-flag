@@ -16,20 +16,36 @@
         data-search-align="left" 
         data-search-selector="#context_search_box" 
         data-search-highlight="true"
-        data-sortable="true"    
+        data-sortable="true"  
+        style="border-style: hidden;"   
     >
         <thead>
             <tr>
-                <th data-sortable="true">Name</th>
+                <th data-sortable="true">Sort by Name</th>
             </tr>
         </thead>
         <% contexts.forEach(context => { %>
         <tr>
             <td>
-                <span>
-                    <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('content_view');htmx.ajax('GET', '/<%= prefix %>/context?uuids=<%= context.uuids %>', {target:'#content_view', swap:'innerHTML'});"><i class="bi bi-eye"></i></button>
-                </span>
-                <%= context.name %>
+
+                <div class="lp_container">
+                    <div class="lp_contrast_container">
+                        <table style="width: 100%;border-style: none;">
+                            <tr>
+                                <td style="width: 50%;"><strong>Name:</strong> <%= context.name %></td>
+                                <td style="width: 50%;text-align: right;">
+                                    <span>
+                                        <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('content_view');htmx.ajax('GET', '/<%= prefix %>/context?uuids=<%= context.uuids %>', {target:'#content_view', swap:'innerHTML'});"><i class="bi bi-eye"></i></button>
+                                    </span>                                                       
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="register_container_body">
+    
+                    </div>                
+                </div>
+
             </td>
         </tr>
         <% }) %>

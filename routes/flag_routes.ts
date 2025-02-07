@@ -75,6 +75,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             let uuid:any = ctx.request.query.uuid || ""
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
+            viewVars.bucketContextUuid = ctx.request.query.bucket_context_uuid || "" // Used to open context automatically
             if (bucketUuid !== "") {
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 

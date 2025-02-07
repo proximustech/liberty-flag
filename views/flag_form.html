@@ -17,6 +17,7 @@
     eval(`<%- engineBooleanConditionedConditionValidateFunction %>`)
 
     app.module_data.flag_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
+    app.module_data.flag_form.bucket_context_uuid=`<%= bucketContextUuid %>`
 
     function submitFlag(triggerElement) {
 
@@ -43,8 +44,7 @@
             })
             .done(function() {
                 setTimeout(() => {
-                    app.setViewForPendingOperation('content_view') 
-                    htmx.ajax('GET', '/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>', {target:'#content_view', swap:'innerHTML'})
+                    app.reloadLastBreadCrumb('content_view')
                     app.drawer.hide();
                     app.toastShow('Saved','Flag saved successfully.',{type:"info"})           
                     
@@ -78,8 +78,7 @@
         })
         .done(function() {      
             setTimeout(() =>{
-                app.setViewForPendingOperation('content_view')
-                htmx.ajax('GET', '/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>', {target:'#content_view', swap:'innerHTML'})
+                app.reloadLastBreadCrumb('content_view')
                 app.drawer.hide();
                 app.dialog.hide()
                 app.toastShow('Deleted','Flag deleted successfully.',{type:"info"}) 
@@ -688,9 +687,15 @@
 </div>
 
 <script>
-    document.getElementById('flag_form_tab_group').show('general')
     addFlagContextsToList()
     $(document).ready(function() {
         $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
+
+        if (app.module_data.flag_form.bucket_context_uuid !=="") {  
+            document.getElementById('flag_form_tab_group').show('values')
+            document.getElementById(`bucket_context_value_config_${app.module_data.flag_form.bucket_context_uuid}`).show()
+        } else {
+            document.getElementById('flag_form_tab_group').show('general')
+        }        
     });    
 </script>

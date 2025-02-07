@@ -48,7 +48,9 @@
                                         <tr>
                                             <td style="width: 50%;"><strong>Bucket Name:</strong> <%= bucketUuidMap.get(flag.bucket_uuid) %> <strong>Flag Name:</strong> <%= flag.name %></td>
                                             <td style="width: 50%;text-align: right;">
-                                                     
+                                                <span>
+                                                    <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= flag.bucket_uuid %>&bucket_context_uuid=<%= context.bucket_context_uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                                                </span>                                                                                                            
                                             </td>
                                         </tr>
                                     </table>

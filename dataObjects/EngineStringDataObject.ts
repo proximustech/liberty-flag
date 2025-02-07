@@ -7,7 +7,13 @@ export const EngineStringDataObjectValidator:any = {
             regexp:"^.+$",
             message:"",
             required:true,
-            requiredMessage : "The value is required."
+            requiredMessage : "The String Engine selected option is required."
+        },       
+        configuration : {
+            regexp:"^.+$",
+            message:"",
+            required:true,
+            requiredMessage : "The value configuration is required."
         },       
 
     },

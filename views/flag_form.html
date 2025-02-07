@@ -152,7 +152,7 @@
             <div id="context_${bucketContext.uuid}_wrapper" style="margin-bottom: 10px;">
                 <sl-details id='bucket_context_value_config_${bucketContext.uuid}' summary="${bucketContext.name}">
                     <label style='margin-bottom:7px;font-size:17px'>Engine</label>
-                    <select style="width:100%;margin-bottom:7px" onchange=";setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
+                    <select style="width:100%;margin-bottom:7px" onchange="setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
                         <option value="boolean" ${booleanIsSelected}>True/False</option>
                         <option value="boolean_conditioned_true" ${booleanConditionedTrueIsSelected} >True (AND)</option>
                         <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND)</option>
@@ -184,7 +184,7 @@
             newFlagContext.engine_parameters.boolean_conditioned_false={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditionedor_true={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditionedor_false={conditions:[]}
-            newFlagContext.engine_parameters.string={value:""}
+            newFlagContext.engine_parameters.string={value:"",configuration:""}
 
             app.module_data.flag_form.flag.contexts.push(newFlagContext)
 
@@ -346,11 +346,37 @@
             }        
         } else if (engine === "string" ) {
             let stringValue = app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
+            let stringValueConfiguration = app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.configuration
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <label style='margin-bottom:4px'>String Value</label>
-                <input type='text' class='form-control' id='string_engine_${contextUuid}' value='${stringValue}' onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string={value:this.value}" ${disabled} />
-            `        
+                <label style='margin-bottom:4px'>Select an option from the list</label>
+                <select id="string_engine_value_selection_${contextUuid}" style="width:100%;margin-bottom:7px" onchange="app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=this.value" ${disabled} >
+                </select>
+                <label style='margin-bottom:4px'>String Options Configuration</label>
+                <input type='text' class='form-control' id='string_engine_value_config_${contextUuid}' value='${stringValueConfiguration}' onchange="setSelectOptionsForStringEngineConfiguration('${contextUuid}');app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.configuration=this.value;app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=''" ${disabled} placeholder='Separate the options with pipe |' />
+            `
+            setSelectOptionsForStringEngineConfiguration(contextUuid)     
         }
+    }
+
+    function setSelectOptionsForStringEngineConfiguration(contextUuid){
+        let actualSelectedValue = app.module_data.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
+        let configurationSelect=document.getElementById(`string_engine_value_selection_${contextUuid}`)
+        configurationSelect.innerHTML=`<option value=''>Select a value...</option>`
+        let options = document.getElementById(`string_engine_value_config_${contextUuid}`).value.split('|')
+        options.forEach(option => {
+            option = option.trim()
+            if (option!=="") {
+                let selected = ""
+                if (option===actualSelectedValue) {
+                    selected="selected"
+                }
+                let optionsHtml = `
+                    <option value='${option}' ${selected}>${option}</option>
+                `
+                configurationSelect.innerHTML+=optionsHtml
+                
+            }
+        });
     }
 
     function addEngineBooleanConditionedTrueCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.module_data.flag_form.engineBooleanConditionedCondition)) ){

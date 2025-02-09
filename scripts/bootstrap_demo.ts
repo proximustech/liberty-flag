@@ -32,7 +32,8 @@ async function createFlag(flagService:FlagService,bucket:BucketDataObject,flagNa
       "conditions": []
     },
     "string": {
-      "value": ""
+      "value": "",
+      "configuration": ""
     }
   }
   
@@ -153,7 +154,8 @@ async function main() {
       "conditions": []
     },
     "string": {
-      "value": ""
+      "value": "",
+      "configuration": ""
     }
   }
 
@@ -191,7 +193,8 @@ async function main() {
       "conditions": []
     },
     "string": {
-      "value": "Light"
+      "value": "Light",
+      "configuration": "Light,Dark,Wall"
     }
   }
 

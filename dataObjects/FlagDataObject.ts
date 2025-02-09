@@ -163,7 +163,7 @@ export const FlagDataObjectValidator:any = {
                     }            
                     if ('string' in flagContext.engine_parameters && flagContext.engine==="string"){
 
-                        let engineStringValidationResult = EngineStringDataObjectValidator.validateFunction(flagContext.engine_parameters.string,EngineStringDataObjectValidator.validateSchema)
+                        let engineStringValidationResult = EngineStringDataObjectValidator.validateFunction(flagContext.engine_parameters.string,EngineStringDataObjectValidator.validateSchema,EngineStringDataObjectValidator.extraValidateFunction)
                         if (!engineStringValidationResult.isValid) {
                             result.isValid = false
                             result.messages = result.messages.concat(engineStringValidationResult.messages)                   

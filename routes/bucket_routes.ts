@@ -16,39 +16,41 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     viewVars.prefix = prefix
 
     router.get('/buckets', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const tagService = new TagService(prefix,viewVars.userPermissions)
+        const bucketService = new BucketService()
         try {
 
-            const tagService = new TagService()
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
-            const bucketService = new BucketService()
             viewVars.buckets = await bucketService.getAll()
 
-            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
-            bucketService.dispose()
-            tagService.dispose()
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
             console.error(error)
+        } finally{
+            bucketService.dispose()
+            tagService.dispose()
+
         }
     })
 
     router.get('/bucket_form', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const tagService = new TagService(prefix,viewVars.userPermissions)
+        const bucketService = new BucketService()
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
             let bucket:BucketDataObject = new BucketDataObject()
 
-            const tagService = new TagService()
             viewVars.tags = await tagService.getAll()
 
             if (uuid !=="") {
-                const bucketService = new BucketService()
                 bucket = await bucketService.getByUuId(uuid) 
                 viewVars.editing = true
-                bucketService.dispose()
                 
             }
             else {
@@ -79,14 +81,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.bucketValidateFunction = "app.module_data.bucket_form.bucketValidateFunction=" + BucketDataObjectValidator.validateFunction
             //viewVars.bucketFieldsHtml = BucketDataObjectSpecs.htmlDataObjectRender(bucket,BucketDataObjectSpecs.metadata)
 
-            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.bucket_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
-            tagService.dispose()
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {
             console.error(error)
+        } finally{
+            tagService.dispose()
+            bucketService.dispose()
         }
     })
 
@@ -257,7 +260,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = new FlagService(prefix,userPermissions)        
         const bucketService = new BucketService()
-        const tagService = new TagService()
+        const tagService = new TagService(prefix,userPermissions)
         try {
 
             let uuids:any = ctx.request.query.uuids || ""

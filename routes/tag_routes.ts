@@ -3,6 +3,7 @@ import Router from "koa-router"
 import { TagService } from "../services/TagService";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
+import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 import koaBody from 'koa-body';
 
@@ -12,33 +13,46 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     viewVars.prefix = prefix
 
     router.get('/tags', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const tagService = new TagService(prefix,viewVars.userPermissions)
         try {
 
-            const tagService = new TagService()
             viewVars.tags = await tagService.getAll()
 
-            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.tags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
 
-            tagService.dispose()
             return ctx.render('plugins/_'+prefix+'/views/tags', viewVars);
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.tag')
+                
+            }
+            else {
+                console.error(error)
+            }
+        } finally {
+            tagService.dispose()
+
         }
     })
-
+    
     router.get('/tag_form', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const tagService = new TagService(prefix,viewVars.userPermissions)
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
             let tag:TagDataObject = new TagDataObject()
 
             if (uuid !=="") {
-                const tagService = new TagService()
                 tag = await tagService.getByUuId(uuid) 
                 viewVars.editing = true
-                tagService.dispose()
                 
             }
             else {
@@ -51,72 +65,88 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.tagValidateSchema = TagDataObjectValidator.validateSchema
             viewVars.tagValidateFunction = "app.module_data.tag_form.tagValidateFunction=" + TagDataObjectValidator.validateFunction
 
-            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.tag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement            
 
             return ctx.render('plugins/_'+prefix+'/views/tag_form', viewVars);
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.tag')
+                
+            }
+            else {
+                console.error(error)
+            }
+        } finally {
+            tagService.dispose()
+
         }
     })
 
     router.post('/tag',koaBody(), async (ctx:Context) => {
-
+        
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])
-        if (!processAllowed) {
-
-            ctx.status=401
-            ctx.body = {
-                status: 'error',
-                messages: [{message:"Operation NOT Allowed"}]
-            }         
-            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
-
-        }
-        else {
-
-            const tagService = new TagService()
+        const tagService = new TagService(prefix,userPermissions)
+        try {
             let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
 
-            let tagValidationResult=TagDataObjectValidator.validateFunction(tag,TagDataObjectValidator.validateSchema)
-            if (await tagService.fieldValueExists(tag.uuid,"name",tag.name)){
+            let dbResultOk=false
+            if (tag.uuid !== "") {
+                dbResultOk = await tagService.updateOne(tag) 
+            } else {
+                dbResultOk = await tagService.create(tag)
+            }
+            if (dbResultOk) {
+                ctx.body = {
+                    status: 'success',
+                }
+            }
+            else {
+                ctx.status=500
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message: "Data Unexpected Error"}]
+                }
+                console.log("DATABASE ERROR writing tag "+tag.uuid)                        
+            }
+
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+                
+            }
+            else if (error instanceof ExceptionRecordAlreadyExists) {
                 ctx.status=409
                 ctx.body = {
                     status: 'error',
-                    messages: [{field:"tag",message:"Name already exists"}]
-                }              
-            }        
-            else if (tagValidationResult.isValid) {
-                let dbResultOk=false
-                if (tag.uuid !== "") {
-                    dbResultOk = await tagService.updateOne(tag) 
-                } else {
-                    dbResultOk = await tagService.create(tag)
-                }
-                if (dbResultOk) {
-                    ctx.body = {
-                        status: 'success',
-                    }
-                }
-                else {
-                    ctx.status=500
-                    ctx.body = {
-                        status: 'error',
-                        messages: [{message: "Data Unexpected Error"}]
-                    }
-                    console.log("DATABASE ERROR writing tag "+tag.uuid)                        
-                }
+                    messages: [{field:"name",message:"Name already exists"}]
+                }   
                 
-            } else {
+            }
+            else if (error instanceof ExceptionInvalidObject) {
                 ctx.status=400
                 ctx.body = {
                     status: 'error',
-                    messages: tagValidationResult.messages
+                    //@ts-ignore
+                    messages: error.errorMessages
                 }
                 
             }
+            else {
+                console.error(error)
+
+            }             
+        } finally{
             tagService.dispose()
         }
 
@@ -125,20 +155,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.delete('/tag',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])
-        if (!processAllowed) {
-
-            ctx.status=401
-            ctx.body = {
-                status: 'error',
-                messages: [{message:"Operation NOT Allowed"}]
-            }         
-            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
-
-        }
-        else {
-
-            const tagService = new TagService()
+        const tagService = new TagService(prefix,userPermissions)
+        try {
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
@@ -166,9 +184,23 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
 
             }
-            tagService.dispose()
-        }
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+                
+            }
+            else {
+                console.error(error)
 
+            }             
+        } finally {
+            tagService.dispose()            
+        }
     })
 
     return router

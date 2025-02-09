@@ -19,7 +19,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = new FlagService(prefix,viewVars.userPermissions)
         const bucketService = new BucketService()
-        const tagService = new TagService()
+        const tagService = new TagService(prefix,viewVars.userPermissions)
         try {
 
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
@@ -69,7 +69,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.get('/flag_form', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const bucketService = new BucketService()
-        const tagService = new TagService()
+        const tagService = new TagService(prefix,viewVars.userPermissions)
         const flagService = new FlagService(prefix,viewVars.userPermissions)
         try {
 

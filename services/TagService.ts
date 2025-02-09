@@ -1,90 +1,106 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-
-import { MongoService } from "./MongoService";
-import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
-import { TagDataObject } from "../dataObjects/TagDataObject";
-import { Uuid } from "../../../services/utilities";
+import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
+import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
+import { TagModel } from "../models/TagModel";
 
 export class TagService implements IDisposable {
     
-    private dataBaseName = "lf_plugin"
-    private collectionName = "tags"
-    private mongoClient:MongoClient
-    private mongoService:MongoService
-    private dataBase:Db
-    private collection:Collection
+    private tagModel:TagModel
+    private userPermissions:any
+    private serviceSecurityElement:string
+    private userCanRead:boolean
+    private userCanWrite:boolean
 
-    constructor(){
-        this.mongoService = new MongoService()
-        this.mongoClient = this.mongoService.getMongoClient()
-        this.dataBase = this.mongoClient.db(this.dataBaseName);
-        this.collection = this.dataBase.collection(this.collectionName);
+    constructor(serviceSecurityElementPrefix:string,userPermissions:any){
+        this.tagModel= new TagModel()
+        this.serviceSecurityElement=serviceSecurityElementPrefix+".tag"
+        this.userPermissions=userPermissions
+        this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])
+        this.userCanWrite = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["write"])
     }
 
     async create(tag:TagDataObject){
-        tag.uuid = Uuid.createMongoUuId()
-        tag._id = new ObjectId(tag.uuid)        
-        const result = await this.collection.insertOne(tag,{writeConcern: {w: 1, j: true}})
-        if (result.insertedId == tag._id && result.acknowledged) {
-            return true
+        let roleValidationResult=TagDataObjectValidator.validateFunction(tag,TagDataObjectValidator.validateSchema)
+
+        if (!roleValidationResult.isValid) {
+            throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,roleValidationResult.messages)
+        }        
+
+        if (await this.fieldValueExists(tag.uuid,"name",tag.name)) {
+            throw new ExceptionRecordAlreadyExists("Name already exists")
+        }  
+        
+        if (this.userCanWrite) {
+            return await this.tagModel.create(tag)            
         }
-        else return false           
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }         
     }
 
     async updateOne(tag:TagDataObject){
-        tag._id = new ObjectId(tag.uuid)
-        const result = await this.collection.replaceOne(
-            {uuid: tag.uuid }, 
-            tag,
-            {upsert: false,writeConcern: {w: 1, j: true}}
-        ) 
-        if (result.acknowledged && result.matchedCount == 1) {
-            return true
+        let roleValidationResult=TagDataObjectValidator.validateFunction(tag,TagDataObjectValidator.validateSchema)
+
+        if (!roleValidationResult.isValid) {
+            throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,roleValidationResult.messages)
+        }        
+
+        if (await this.fieldValueExists(tag.uuid,"name",tag.name)) {
+            throw new ExceptionRecordAlreadyExists("Name already exists")
+        }  
+        
+        if (this.userCanWrite) {
+            return await this.tagModel.updateOne(tag)            
         }
-        else return false                  
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }                    
     }
 
     async deleteByUuId(tagUuId:string){
-        const result = await this.collection.deleteOne({ uuid: tagUuId },{writeConcern: {w: 1, j: true}})
-        if (result.deletedCount == 1 && result.acknowledged) {
-            return true
+        if (this.userCanWrite) {
+            return await this.tagModel.deleteByUuId(tagUuId) 
+           
         }
-        else return false           
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }         
     }
 
     async getByUuId(uuid:string) : Promise<TagDataObject> {
 
-        const cursor = this.collection.find({uuid : uuid});
-
-        while (await cursor.hasNext()) {
-            let document = (await cursor.next() as TagDataObject);
-            return document
+        if (this.userCanRead) {
+            return await this.tagModel.getByUuId(uuid)
+           
         }
-
-        return new TagDataObject()
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }  
     }
 
     async getAll() : Promise<TagDataObject[]> {
-        //await this.processTest()
-        const cursor = this.collection.find({});
-        return (await cursor.toArray() as TagDataObject[])
+        if (this.userCanRead) {
+            return await this.tagModel.getAll()
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        } 
     }
     
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
-        let filter:any = {}
-        filter[fieldName] = fieldValue
-        const cursor = this.collection.find(filter);
-        while (await cursor.hasNext()) {
-            let document:any = await cursor.next();
-            if (document.uuid !== processedDocumentUuid) {
-                return true
-            }
+        if (this.userCanRead) {
+            return await this.tagModel.fieldValueExists(processedDocumentUuid,fieldName,fieldValue)
+           
         }
-        return false
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        } 
     }
 
     dispose(){
-        this.mongoService.dispose()
+        this.tagModel.dispose()
     }      
 
     getUuidMapFromList(list:TagDataObject[]) : Map<string, string> {

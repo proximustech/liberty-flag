@@ -5,6 +5,7 @@ import { BucketService } from "../services/BucketService"
 import { FlagService } from "../services/FlagService"
 
 import { Uuid } from "../../../services/utilities";
+import { ExceptionNotAuthorized, ExceptionRecordAlreadyExists, ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 
 function getRandomString(){
@@ -172,7 +173,26 @@ async function main() {
   thirdFlagContext.bucket_context_uuid = bucket.contexts[2].uuid
   flag.contexts.push(thirdFlagContext)
 
-  await flagService.create(flag)
+  try {
+      await flagService.create(flag)
+  } catch (error) {
+    if (error instanceof ExceptionNotAuthorized) {         
+      console.log("Operation NOT Allowed")
+      
+    }
+    else if (error instanceof ExceptionRecordAlreadyExists) {
+      console.log("Record Exists")
+        
+    }
+    else if (error instanceof ExceptionInvalidObject) {
+        console.log(error.errorMessages[0])
+        
+    }
+    else {
+        console.error(error)
+
+    }       
+  }
 
   flagContext = new FlagContextDataObject()
   flagContext.engine = "string"
@@ -194,7 +214,7 @@ async function main() {
     },
     "string": {
       "value": "Light",
-      "configuration": "Light,Dark,Wall"
+      "configuration": "Light|Dark|Wall"
     }
   }
 
@@ -211,7 +231,26 @@ async function main() {
   thirdFlagContext.bucket_context_uuid = bucket.contexts[2].uuid
   flag.contexts.push(thirdFlagContext)
 
-  await flagService.create(flag)
+  try {
+    await flagService.create(flag)
+  } catch (error) {
+    if (error instanceof ExceptionNotAuthorized) {         
+      console.log("Operation NOT Allowed")
+      
+    }
+    else if (error instanceof ExceptionRecordAlreadyExists) {
+      console.log("Record Exists")
+        
+    }
+    else if (error instanceof ExceptionInvalidObject) {
+        console.log(error.errorMessages[0])
+        
+    }
+    else {
+        console.error(error)
+
+    }     
+  }
   
   console.log(bucket.contexts[2].uuid)     
 

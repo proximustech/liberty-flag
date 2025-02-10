@@ -8,7 +8,7 @@
     app.md.tag_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
     eval(`<%- userHasPermissionOnElement %>`) 
 
-    function submitTag(triggerElement) {
+    app.md.submitTag=(triggerElement)=> {
         let tag = app.md.tag_form.tag
         let tagValidationResult = app.md.tag_form.tagValidateFunction(tag,app.md.tag_form.tagValidateSchema)
        
@@ -51,7 +51,7 @@
       
     }
 
-    function deleteTag(uuid) {
+    app.md.deleteTag=(uuid)=> {
         let result = $.ajax({
             type:"DELETE",
             url:"<%= prefix %>/tag?uuid="+uuid,
@@ -102,7 +102,7 @@
                         <br>
                         <br>
                     </label>
-                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Tag','Are you sure to delete the tag <strong><%= tag.name %></strong> ?','deleteTag(`<%= tag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Tag</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Tag','Are you sure to delete the tag <strong><%= tag.name %></strong> ?','app.md.deleteTag(`<%= tag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Tag</button>
                     <br>
                 </sl-details>
     
@@ -115,7 +115,7 @@
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
         <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])){ %>
-        <button type="button" class="btn btn-primary" onclick="submitTag(this)">Save</sl-button>
+        <button type="button" class="btn btn-primary" onclick="app.md.submitTag(this)">Save</sl-button>
         <% } %>
     </div>
 

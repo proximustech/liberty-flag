@@ -19,7 +19,7 @@
     app.md.flag_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
     app.md.flag_form.bucket_context_uuid=`<%= bucketContextUuid %>`
 
-    function submitFlag(triggerElement) {
+    app.md.submitFlag=(triggerElement) => {
 
         let tags=[]
 
@@ -71,7 +71,7 @@
       
     }
 
-    function deleteFlag(uuid) {
+    app.md.deleteFlag=(uuid) => {
         let result = $.ajax({
             type:"DELETE",
             url:"<%= prefix %>/flag?uuid="+uuid,
@@ -87,7 +87,7 @@
     
     }
 
-    function getFlagContextIndexByUuId(contextUuid){
+    app.md.getFlagContextIndexByUuId=(contextUuid) => {
         found = false
         for (let index = 0; index < app.md.flag_form.flag.contexts.length; index++) {
             if( app.md.flag_form.flag.contexts[index].bucket_context_uuid===contextUuid){
@@ -96,7 +96,7 @@
         }
         return found
     }
-    function getBucketContextByUuId(contextUuid){
+    app.md.getBucketContextByUuId=(contextUuid) => {
         found = {}
         for (let index = 0; index < app.md.flag_form.bucket.contexts.length; index++) {
             if( app.md.flag_form.bucket.contexts[index].uuid===contextUuid){
@@ -109,11 +109,11 @@
     /**
      * Redraws ALL the contexts of the "Context Values Tab"
      */
-    function addFlagContextsToList(){
+    app.md.addFlagContextsToList=() => {
         document.getElementById('contexts_values_config').innerHTML=""
         let counter = 0
         app.md.flag_form.flag.contexts.forEach(flagContext => {
-            addFlagContextToList(getBucketContextByUuId(flagContext.bucket_context_uuid),counter)
+            app.md.addFlagContextToList(app.md.getBucketContextByUuId(flagContext.bucket_context_uuid),counter)
             counter++
         });
     }
@@ -121,7 +121,7 @@
     /**
      * Renders a specific context in the "Context Values" Tab
      */
-    function addFlagContextToList(bucketContext,counter) {
+    app.md.addFlagContextToList=(bucketContext,counter) => {
         let booleanIsSelected = ""
         let booleanConditionedTrueIsSelected = ""
         let booleanConditionedFalseIsSelected = ""
@@ -129,17 +129,17 @@
         let booleanConditionedOrFalseIsSelected = ""
         let stringIsSelected = ""
 
-        if (app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean") {
+        if (app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean") {
             booleanIsSelected="selected"
-        } else if(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditioned_true") {
+        } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditioned_true") {
             booleanConditionedTrueIsSelected = "selected"
-        } else if(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditioned_false") {
+        } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditioned_false") {
             booleanConditionedFalseIsSelected = "selected"
-        } else if(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_true") {
+        } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_true") {
             booleanConditionedOrTrueIsSelected = "selected"
-        } else if(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_false") {
+        } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean_conditionedor_false") {
             booleanConditionedOrFalseIsSelected = "selected"
-        } else if(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="string") {
+        } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="string") {
             stringIsSelected = "selected"
         }
 
@@ -152,7 +152,7 @@
             <div id="context_${bucketContext.uuid}_wrapper" style="margin-bottom: 10px;">
                 <sl-details id='bucket_context_value_config_${bucketContext.uuid}' summary="${bucketContext.name}">
                     <label style='margin-bottom:7px;font-size:17px'>Engine</label>
-                    <select style="width:100%;margin-bottom:7px" onchange="setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
+                    <select style="width:100%;margin-bottom:7px" onchange="app.md.setEngineView(this.value,'${bucketContext.uuid}')" ${disabled}>
                         <option value="boolean" ${booleanIsSelected}>True/False</option>
                         <option value="boolean_conditioned_true" ${booleanConditionedTrueIsSelected} >True (AND)</option>
                         <option value="boolean_conditioned_false" ${booleanConditionedFalseIsSelected} >False (AND)</option>
@@ -164,13 +164,13 @@
                 </sl-details>
             </div>
             `)
-        setEngineView(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine,`${bucketContext.uuid}`)
+        app.md.setEngineView(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine,`${bucketContext.uuid}`)
     }
 
     /**
      * Set display context data inside the "Context Values Tab" and Sets the data inside the flag data structure
      */ 
-    function setFlagContextValueConfig(contextUuid){
+    app.md.setFlagContextValueConfig=(contextUuid) => {
         let isChecked = document.getElementById("bucket_context_visibility_"+contextUuid).checked
 
         if (isChecked) {
@@ -188,12 +188,12 @@
 
             app.md.flag_form.flag.contexts.push(newFlagContext)
 
-            addFlagContextsToList()
+            app.md.addFlagContextsToList()
 
 
         } else {
             //Remove flag context from the Values list
-            app.md.flag_form.flag.contexts.splice(getFlagContextIndexByUuId(contextUuid), 1);
+            app.md.flag_form.flag.contexts.splice(app.md.getFlagContextIndexByUuId(contextUuid), 1);
             document.getElementById('contexts_values_config').removeChild(
                 document.getElementById(`context_${contextUuid}_wrapper`)
             )
@@ -205,7 +205,7 @@
     /**
      * Saves a condition (conditionedTrue engine) data inside the flag data structure and sets the listeners for validation
      */
-    function setEngineBooleanConditionatedTrueConditionValueConfig(contextUuid,conditionNumber){
+    app.md.setEngineBooleanConditionatedTrueConditionValueConfig=(contextUuid,conditionNumber) => {
         
         let firstParameterElement=document.getElementById(`engine_boolean_conditioned_true_first_parameter_${contextUuid}_${conditionNumber}`)
         let secondParameterElement=document.getElementById(`engine_boolean_conditioned_true_second_parameter_${contextUuid}_${conditionNumber}`)
@@ -216,16 +216,16 @@
         condition.second_parameter=secondParameterElement.value
         condition.operator_parameter=operatorParameterElement.value
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions[conditionNumber]=condition
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions[conditionNumber]=condition
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
         
     }
 
     /**
      * Saves a condition (conditionedFalse engine) data inside the flag data structure and sets the listeners for validation
      */    
-    function setEngineBooleanConditionatedFalseConditionValueConfig(contextUuid,conditionNumber){
+    app.md.setEngineBooleanConditionatedFalseConditionValueConfig=(contextUuid,conditionNumber)=>{
         
         let firstParameterElement=document.getElementById(`engine_boolean_conditioned_false_first_parameter_${contextUuid}_${conditionNumber}`)
         let secondParameterElement=document.getElementById(`engine_boolean_conditioned_false_second_parameter_${contextUuid}_${conditionNumber}`)
@@ -236,16 +236,16 @@
         condition.second_parameter=secondParameterElement.value
         condition.operator_parameter=operatorParameterElement.value
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions[conditionNumber]=condition
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions[conditionNumber]=condition
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
         
     }   
 
     /**
      * Saves a condition (conditionedTrue (OR) engine) data inside the flag data structure and sets the listeners for validation
      */
-    function setEngineBooleanConditionatedOrTrueConditionValueConfig(contextUuid,conditionNumber){
+    app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig=(contextUuid,conditionNumber)=>{
         
         let firstParameterElement=document.getElementById(`engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${conditionNumber}`)
         let secondParameterElement=document.getElementById(`engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${conditionNumber}`)
@@ -256,16 +256,16 @@
         condition.second_parameter=secondParameterElement.value
         condition.operator_parameter=operatorParameterElement.value
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[conditionNumber]=condition
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[conditionNumber]=condition
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
         
     } 
 
     /**
      * Saves a condition (conditionedFalse (OR) engine) data inside the flag data structure and sets the listeners for validation
      */
-     function setEngineBooleanConditionatedOrFalseConditionValueConfig(contextUuid,conditionNumber){
+     app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig=(contextUuid,conditionNumber)=>{
 
         let firstParameterElement=document.getElementById(`engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${conditionNumber}`)
         let secondParameterElement=document.getElementById(`engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${conditionNumber}`)
@@ -276,27 +276,27 @@
         condition.second_parameter=secondParameterElement.value
         condition.operator_parameter=operatorParameterElement.value
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[conditionNumber]=condition
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[conditionNumber]=condition
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,firstParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(conditionNumber,secondParameterElement.id,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
         
     }     
 
     /**
      * Renders the html template for the selected engine and updates the flag data structure
      */
-    function setEngineView(engine,contextUuid){
+    app.md.setEngineView=(engine,contextUuid)=>{
 
         let disabled = "disabled='disabled'"
         if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
             disabled=""
         }
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine=engine
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine=engine
         if (engine === "boolean") {
 
             let checked = ""
-            if(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean.status){
+            if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean.status){
                 checked = "checked"
             }
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
@@ -304,62 +304,62 @@
                 <label class="form-check-label" for="flexCheckChecked">
                     Boolean Status
                 </label>
-                <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" ${checked} onchange="app.md.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}" ${disabled}>
+                <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" ${checked} onchange="app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.boolean={status:this.checked}" ${disabled}>
             </div>
             `
         } else if (engine === "boolean_conditioned_true" ) {
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedTrueCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="app.md.addEngineBooleanConditionedTrueCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditioned_true_conditions_${contextUuid}'></div>
             `  
-            for (let index = 0; index < app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions.length; index++) {
-                addEngineBooleanConditionedTrueCondition(contextUuid,app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions[index])
+            for (let index = 0; index < app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions.length; index++) {
+                app.md.addEngineBooleanConditionedTrueCondition(contextUuid,app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions[index])
                 
             }        
         }
         else if (engine === "boolean_conditioned_false" ) {
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedFalseCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="app.md.addEngineBooleanConditionedFalseCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditioned_false_conditions_${contextUuid}'></div>
             `  
-            for (let index = 0; index < app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions.length; index++) {
-                addEngineBooleanConditionedFalseCondition(contextUuid,app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions[index])
+            for (let index = 0; index < app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions.length; index++) {
+                app.md.addEngineBooleanConditionedFalseCondition(contextUuid,app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions[index])
                 
             }        
         } else if (engine === "boolean_conditionedor_true" ) {
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedOrTrueCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="app.md.addEngineBooleanConditionedOrTrueCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditionedor_true_conditions_${contextUuid}'></div>
             `  
-            for (let index = 0; index < app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions.length; index++) {
-                addEngineBooleanConditionedOrTrueCondition(contextUuid,app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[index])
+            for (let index = 0; index < app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions.length; index++) {
+                app.md.addEngineBooleanConditionedOrTrueCondition(contextUuid,app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[index])
                 
             }        
         } else if (engine === "boolean_conditionedor_false" ) {
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
-                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="addEngineBooleanConditionedOrFalseCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
+                <button type="button" class="btn btn-outline-primary" style="width:100%" onclick="app.md.addEngineBooleanConditionedOrFalseCondition('${contextUuid}')" ${disabled}><i class="bi bi-plus-circle"></i> Add Condition</button>
                 <div id='boolean_conditionedor_false_conditions_${contextUuid}'></div>
             `  
-            for (let index = 0; index < app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions.length; index++) {
-                addEngineBooleanConditionedOrFalseCondition(contextUuid,app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[index])
+            for (let index = 0; index < app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions.length; index++) {
+                app.md.addEngineBooleanConditionedOrFalseCondition(contextUuid,app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[index])
                 
             }        
         } else if (engine === "string" ) {
-            let stringValue = app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
-            let stringValueConfiguration = app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.configuration
+            let stringValue = app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
+            let stringValueConfiguration = app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.configuration
             document.getElementById('engine_container_'+contextUuid).innerHTML = `
                 <label style='margin-bottom:4px'>Select an option from the list</label>
-                <select id="string_engine_value_selection_${contextUuid}" style="width:100%;margin-bottom:7px" onchange="app.md.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=this.value" ${disabled} >
+                <select id="string_engine_value_selection_${contextUuid}" style="width:100%;margin-bottom:7px" onchange="app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=this.value" ${disabled} >
                 </select>
                 <label style='margin-bottom:4px'>String Options Configuration</label>
-                <input type='text' class='form-control' id='string_engine_value_config_${contextUuid}' value='${stringValueConfiguration}' onchange="setSelectOptionsForStringEngineConfiguration('${contextUuid}');app.md.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.configuration=this.value;app.md.flag_form.flag.contexts[getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=''" ${disabled} placeholder='Separate the options with pipe |' />
+                <input type='text' class='form-control' id='string_engine_value_config_${contextUuid}' value='${stringValueConfiguration}' onchange="app.md.setSelectOptionsForStringEngineConfiguration('${contextUuid}');app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.configuration=this.value;app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=''" ${disabled} placeholder='Separate the options with pipe |' />
             `
-            setSelectOptionsForStringEngineConfiguration(contextUuid)     
+            app.md.setSelectOptionsForStringEngineConfiguration(contextUuid)     
         }
     }
 
-    function setSelectOptionsForStringEngineConfiguration(contextUuid){
-        let actualSelectedValue = app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
+    app.md.setSelectOptionsForStringEngineConfiguration=(contextUuid) => {
+        let actualSelectedValue = app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.string.value
         let configurationSelect=document.getElementById(`string_engine_value_selection_${contextUuid}`)
         configurationSelect.innerHTML=`<option value=''>Select a value...</option>`
         let options = document.getElementById(`string_engine_value_config_${contextUuid}`).value.split('|')
@@ -379,19 +379,19 @@
         });
     }
 
-    function addEngineBooleanConditionedTrueCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ){
+    app.md.addEngineBooleanConditionedTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
         if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
             disabled=""
         }
 
-        //app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions
+        //app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions
           
         let conditionsContainer = document.getElementById(`boolean_conditioned_true_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions[newConditionNumber]=condition
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions[newConditionNumber]=condition
 
         let selectedEqual = ""
         let selectedDifferent = ""
@@ -411,39 +411,39 @@
         let html =`
             <span id="boolean_condition_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
                 <div class="card-body">
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                    <input id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
+                    <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                    <input id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                     <label id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                    <select id="engine_boolean_conditioned_true_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                    <select id="engine_boolean_conditioned_true_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                         <option value="equal" ${selectedEqual} > (=) Equal</option>
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
                         <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                         <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                     </select>                        
-                    <input id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
+                    <input id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                     <label id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
 
                 </div>
             </span>
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
     }
 
-    function addEngineBooleanConditionedFalseCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ){
+    app.md.addEngineBooleanConditionedFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
         if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
             disabled=""
         }
 
-        //app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions
+        //app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions
           
         let conditionsContainer = document.getElementById(`boolean_conditioned_false_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions[newConditionNumber]=condition
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions[newConditionNumber]=condition
 
         let selectedEqual = ""
         let selectedDifferent = ""
@@ -463,38 +463,38 @@
         let html =`
             <span id="boolean_condition_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
                 <div class="card-body">        
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                    <input id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
+                    <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                    <input id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                     <label id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                    <select id="engine_boolean_conditioned_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                    <select id="engine_boolean_conditioned_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                         <option value="equal" ${selectedEqual} > (=) Equal</option>
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
                         <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                         <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                     </select>                        
-                    <input id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
+                    <input id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                     <label id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
                 </div>
             </span>            
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
     }
 
-    function addEngineBooleanConditionedOrTrueCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ){
+    app.md.addEngineBooleanConditionedOrTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
         if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
             disabled=""
         }
 
-        //app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions
+        //app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions
           
         let conditionsContainer = document.getElementById(`boolean_conditionedor_true_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[newConditionNumber]=condition
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions[newConditionNumber]=condition
 
         let selectedEqual = ""
         let selectedDifferent = ""
@@ -514,26 +514,26 @@
         let html =`
         <span id="boolean_conditionor_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
             <div class="card-body">        
-                <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedOrTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                <input id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
+                <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedOrTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                <input id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                 <label id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                <select id="engine_boolean_conditionedor_true_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                <select id="engine_boolean_conditionedor_true_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                 </select>                        
-                <input id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
+                <input id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                 <label id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
             </div>
         </span>            
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
     }
 
-    function addEngineBooleanConditionedOrFalseCondition(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ){
+    app.md.addEngineBooleanConditionedOrFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
         if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
@@ -543,7 +543,7 @@
         let conditionsContainer = document.getElementById(`boolean_conditionedor_false_conditions_${contextUuid}`)
         let newConditionNumber = conditionsContainer.childElementCount
 
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[newConditionNumber]=condition
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions[newConditionNumber]=condition
 
         let selectedEqual = ""
         let selectedDifferent = ""
@@ -563,29 +563,29 @@
         let html =`
         <span id="boolean_conditionor_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
             <div class="card-body">        
-                <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngineBooleanConditionedOrFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
-                <input id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
+                <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedOrFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
+                <input id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                 <label id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                <select id="engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                <select id="engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
                 </select>                        
-                <input id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
+                <input id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                 <label id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
             </div>
         </span>            
         `
         conditionsContainer.insertAdjacentHTML('afterbegin',html)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
-        engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.first_parameter)
+        app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
     }
 
     /**
      * Validation listener for both TRUE and FALSE boolean conditioned engines
      */
-    function engineBooleanConditionedCondition_ValidationListener(conditionIndex,elementId,validateSchema){
+    app.md.engineBooleanConditionedCondition_ValidationListener=(conditionIndex,elementId,validateSchema) => {
         let element = document.getElementById(elementId)
         if(element.value===""){
             if(validateSchema.required){
@@ -606,28 +606,28 @@
         }
     }     
 
-    function deleteEngineBooleanConditionedTrueCondition(contextUuid,conditionIndex){
+    app.md.deleteEngineBooleanConditionedTrueCondition=(contextUuid,conditionIndex)=>{
         document.getElementById(`boolean_conditioned_true_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_condition_true_${contextUuid}_${conditionIndex}`))
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions.splice(conditionIndex, 1);
-        setEngineView(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_true.conditions.splice(conditionIndex, 1);
+        app.md.setEngineView(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
     }
 
-    function deleteEngineBooleanConditionedFalseCondition(contextUuid,conditionIndex){
+    app.md.deleteEngineBooleanConditionedFalseCondition=(contextUuid,conditionIndex)=>{
         document.getElementById(`boolean_conditioned_false_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_condition_false_${contextUuid}_${conditionIndex}`))
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions.splice(conditionIndex, 1);
-        setEngineView(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditioned_false.conditions.splice(conditionIndex, 1);
+        app.md.setEngineView(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
     }
 
-    function deleteEngineBooleanConditionedOrTrueCondition(contextUuid,conditionIndex){
+    app.md.deleteEngineBooleanConditionedOrTrueCondition=(contextUuid,conditionIndex)=>{
         document.getElementById(`boolean_conditionedor_true_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_conditionor_true_${contextUuid}_${conditionIndex}`))
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions.splice(conditionIndex, 1);
-        setEngineView(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_true.conditions.splice(conditionIndex, 1);
+        app.md.setEngineView(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
     }
 
-    function deleteEngineBooleanConditionedOrFalseCondition(contextUuid,conditionIndex){
+    app.md.deleteEngineBooleanConditionedOrFalseCondition=(contextUuid,conditionIndex)=>{
         document.getElementById(`boolean_conditionedor_false_conditions_${contextUuid}`).removeChild(document.getElementById(`boolean_conditionor_false_${contextUuid}_${conditionIndex}`))
-        app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions.splice(conditionIndex, 1);
-        setEngineView(app.md.flag_form.flag.contexts[getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
+        app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.boolean_conditionedor_false.conditions.splice(conditionIndex, 1);
+        app.md.setEngineView(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${contextUuid}`)].engine,contextUuid)
     }    
 
 </script>
@@ -674,7 +674,7 @@
 
             <div class="alert alert-light" role="alert">
                 <% let checked=""; if (flagContextsUuids.includes(context.uuid)) checked="checked" %>
-                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %>  <%= disabled %> > <%= context.name %>
+                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="app.md.setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %>  <%= disabled %> > <%= context.name %>
             </div>
         
         <% }) %>
@@ -690,7 +690,7 @@
                     <br>
                     <br>
                 </label>
-                <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Flag','Are you sure to delete the flag <strong><%= flag.name %></strong> ?','deleteFlag(`<%= flag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Flag</button>
+                <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Flag','Are you sure to delete the flag <strong><%= flag.name %></strong> ?','app.md.deleteFlag(`<%= flag.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Flag</button>
                 <br>
             </sl-details>
         </sl-tab-panel>
@@ -701,12 +701,12 @@
 <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
     <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
-        <button type="button" class="btn btn-primary" onclick="submitFlag(this)">Save</sl-button>
+        <button type="button" class="btn btn-primary" onclick="app.md.submitFlag(this)">Save</sl-button>
     <% } %>
 </div>
 
 <script>
-    addFlagContextsToList()
+    app.md.addFlagContextsToList()
     $(document).ready(function() {
         $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
 

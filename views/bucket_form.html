@@ -13,23 +13,23 @@
     app.md.bucket_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
     eval(`<%- userHasPermissionOnElement %>`)    
 
-    function createContext(){
+    app.md.createContext=()=>{
         let newContext = JSON.parse(JSON.stringify(app.md.bucket_form.bucketContext))
         let contextsLength=app.md.bucket_form.bucket.contexts.push(newContext)
-        addContextToList(newContext,contextsLength -1)
+        app.md.addContextToList(newContext,contextsLength -1)
     }
 
-    function addContextsToList(){
+    app.md.addContextsToList=()=>{
         document.getElementById('bucket_form_context_list').innerHTML=""
 
         let counter = 0
         app.md.bucket_form.bucket.contexts.forEach(context => {
-            addContextToList(context,counter)
+            app.md.addContextToList(context,counter)
             counter++
         });
     }
 
-    function addContextToList(bucketContext,contextIndex){
+    app.md.addContextToList=(bucketContext,contextIndex)=>{
 
         let contextKeyLabel =``
         if (bucketContext.uuid !== "") {
@@ -42,13 +42,13 @@
         
         let deleteButton = ""
         if (app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket'],['write'])) {
-            deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.md.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
+            deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.md.bucket_form.bucket.contexts.splice(${contextIndex}, 1);app.md.addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
         }
         html = `
         <div id="context_${contextIndex}_wrapper" style="margin-bottom: 10px;">
             <sl-details id="context_${contextIndex}" summary="${bucketContext.name}">
                 <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
-                <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="context_listener(${contextIndex},this)" value='${bucketContext.name}' />
+                <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="app.md.context_listener(${contextIndex},this)" value='${bucketContext.name}' />
                 <label id='context_${contextIndex}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
                 ${contextKeyLabel}
                 <br>
@@ -58,11 +58,11 @@
         </div>  
         `
         document.getElementById('bucket_form_context_list').insertAdjacentHTML('beforeend',html)
-        context_listener(contextIndex,document.getElementById(`context_name_${contextIndex}`))
+        app.md.context_listener(contextIndex,document.getElementById(`context_name_${contextIndex}`))
 
     }
 
-    function context_listener(contextIndex,element){
+    app.md.context_listener=(contextIndex,element)=>{
         document.getElementById(`context_${contextIndex}`).summary=element.value;
         app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
 
@@ -86,7 +86,7 @@
 
     }  
     
-    function submitBucket(triggerElement) {
+    app.md.submitBucket=(triggerElement)=> {
 
         let tags=[]
 
@@ -138,7 +138,7 @@
       
     }
 
-    function deleteBucket(uuid) {
+    app.md.deleteBucket=(uuid)=> {
         let result = $.ajax({
             type:"DELETE",
             url:"<%= prefix %>/bucket?uuid="+uuid,
@@ -193,7 +193,7 @@
         <sl-tab-panel name="contexts">
             <div style="text-align: right;">
                 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
-                    <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 9px;"  onclick="createContext()">
+                    <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 9px;"  onclick="app.md.createContext()">
                         <i class="bi bi-plus-circle"></i> Add Context
                     </button>            
                 <% } %>
@@ -209,7 +209,7 @@
                         <br>
                         <br>
                     </label>
-                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Bucket','Are you sure to delete the bucket <strong><%= bucket.name %></strong> ?','deleteBucket(`<%= bucket.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Bucket</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Bucket','Are you sure to delete the bucket <strong><%= bucket.name %></strong> ?','app.md.deleteBucket(`<%= bucket.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Bucket</button>
                     <br>
                 </sl-details>
     
@@ -222,12 +222,12 @@
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
         <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])){ %>
-            <button type="button" class="btn btn-primary" onclick="submitBucket(this)">Save</sl-button>
+            <button type="button" class="btn btn-primary" onclick="app.md.submitBucket(this)">Save</sl-button>
         <% } %>        
     </div>
 
 <script>
-    addContextsToList()
+    app.md.addContextsToList()
     document.getElementById('bucket_form_tab_group').show('general')
 
     $(document).ready(function() {

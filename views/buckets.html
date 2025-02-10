@@ -1,7 +1,5 @@
 <script>
-    app.module_data.buckets_list = {}
-    app.module_data.buckets_list.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
-    eval(`<%- userHasPermissionOnElement %>`)       
+    app.module_data = {} 
 </script>
 
 <div class="alert alert-light" role="alert" style="text-align: left;">   
@@ -73,7 +71,6 @@
     <% }) %>
 </table>
 <script>
-    app.module_data = {}
     app.module_data.buckets_table = $('#buckets_table')
     app.module_data.buckets_table.bootstrapTable()
 </script>

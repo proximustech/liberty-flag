@@ -1,3 +1,6 @@
+<script>
+    app.module_data = {}
+</script>
 <% let bucketContextsMap = getUuidMapFromBucketContextsList(bucket.contexts) %>
 <div class="alert alert-light" role="alert" style="text-align: left;">
     <strong>Flags</strong> - Bucket: <%= bucket.name %>
@@ -106,10 +109,6 @@
     <% }) %>
 </table>
 <script>
-    app.module_data = {}
-
-    app.module_data.flags_list={}
-    app.module_data.flags_list.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
     app.module_data.flags_table = $('#flags_table')
     app.module_data.flags_table.bootstrapTable()
 </script>

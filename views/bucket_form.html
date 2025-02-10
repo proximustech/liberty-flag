@@ -97,16 +97,7 @@
         app.module_data.bucket_form.bucket.tags=tags
 
         let bucket = app.module_data.bucket_form.bucket
-        let bucketValidationResult = app.module_data.bucket_form.bucketValidateFunction(bucket,app.module_data.bucket_form.bucketValidateSchema)
-        bucket.contexts.forEach(context => {
-            let bucketContextValidationResult=app.module_data.bucket_form.bucketContextValidateFunction(context,app.module_data.bucket_form.bucketContextValidateSchema)
-            if (!bucketContextValidationResult.isValid) {
-                bucketValidationResult.isValid = false
-                bucketValidationResult.messages = bucketValidationResult.messages.concat(bucketContextValidationResult.messages)
-
-            } 
-            
-        });        
+        let bucketValidationResult = app.module_data.bucket_form.bucketValidateFunction(bucket,app.module_data.bucket_form.bucketValidateSchema)       
         if (bucketValidationResult.isValid) {
             app.setElementForPendingOperation(triggerElement)
             let result = $.ajax({

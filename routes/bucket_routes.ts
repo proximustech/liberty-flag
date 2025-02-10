@@ -7,6 +7,7 @@ import { TagService } from "../services/TagService";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
+import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 import koaBody from 'koa-body';
 
@@ -18,7 +19,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.get('/buckets', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = new TagService(prefix,viewVars.userPermissions)
-        const bucketService = new BucketService()
+        const bucketService = new BucketService(prefix,viewVars.userPermissions)
         try {
 
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
@@ -29,7 +30,18 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                
+            }
+            else {
+                console.error(error)
+            }
         } finally{
             bucketService.dispose()
             tagService.dispose()
@@ -40,7 +52,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.get('/bucket_form', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = new TagService(prefix,viewVars.userPermissions)
-        const bucketService = new BucketService()
+        const bucketService = new BucketService(prefix,viewVars.userPermissions)
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -86,7 +98,18 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                
+            }
+            else {
+                console.error(error)
+            }
         } finally{
             tagService.dispose()
             bucketService.dispose()
@@ -96,47 +119,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.post('/bucket',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])
-        if (!processAllowed) {
 
-            ctx.status=401
-            ctx.body = {
-                status: 'error',
-                messages: [{message:"Operation NOT Allowed"}]
-            }         
-            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
+            const bucketService = new BucketService(prefix,userPermissions)
+            try {
+                let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
 
-        }
-        else {
-
-            const bucketService = new BucketService()
-            let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
-
-            let bucketValidationResult=BucketDataObjectValidator.validateFunction(bucket,BucketDataObjectValidator.validateSchema)
-            bucket.contexts.forEach(context => {
-                //Validation
-                let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
-                if (!contextValidationResult.isValid) {
-                    bucketValidationResult.isValid = false
-                    bucketValidationResult.messages = bucketValidationResult.messages.concat(contextValidationResult.messages)
-
-                }
-
-                //Assign uuid to new contexts
-                if (context.uuid ==="") {
-                    context.uuid = Uuid.createMongoUuId()
-                }
-                
-            });
-
-            if (await bucketService.fieldValueExists(bucket.uuid,"name",bucket.name)){
-                ctx.status=409
-                ctx.body = {
-                    status: 'error',
-                    messages: [{field:"name",message:"Name already exists"}]
-                }              
-            }        
-            else if (bucketValidationResult.isValid) {
                 let dbResultOk = false
                 if (bucket.uuid !== "") {
                     dbResultOk = await bucketService.updateOne(bucket)
@@ -156,39 +143,51 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     }
                     console.log("DATABASE ERROR writing bucket "+bucket.uuid)                    
                 }
-
-                
-            } else {
-                ctx.status=400
-                ctx.body = {
-                    status: 'error',
-                    messages: bucketValidationResult.messages
+       
+            } catch (error) {
+                if (error instanceof ExceptionNotAuthorized) {
+                    ctx.status=401
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{message:"Operation NOT Allowed"}]
+                    }         
+                    console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
+                    
                 }
-                
+                else if (error instanceof ExceptionRecordAlreadyExists) {
+                    ctx.status=409
+                    ctx.body = {
+                        status: 'error',
+                        messages: [{field:"name",message:"Name already exists"}]
+                    }   
+                    
+                }
+                else if (error instanceof ExceptionInvalidObject) {
+                    ctx.status=400
+                    ctx.body = {
+                        status: 'error',
+                        //@ts-ignore
+                        messages: error.errorMessages
+                    }
+                    
+                }
+                else {
+                    console.error(error)
+    
+                }                 
+            } finally {
+                bucketService.dispose()
             }
-            bucketService.dispose()
-        }
+            
 
     })
 
     router.delete('/bucket',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        let processAllowed = UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])
-        if (!processAllowed) {
-
-            ctx.status=401
-            ctx.body = {
-                status: 'error',
-                messages: [{message:"Operation NOT Allowed"}]
-            }         
-            console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
-
-        }
-        else {
-
-            const bucketService = new BucketService()
-
+    
+        const bucketService = new BucketService(prefix,userPermissions)
+        try {
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
@@ -215,14 +214,30 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     message: "Invalid Uuid"
                 }
 
+            }                
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
+                
             }
+            else {
+                console.error(error)
+
+            }  
+        } finally {
             bucketService.dispose()
         }
 
     })
 
     router.get('/contexts', async (ctx:Context) => {
-        const bucketService = new BucketService()
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const bucketService = new BucketService(prefix,viewVars.userPermissions)
         try {
 
             let buckets = await bucketService.getAll()
@@ -244,13 +259,24 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             });            
 
             viewVars.contexts = contexts
-            viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.module_data.contexts_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
             return ctx.render('plugins/_'+prefix+'/views/contexts', viewVars);
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                
+            }
+            else {
+                console.error(error)
+
+            }  
         } finally {
             bucketService.dispose()
         }
@@ -259,7 +285,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.get('/context', async (ctx:Context) => {
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = new FlagService(prefix,userPermissions)        
-        const bucketService = new BucketService()
+        const bucketService = new BucketService(prefix,userPermissions)
         const tagService = new TagService(prefix,userPermissions)
         try {
 
@@ -297,7 +323,19 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             return ctx.render('plugins/_'+prefix+'/views/context', viewVars);
         } catch (error) {
-            console.error(error)
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                
+            }
+            else {
+                console.error(error)
+
+            }  
         }
         finally{
             tagService.dispose()

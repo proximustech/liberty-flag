@@ -1,6 +1,6 @@
 import { Context } from "koa";
 import Router from "koa-router"
-import { TagService } from "../services/TagService";
+import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
@@ -14,7 +14,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/tags', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const tagService = new TagService(prefix,viewVars.userPermissions)
+        const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
             viewVars.tags = await tagService.getAll()
@@ -44,7 +44,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     
     router.get('/tag_form', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const tagService = new TagService(prefix,viewVars.userPermissions)
+        const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -91,7 +91,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.post('/tag',koaBody(), async (ctx:Context) => {
         
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const tagService = new TagService(prefix,userPermissions)
+        const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
             let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
 
@@ -155,7 +155,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.delete('/tag',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const tagService = new TagService(prefix,userPermissions)
+        const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
             let uuid:any = ctx.request.query.uuid || ""
 

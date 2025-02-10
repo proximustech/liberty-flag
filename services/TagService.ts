@@ -12,8 +12,8 @@ export class TagService implements IDisposable {
     private userCanRead:boolean
     private userCanWrite:boolean
 
-    constructor(serviceSecurityElementPrefix:string,userPermissions:any){
-        this.tagModel= new TagModel()
+    constructor(tagModel:TagModel,serviceSecurityElementPrefix:string,userPermissions:any){
+        this.tagModel= tagModel
         this.serviceSecurityElement=serviceSecurityElementPrefix+".tag"
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])

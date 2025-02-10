@@ -1,8 +1,10 @@
 import { BucketDataObject,BucketContextDataObject } from "../dataObjects/BucketDataObject";
 import { FlagDataObject,FlagContextDataObject } from "../dataObjects/FlagDataObject";
 
-import { BucketService } from "../services/BucketService"
-import { FlagService } from "../services/FlagService"
+import { FlagService } from "../services/FlagService";
+import { BucketService } from "../services/BucketService";
+import { BucketServiceFactory } from "../factories/BucketServiceFactory"
+import { FlagServiceFactory } from "../factories/FlagServiceFactory"
 
 import { Uuid } from "../../../services/utilities";
 import { ExceptionNotAuthorized, ExceptionRecordAlreadyExists, ExceptionInvalidObject } from "../../../types/exception_custom_errors";
@@ -110,8 +112,8 @@ async function randomDbPopulation(bucketService:BucketService,flagService:FlagSe
 async function main() {
 
   let userPermissions:any = [['','liberty_flag.flag','read'],['','liberty_flag.flag','write']]
-  const flagService = new FlagService('liberty_flag',userPermissions)
-  const bucketService = new BucketService()
+  const flagService = FlagServiceFactory.create('liberty_flag',userPermissions)
+  const bucketService = BucketServiceFactory.create('liberty_flag',userPermissions)
 
   // Especial elements DB population
 

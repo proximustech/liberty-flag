@@ -34,7 +34,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.flags = await flagService.getAllByBucketUuid(bucketUuid)
 
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-                viewVars.userHasPermissionOnElement = "app.module_data.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
+                viewVars.userHasPermissionOnElement = "app.md.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
 
                 return ctx.render('plugins/_'+prefix+'/views/flags', viewVars);
             }
@@ -103,7 +103,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.flagMetadata = FlagDataObjectSpecs.metadata
                 viewVars.flagFieldRender = FlagDataObjectSpecs.htmlDataObjectFieldRender
                 viewVars.flagValidateSchema = FlagDataObjectValidator.validateSchema
-                viewVars.flagValidateFunction = "app.module_data.flag_form.flagValidateFunction=" + FlagDataObjectValidator.validateFunction
+                viewVars.flagValidateFunction = "app.md.flag_form.flagValidateFunction=" + FlagDataObjectValidator.validateFunction
 
                 let flagContext = new FlagContextDataObject()
                 viewVars.flagContext = flagContext
@@ -112,15 +112,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 //viewVars.engineBooleanMetadata = EngineBooleanDataObjectSpecs.metadata
                 //viewVars.engineBooleanFieldRender = EngineBooleanDataObjectSpecs.htmlDataObjectFieldRender
                 //viewVars.engineBooleanValidateSchema = EngineBooleanDataObjectValidator.validateSchema
-                //viewVars.engineBooleanValidateFunction = "app.module_data.flag_form.engineBooleanValidateFunction=" + EngineBooleanDataObjectValidator.validateFunction
+                //viewVars.engineBooleanValidateFunction = "app.md.flag_form.engineBooleanValidateFunction=" + EngineBooleanDataObjectValidator.validateFunction
                                 
                 viewVars.engineBooleanConditioned = new EngineBooleanConditionedDataObject()
                 viewVars.engineBooleanConditionedCondition = new EngineBooleanConditionedConditionDataObject()
                 viewVars.engineBooleanConditionedConditionValidateShema = EngineBooleanConditionedConditionDataObjectValidator.validateSchema
-                viewVars.engineBooleanConditionedConditionValidateFunction = "app.module_data.flag_form.engineBooleanConditionedConditionValidateFunction=" + EngineBooleanConditionedConditionDataObjectValidator.validateFunction                
+                viewVars.engineBooleanConditionedConditionValidateFunction = "app.md.flag_form.engineBooleanConditionedConditionValidateFunction=" + EngineBooleanConditionedConditionDataObjectValidator.validateFunction                
 
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-                viewVars.userHasPermissionOnElement = "app.module_data.flag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement                            
+                viewVars.userHasPermissionOnElement = "app.md.flag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement                            
 
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 

@@ -1,5 +1,5 @@
 <script>
-    app.module_data = {}
+    app.md = {}
 </script>
 <% let bucketContextsMap = getUuidMapFromBucketContextsList(bucket.contexts) %>
 <div class="alert alert-light" role="alert" style="text-align: left;">
@@ -109,6 +109,6 @@
     <% }) %>
 </table>
 <script>
-    app.module_data.flags_table = $('#flags_table')
-    app.module_data.flags_table.bootstrapTable()
+    app.md.flags_table = $('#flags_table')
+    app.md.flags_table.bootstrapTable()
 </script>

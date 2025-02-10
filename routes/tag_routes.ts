@@ -20,7 +20,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.tags = await tagService.getAll()
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-            viewVars.userHasPermissionOnElement = "app.module_data.tags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
+            viewVars.userHasPermissionOnElement = "app.md.tags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
 
             return ctx.render('plugins/_'+prefix+'/views/tags', viewVars);
         } catch (error) {
@@ -63,10 +63,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.tagMetadata = TagDataObjectSpecs.metadata
             viewVars.tagFieldRender = TagDataObjectSpecs.htmlDataObjectFieldRender
             viewVars.tagValidateSchema = TagDataObjectValidator.validateSchema
-            viewVars.tagValidateFunction = "app.module_data.tag_form.tagValidateFunction=" + TagDataObjectValidator.validateFunction
+            viewVars.tagValidateFunction = "app.md.tag_form.tagValidateFunction=" + TagDataObjectValidator.validateFunction
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-            viewVars.userHasPermissionOnElement = "app.module_data.tag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement            
+            viewVars.userHasPermissionOnElement = "app.md.tag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement            
 
             return ctx.render('plugins/_'+prefix+'/views/tag_form', viewVars);
         } catch (error) {

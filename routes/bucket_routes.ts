@@ -26,7 +26,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.buckets = await bucketService.getAll()
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-            viewVars.userHasPermissionOnElement = "app.module_data.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.md.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
             return ctx.render('plugins/_'+prefix+'/views/buckets', viewVars);
         } catch (error) {
@@ -84,17 +84,17 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.bucketContext = bucketContext
             viewVars.bucketContextMetadata = BucketContextDataObjectSpecs.metadata
             viewVars.bucketContextValidateSchema = BucketContextDataObjectValidator.validateSchema
-            viewVars.bucketContextValidateFunction = "app.module_data.bucket_form.bucketContextValidateFunction=" + BucketContextDataObjectValidator.validateFunction
+            viewVars.bucketContextValidateFunction = "app.md.bucket_form.bucketContextValidateFunction=" + BucketContextDataObjectValidator.validateFunction
 
             viewVars.bucket = bucket
             viewVars.bucketMetadata = BucketDataObjectSpecs.metadata
             viewVars.bucketFieldRender = BucketDataObjectSpecs.htmlDataObjectFieldRender
             viewVars.bucketValidateSchema = BucketDataObjectValidator.validateSchema
-            viewVars.bucketValidateFunction = "app.module_data.bucket_form.bucketValidateFunction=" + BucketDataObjectValidator.validateFunction
+            viewVars.bucketValidateFunction = "app.md.bucket_form.bucketValidateFunction=" + BucketDataObjectValidator.validateFunction
             //viewVars.bucketFieldsHtml = BucketDataObjectSpecs.htmlDataObjectRender(bucket,BucketDataObjectSpecs.metadata)
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-            viewVars.userHasPermissionOnElement = "app.module_data.bucket_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.md.bucket_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
             return ctx.render('plugins/_'+prefix+'/views/bucket_form', viewVars);
         } catch (error) {
@@ -260,7 +260,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             viewVars.contexts = contexts
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-            viewVars.userHasPermissionOnElement = "app.module_data.contexts_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.md.contexts_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
             return ctx.render('plugins/_'+prefix+'/views/contexts', viewVars);
         } catch (error) {
@@ -319,7 +319,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.contextName = contextName
             viewVars.flags = await flagService.getAll()
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
-            viewVars.userHasPermissionOnElement = "app.module_data.context.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.md.context.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
             return ctx.render('plugins/_'+prefix+'/views/context', viewVars);
         } catch (error) {

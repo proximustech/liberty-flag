@@ -1,21 +1,21 @@
 <script>
-    app.module_data.bucket_form={}
-    app.module_data.bucket_form.prefix=<%- JSON.stringify(prefix) %>
-    app.module_data.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
-    app.module_data.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema).replaceAll("\\","\\\\") %>`)
+    app.md.bucket_form={}
+    app.md.bucket_form.prefix=<%- JSON.stringify(prefix) %>
+    app.md.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
+    app.md.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- bucketValidateFunction %>`)
 
-    app.module_data.bucket_form.bucketContext=JSON.parse(`<%- JSON.stringify(bucketContext) %>`)
-    app.module_data.bucket_form.bucketContextValidateSchema = JSON.parse(`<%- JSON.stringify(bucketContextValidateSchema).replaceAll("\\","\\\\") %>`)
-    app.module_data.bucket_form.bucketContext.name='New Context Name'
+    app.md.bucket_form.bucketContext=JSON.parse(`<%- JSON.stringify(bucketContext) %>`)
+    app.md.bucket_form.bucketContextValidateSchema = JSON.parse(`<%- JSON.stringify(bucketContextValidateSchema).replaceAll("\\","\\\\") %>`)
+    app.md.bucket_form.bucketContext.name='New Context Name'
     eval(`<%- bucketContextValidateFunction %>`)
 
-    app.module_data.bucket_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
+    app.md.bucket_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
     eval(`<%- userHasPermissionOnElement %>`)    
 
     function createContext(){
-        let newContext = JSON.parse(JSON.stringify(app.module_data.bucket_form.bucketContext))
-        let contextsLength=app.module_data.bucket_form.bucket.contexts.push(newContext)
+        let newContext = JSON.parse(JSON.stringify(app.md.bucket_form.bucketContext))
+        let contextsLength=app.md.bucket_form.bucket.contexts.push(newContext)
         addContextToList(newContext,contextsLength -1)
     }
 
@@ -23,7 +23,7 @@
         document.getElementById('bucket_form_context_list').innerHTML=""
 
         let counter = 0
-        app.module_data.bucket_form.bucket.contexts.forEach(context => {
+        app.md.bucket_form.bucket.contexts.forEach(context => {
             addContextToList(context,counter)
             counter++
         });
@@ -41,8 +41,8 @@
         }
         
         let deleteButton = ""
-        if (app.module_data.bucket_form.userHasPermissionOnElement(app.module_data.bucket_form.userPermissions,[app.module_data.bucket_form.prefix+'.bucket'],['write'])) {
-            deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.module_data.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
+        if (app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket'],['write'])) {
+            deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.md.bucket_form.bucket.contexts.splice(${contextIndex}, 1);addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
         }
         html = `
         <div id="context_${contextIndex}_wrapper" style="margin-bottom: 10px;">
@@ -64,20 +64,20 @@
 
     function context_listener(contextIndex,element){
         document.getElementById(`context_${contextIndex}`).summary=element.value;
-        app.module_data.bucket_form.bucket.contexts[contextIndex].name = element.value
+        app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
 
         if(element.value===""){
-            if(app.module_data.bucket_form.bucketContextValidateSchema.name.required){
-                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.module_data.bucket_form.bucketContextValidateSchema.name.requiredMessage
+            if(app.md.bucket_form.bucketContextValidateSchema.name.required){
+                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.md.bucket_form.bucketContextValidateSchema.name.requiredMessage
 
             }
             else{
                 document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=""
             }               
         } else {
-            regexpValidator = new RegExp(app.module_data.bucket_form.bucketContextValidateSchema.name.regexp)
+            regexpValidator = new RegExp(app.md.bucket_form.bucketContextValidateSchema.name.regexp)
             if(!regexpValidator.test(element.value)){
-                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.module_data.bucket_form.bucketContextValidateSchema.name.message
+                document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=app.md.bucket_form.bucketContextValidateSchema.name.message
             }
             else {
                 document.getElementById(`context_${contextIndex}_validation_message`).innerHTML=''
@@ -94,10 +94,10 @@
             tags.push(document.getElementById("bucket_tags").selectedOptions[i].value)
         }
         
-        app.module_data.bucket_form.bucket.tags=tags
+        app.md.bucket_form.bucket.tags=tags
 
-        let bucket = app.module_data.bucket_form.bucket
-        let bucketValidationResult = app.module_data.bucket_form.bucketValidateFunction(bucket,app.module_data.bucket_form.bucketValidateSchema)       
+        let bucket = app.md.bucket_form.bucket
+        let bucketValidationResult = app.md.bucket_form.bucketValidateFunction(bucket,app.md.bucket_form.bucketValidateSchema)       
         if (bucketValidationResult.isValid) {
             app.setElementForPendingOperation(triggerElement)
             let result = $.ajax({

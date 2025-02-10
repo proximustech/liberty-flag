@@ -13,8 +13,8 @@ export class BucketService implements IDisposable {
     private userCanRead:boolean
     private userCanWrite:boolean
 
-    constructor(serviceSecurityElementPrefix:string,userPermissions:any){
-        this.bucketModel= new BucketModel()
+    constructor(bucketModel:BucketModel,serviceSecurityElementPrefix:string,userPermissions:any){
+        this.bucketModel=bucketModel
         this.serviceSecurityElement=serviceSecurityElementPrefix+".bucket"
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])

@@ -1,9 +1,8 @@
 import { Context } from "koa";
 import Router from "koa-router"
-import { Uuid } from "../../../services/utilities";
-import { BucketService } from "../services/BucketService";
+import { BucketServiceFactory } from "../factories/BucketServiceFactory";
 import { FlagService } from "../services/FlagService";
-import { TagService } from "../services/TagService";
+import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
@@ -18,8 +17,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/buckets', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const tagService = new TagService(prefix,viewVars.userPermissions)
-        const bucketService = new BucketService(prefix,viewVars.userPermissions)
+        const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
+        const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
@@ -51,8 +50,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/bucket_form', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const tagService = new TagService(prefix,viewVars.userPermissions)
-        const bucketService = new BucketService(prefix,viewVars.userPermissions)
+        const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
+        const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -120,7 +119,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
 
-            const bucketService = new BucketService(prefix,userPermissions)
+            const bucketService = BucketServiceFactory.create(prefix,userPermissions)
             try {
                 let bucket = (JSON.parse(ctx.request.body.json) as BucketDataObject)
 
@@ -186,7 +185,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
     
-        const bucketService = new BucketService(prefix,userPermissions)
+        const bucketService = BucketServiceFactory.create(prefix,userPermissions)
         try {
             let uuid:any = ctx.request.query.uuid || ""
 
@@ -237,7 +236,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/contexts', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const bucketService = new BucketService(prefix,viewVars.userPermissions)
+        const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
             let buckets = await bucketService.getAll()
@@ -285,8 +284,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.get('/context', async (ctx:Context) => {
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = new FlagService(prefix,userPermissions)        
-        const bucketService = new BucketService(prefix,userPermissions)
-        const tagService = new TagService(prefix,userPermissions)
+        const bucketService = BucketServiceFactory.create(prefix,userPermissions)
+        const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
 
             let uuids:any = ctx.request.query.uuids || ""

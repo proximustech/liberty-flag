@@ -4,7 +4,6 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 import { FlagDataObject,FlagDataObjectValidator } from "../dataObjects/FlagDataObject";
 import { FlagModel } from "../models/FlagModel";
 
-
 export class FlagService implements IDisposable {
     
     private flagModel:FlagModel
@@ -13,9 +12,9 @@ export class FlagService implements IDisposable {
     private userCanRead:boolean
     private userCanWrite:boolean
 
-    constructor(serviceSecurityElementPrefix:string,userPermissions:any){
+    constructor(flagModel:FlagModel,serviceSecurityElementPrefix:string,userPermissions:any){
 
-        this.flagModel= new FlagModel()
+        this.flagModel= flagModel
         this.serviceSecurityElement=serviceSecurityElementPrefix+".flag"
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])

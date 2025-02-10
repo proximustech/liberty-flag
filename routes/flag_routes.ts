@@ -1,6 +1,6 @@
 import Router from "koa-router"
 import { Context } from "koa";
-import { FlagService } from "../services/FlagService";
+import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 import { BucketService } from "../services/BucketService";
 import { BucketServiceFactory } from "../factories/BucketServiceFactory";
 import { TagServiceFactory } from "../factories/TagServiceFactory";
@@ -18,7 +18,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/flags', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const flagService = new FlagService(prefix,viewVars.userPermissions)
+        const flagService = FlagServiceFactory.create(prefix,viewVars.userPermissions)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
@@ -71,7 +71,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
-        const flagService = new FlagService(prefix,viewVars.userPermissions)
+        const flagService = FlagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
             let uuid:any = ctx.request.query.uuid || ""
@@ -156,7 +156,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.post('/flag',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const flagService = new FlagService(prefix,userPermissions)
+        const flagService = FlagServiceFactory.create(prefix,userPermissions)
 
         try {
             let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
@@ -222,7 +222,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.delete('/flag',koaBody(), async (ctx:Context) => {
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const flagService = new FlagService(prefix,userPermissions)
+        const flagService = FlagServiceFactory.create(prefix,userPermissions)
 
         try {
             let uuid:any = ctx.request.query.uuid || ""

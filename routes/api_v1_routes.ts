@@ -1,6 +1,6 @@
 import Router from "koa-router"
 import { Context } from "koa";
-import { FlagService } from "../services/FlagService";
+import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 import { FlagDataObject } from "../dataObjects/FlagDataObject";
 import { env } from 'node:process';
 import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
@@ -15,7 +15,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.post(apiPrefix+'/get-flags-config',koaBody(), async (ctx:Context) => {
 
         let userPermissions:any = [['','liberty_flag.flag','read']]
-        const flagService = new FlagService(apiSecurityPrefix,userPermissions)
+        const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
 
         try {
             let contextKey = ctx.request.body["context-key"] || ""
@@ -95,7 +95,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     router.post(apiPrefix+'/set-flags-config',koaBody(), async (ctx:Context) => {
 
         let userPermissions:any = [['','liberty_flag.flag','read'],['','liberty_flag.flag','write']]
-        const flagService = new FlagService(apiSecurityPrefix,userPermissions)
+        const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
 
         try {
             let contextKey = ctx.request.body["context-key"] || ""

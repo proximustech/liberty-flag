@@ -9,6 +9,7 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 import koaBody from 'koa-body';
+import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 
 module.exports = function(router:Router,appViewVars:any,prefix:string){
 
@@ -283,7 +284,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/context', async (ctx:Context) => {
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
-        const flagService = new FlagService(prefix,userPermissions)        
+        const flagService = FlagServiceFactory.create(prefix,userPermissions)        
         const bucketService = BucketServiceFactory.create(prefix,userPermissions)
         const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {

@@ -1,7 +1,7 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
 import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
+import { TagDataObject,TagDataObjectValidator } from "../dataObjects/TagDataObject";
 import { TagModel } from "../models/TagModel";
 
 export class TagService implements IDisposable {

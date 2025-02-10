@@ -30,7 +30,28 @@ export const BucketDataObjectValidator:any = {
 
     },
 
-    validateFunction : DataObjectValidateFunction
+    validateFunction : DataObjectValidateFunction,
+    extraValidateFunction : (data:any) => {
+        let result:any = {
+            isValid :true,
+            messages:[]
+        }
+
+        //This code will run well in backend but not in the browser
+        try {
+            for (let contextsIndex = 0; contextsIndex < data.contexts.length; contextsIndex++) {
+                const context = data.contexts[contextsIndex];
+                let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
+                if (!contextValidationResult.isValid) {
+                    result.isValid = false
+                    result.messages = contextValidationResult.messages
+                    break                
+                }
+            }
+        } catch (error) {}
+
+        return result
+    }
 }
 
 export const BucketDataObjectSpecs:any = {

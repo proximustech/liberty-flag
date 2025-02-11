@@ -4,17 +4,20 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 import { BucketDataObject,BucketContextDataObject,BucketDataObjectValidator} from "../dataObjects/BucketDataObject";
 import { BucketModel } from "../models/BucketModel";
 import { Uuid } from "../../../services/utilities";
+import { FlagService } from "./FlagService";
 
 export class BucketService implements IDisposable {
     
     private bucketModel:BucketModel
+    private flagService:FlagService
     private userPermissions:any
     private serviceSecurityElement:string
     private userCanRead:boolean
     private userCanWrite:boolean
 
-    constructor(bucketModel:BucketModel,serviceSecurityElementPrefix:string,userPermissions:any){
+    constructor(bucketModel:BucketModel,flagService:FlagService,serviceSecurityElementPrefix:string,userPermissions:any){
         this.bucketModel=bucketModel
+        this.flagService=flagService
         this.serviceSecurityElement=serviceSecurityElementPrefix+".bucket"
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])
@@ -73,8 +76,11 @@ export class BucketService implements IDisposable {
 
     async deleteByUuId(bucketUuId:string){
         if (this.userCanWrite) {
-            return await this.bucketModel.deleteByUuId(bucketUuId) 
-           
+            if (await this.flagService.deleteByBucketUuId(bucketUuId)) {
+                return await this.bucketModel.deleteByUuId(bucketUuId) 
+                
+            } else return false
+
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            

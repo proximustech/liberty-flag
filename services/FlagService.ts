@@ -112,6 +112,16 @@ export class FlagService implements IDisposable {
         }     
     }
 
+    async deleteByBucketUuId(bucketUuId:string){
+        if (this.userCanWrite) {
+            return await this.flagModel.deleteByBucketUuId(bucketUuId) 
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }     
+    }
+
     async getByName(name:string) : Promise<FlagDataObject> {
 
         if (this.userCanRead) {

@@ -53,6 +53,13 @@ export class FlagModel implements IDisposable {
         }
         else return false
     }
+    async deleteByBucketUuId(bucketUuId:string){
+        const result = await this.collection.deleteMany({ bucket_uuid: bucketUuId },{writeConcern: {w: 1, j: true}})
+        if (result.acknowledged) {
+            return true
+        }
+        else return false
+    }
 
     async getByName(name:string) : Promise<FlagDataObject> {
 

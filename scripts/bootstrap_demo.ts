@@ -111,7 +111,10 @@ async function randomDbPopulation(bucketService:BucketService,flagService:FlagSe
 
 async function main() {
 
-  let userPermissions:any = [['','liberty_flag.flag','read'],['','liberty_flag.flag','write']]
+  let userPermissions:any = [
+    ['','liberty_flag.bucket','read'],['','liberty_flag.bucket','write'],
+    ['','liberty_flag.flag','read'],['','liberty_flag.flag','write'],
+  ]
   const flagService = FlagServiceFactory.create('liberty_flag',userPermissions)
   const bucketService = BucketServiceFactory.create('liberty_flag',userPermissions)
 

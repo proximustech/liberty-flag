@@ -30,7 +30,10 @@
     }
 
     app.md.addContextToList=(bucketContext,contextIndex)=>{
-
+        let disabled = ""
+        if (!app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket'],['write'])) {
+            disabled="disabled='disabled'"
+        }
         let contextKeyLabel =``
         if (bucketContext.uuid !== "") {
             contextKeyLabel = `
@@ -48,7 +51,7 @@
         <div id="context_${contextIndex}_wrapper" style="margin-bottom: 10px;">
             <sl-details id="context_${contextIndex}" summary="${bucketContext.name}">
                 <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
-                <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="app.md.context_listener(${contextIndex},this)" value='${bucketContext.name}' />
+                <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="app.md.context_listener(${contextIndex},this)" value='${bucketContext.name}' ${disabled} />
                 <label id='context_${contextIndex}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
                 ${contextKeyLabel}
                 <br>

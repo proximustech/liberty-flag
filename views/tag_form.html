@@ -26,7 +26,7 @@
                     app.setViewForPendingOperation('content_view') 
                     htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
                     app.drawer.hide();
-                    app.toastShow('Saved','Tag saved successfully.',{type:"info"})           
+                    app.toastShow('Saved','Tag saved successfully.',{type:"success"})           
                     
                 }, 1000);
             })
@@ -62,7 +62,7 @@
                 htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
                 app.drawer.hide();
                 app.dialog.hide()
-                app.toastShow('Deleted','Tag deleted successfully.',{type:"info"}) 
+                app.toastShow('Deleted','Tag deleted successfully.',{type:"success"}) 
             },1000)   
         })
     

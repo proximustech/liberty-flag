@@ -116,7 +116,7 @@
                     app.setViewForPendingOperation('content_view') 
                     htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
                     app.drawer.hide();
-                    app.toastShow('Saved','Bucket saved successfully.',{type:"info"})           
+                    app.toastShow('Saved','Bucket saved successfully.',{type:"success"})           
                     
                 }, 1000);
             })
@@ -152,7 +152,7 @@
                 htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
                 app.drawer.hide();
                 app.dialog.hide()
-                app.toastShow('Deleted','Bucket deleted successfully.',{type:"info"}) 
+                app.toastShow('Deleted','Bucket deleted successfully.',{type:"success"}) 
             },1000)   
         })
     

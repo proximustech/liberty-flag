@@ -6,13 +6,10 @@ import { BucketService } from "../services/BucketService";
 import { BucketServiceFactory } from "../factories/BucketServiceFactory"
 import { FlagServiceFactory } from "../factories/FlagServiceFactory"
 
-import { Uuid } from "../../../services/utilities";
+import { Uuid,Random } from "../../../services/utilities";
 import { ExceptionNotAuthorized, ExceptionRecordAlreadyExists, ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
 
-function getRandomString(){
-  return (Math.random()+1).toString(36).substring(2)
-}
 
 async function createFlag(flagService:FlagService,bucket:BucketDataObject,flagName:string) {
 
@@ -99,9 +96,9 @@ async function randomDbPopulation(bucketService:BucketService,flagService:FlagSe
   for (let bucketIndex = 0; bucketIndex < bucketsNumber; bucketIndex++) {
     let flagNames:any=[]
     for (let flagNameIndex = 0; flagNameIndex < flagNamesNumber; flagNameIndex++) {
-      flagNames.push(getRandomString())
+      flagNames.push(Random.getRandomString())
     }
-    let bucketName:string = getRandomString()
+    let bucketName:string = Random.getRandomString()
     try {
       await createBucketWithFlags(bucketService,flagService,bucketName,flagNames)
     } catch (error) {}

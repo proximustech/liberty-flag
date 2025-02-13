@@ -22,8 +22,8 @@ export const FlagDataObjectValidator:any = {
 
     validateSchema : {
         name : {
-            regexp:"^.{5,30}$",
-            message:"Flag name must be in the range of 5 and 30 characters.",
+            regexp:String.raw`^\S{5,30}$`,
+            message:"Flag name must be in the range of 5 and 30 characters without spaces.",
             required:true,
             requiredMessage : "Flag name is required."
         },
@@ -235,10 +235,10 @@ export const FlagContextDataObjectValidator:any = {
 
     validateSchema : {
         bucket_context_uuid : {
-            regexp:"^.{24}$",
+            regexp:String.raw`^\S{24}$`,
             message:"Bucket context format is invalid",
             required:true,
-            requiredMessage : "Tag name is required."
+            requiredMessage : "bucket_context_uuid is required."
         },
         engine : {
             regexp:"^(string|boolean|boolean_conditioned_true|boolean_conditioned_false|boolean_conditionedor_true|boolean_conditionedor_false)$",

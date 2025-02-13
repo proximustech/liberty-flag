@@ -4,10 +4,10 @@ export const EngineStringDataObjectValidator:any = {
 
     validateSchema : {
         value : {
-            regexp:"^.+$",
+            regexp:String.raw`^\S+$`,
             message:"",
             required:true,
-            requiredMessage : "The String Engine selected option is required."
+            requiredMessage : "The String Engine selected option value is required without spaces."
         },       
         configuration : {
             regexp:"^.+$",

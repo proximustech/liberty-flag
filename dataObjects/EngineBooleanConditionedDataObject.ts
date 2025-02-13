@@ -14,10 +14,10 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
 
     validateSchema : {
         first_parameter : {
-            regexp:"^.+$",
-            message:"",
+            regexp:String.raw`^\S+$`,
+            message:"Boolean condition: Key must have at least one character and without spaces.",
             required:true,
-            requiredMessage : "Boolean condition: Key is required."
+            requiredMessage : "Boolean condition: Key is required without spaces."
         },       
         second_parameter : {
             regexp:"^.*$",

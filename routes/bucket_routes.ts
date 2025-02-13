@@ -1,12 +1,12 @@
 import { Context } from "koa";
 import Router from "koa-router"
 import { BucketServiceFactory } from "../factories/BucketServiceFactory";
-import { FlagService } from "../services/FlagService";
 import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 
 import koaBody from 'koa-body';
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
@@ -15,6 +15,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     let viewVars = {...appViewVars};
     viewVars.prefix = prefix
+
+    let logger = LoggerServiceFactory.create()
 
     router.get('/buckets', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
@@ -36,11 +38,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
             }
         } finally{
             bucketService.dispose()
@@ -104,11 +106,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
             }
         } finally{
             tagService.dispose()
@@ -141,7 +143,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         status: 'error',
                         messages: [{message: "Data Unexpected Error"}]
                     }
-                    console.log("DATABASE ERROR writing bucket "+bucket.uuid)                    
+                    logger.error("DATABASE ERROR writing bucket "+bucket.uuid)                    
                 }
        
             } catch (error) {
@@ -151,7 +153,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         status: 'error',
                         messages: [{message:"Operation NOT Allowed"}]
                     }         
-                    console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
+                    logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
                     
                 }
                 else if (error instanceof ExceptionRecordAlreadyExists) {
@@ -172,7 +174,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     
                 }
                 else {
-                    console.error(error)
+                    logger.error(error)
     
                 }                 
             } finally {
@@ -204,7 +206,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         status: 'error',
                         messages: [{message: "Data Unexpected Error"}]
                     }
-                    console.log("DATABASE ERROR deleting bucket "+uuid)                    
+                    logger.error("DATABASE ERROR deleting bucket "+uuid)                    
                 } 
             }
             else {
@@ -222,11 +224,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.bucket')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }  
         } finally {
@@ -270,11 +272,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }  
         } finally {
@@ -329,11 +331,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }  
         }

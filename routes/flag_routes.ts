@@ -8,6 +8,7 @@ import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContext
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 
 import koaBody from 'koa-body';
 
@@ -15,6 +16,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     let viewVars = {...appViewVars};
     viewVars.prefix = prefix
+
+    let logger = LoggerServiceFactory.create()
 
     router.get('/flags', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
@@ -54,11 +57,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.flag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.flag')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
             }
         } finally{
             bucketService.dispose()
@@ -140,11 +143,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.flag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.flag')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
             }
         } finally{
             bucketService.dispose()
@@ -178,7 +181,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message: "Data Unexpected Error"}]
                 }
-                console.log("DATABASE ERROR writing flag "+flag.uuid)
+                logger.error("DATABASE ERROR writing flag "+flag.uuid)
             }  
                          
         } catch (error) {
@@ -188,7 +191,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
                 
             }
             else if (error instanceof ExceptionRecordAlreadyExists) {
@@ -209,7 +212,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }              
         } finally{
@@ -241,7 +244,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         status: 'error',
                         messages: [{message: "Data Unexpected Error"}]
                     }
-                    console.log("DATABASE ERROR deleting flag "+uuid)                    
+                    logger.error("DATABASE ERROR deleting flag "+uuid)                    
                 }  
             }
             else {
@@ -259,11 +262,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }              
         } finally {

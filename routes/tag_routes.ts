@@ -4,6 +4,7 @@ import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 
 import koaBody from 'koa-body';
 
@@ -11,6 +12,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     let viewVars = {...appViewVars};
     viewVars.prefix = prefix
+
+    let logger = LoggerServiceFactory.create()
 
     router.get('/tags', async (ctx:Context) => {
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
@@ -30,11 +33,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.tag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.tag')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
             }
         } finally {
             tagService.dispose()
@@ -76,11 +79,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.tag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.tag')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
             }
         } finally {
             tagService.dispose()
@@ -112,7 +115,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message: "Data Unexpected Error"}]
                 }
-                console.log("DATABASE ERROR writing tag "+tag.uuid)                        
+                logger.error("DATABASE ERROR writing tag "+tag.uuid)                        
             }
 
         } catch (error) {
@@ -122,7 +125,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
                 
             }
             else if (error instanceof ExceptionRecordAlreadyExists) {
@@ -143,7 +146,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }             
         } finally{
@@ -173,7 +176,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         status: 'error',
                         messages: [{message: "Data Unexpected Error"}]
                     }
-                    console.log("DATABASE ERROR deleting tag "+uuid)                    
+                    logger.error("DATABASE ERROR deleting tag "+uuid)                    
                 } 
             }
             else {
@@ -191,11 +194,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }             
         } finally {

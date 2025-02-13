@@ -4,6 +4,7 @@ import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 import { FlagDataObject } from "../dataObjects/FlagDataObject";
 import { env } from 'node:process';
 import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 
 import koaBody from 'koa-body';
 
@@ -11,6 +12,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     let apiPrefix = "/api/v1"
     let apiSecurityPrefix="liberty_flag" //Must be the same value of the Liberty Flag prefix in the _liberty_flag_routes.ts file.
+
+    let logger = LoggerServiceFactory.create()
 
     router.post(apiPrefix+'/get-flags-config',koaBody(), async (ctx:Context) => {
 
@@ -45,7 +48,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     });
         
                     if (flags.length == 0) {
-                        console.log('API - get_context_flags_data - No flags for Context Key: "'+ contextKey + '"' )
+                        logger.warn('API - get-flags-config - No flags for Context Key: "'+ contextKey + '"' )
                     }
         
                     ctx.body = {
@@ -54,7 +57,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     }
                     
                 } else {
-                    console.log('API - get_context_flags_data - No valid Context Key: "'+ contextKey + '"' )
+                    logger.warn('API - get-flags-config - No valid Context Key: "'+ contextKey + '"' )
                     ctx.status=400
                     ctx.body = {
                         status: 'error',
@@ -64,7 +67,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }            
             }
             else {
-                console.log('API - get_context_flags_data - Invalid Access Token: "'+ accessToken + '"' )
+                logger.warn('API - get-flags-config - Invalid Access Token: "'+ accessToken + '"' )
                 ctx.status=401
                 ctx.body = {
                     status: 'error',
@@ -78,12 +81,12 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user traying to READ on " + prefix +'.flag')
+                logger.warn("SECURITY WARNING: unauthorized user traying to READ on " + prefix +'.flag')
                 
             }
 
             else {
-                console.error(error)
+                logger.error(error)
 
             }               
         } finally{
@@ -107,7 +110,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     if (flagsContextConfig !== "") {
                         let contextConfigUpdated = await flagService.updateFlagsContextConfig(contextKey,flagsContextConfig)
                         if (!contextConfigUpdated) {
-                            console.log('API - set-flags-config - '+flagsContextConfig.name+' - No match for flags and context storage' )
+                            logger.warn('API - set-flags-config - '+flagsContextConfig.name+' - No match for flags and context storage' )
                             ctx.status=400
                             ctx.body = {
                                 status: 'error',
@@ -121,7 +124,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         }
 
                     } else {
-                        console.log('API - set-flag-config - No valid Flag Definition' )
+                        logger.warn('API - set-flags-config - No valid Flag Definition' )
                         ctx.status=400
                         ctx.body = {
                             status: 'error',
@@ -130,7 +133,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     }
                     
                 } else {
-                    console.log('API - get_context_flags_data - No valid Context Key: "'+ contextKey + '"' )
+                    logger.warn('API - set-flags-config - No valid Context Key: "'+ contextKey + '"' )
                     ctx.status=400
                     ctx.body = {
                         status: 'error',
@@ -140,7 +143,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }            
             }
             else {
-                console.log('API - get_context_flags_data - Invalid Access Token: "'+ accessToken + '"' )
+                logger.warn('API - set_flags_config - Invalid Access Token: "'+ accessToken + '"' )
                 ctx.status=401
                 ctx.body = {
                     status: 'error',
@@ -154,7 +157,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     status: 'error',
                     messages: [{message:"Operation NOT Allowed"}]
                 }         
-                console.log("SECURITY WARNING: unauthorized user traying to READ on " + prefix +'.flag')
+                logger.warn("SECURITY WARNING: unauthorized user traying to READ on " + prefix +'.flag')
                 
             }
             else if (error instanceof ExceptionInvalidObject) {
@@ -167,7 +170,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 
             }
             else {
-                console.error(error)
+                logger.error(error)
 
             }               
         } finally{

@@ -72,7 +72,7 @@ export class TagModel implements IDisposable {
     
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
         let filter:any = {}
-        filter[fieldName] = fieldValue
+        filter[fieldName] = String(fieldValue)
         const cursor = this.collection.find(filter);
         while (await cursor.hasNext()) {
             let document:any = await cursor.next();

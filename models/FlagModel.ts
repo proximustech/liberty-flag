@@ -102,7 +102,7 @@ export class FlagModel implements IDisposable {
 
     async fieldValueExists(processedDocumentBucketUuid:string,processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
         let filter:any = {}
-        filter[fieldName] = fieldValue
+        filter[fieldName] = String(fieldValue)
         filter["bucket_uuid"] = processedDocumentBucketUuid
         const cursor = this.collection.find(filter);
         while (await cursor.hasNext()) {

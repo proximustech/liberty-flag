@@ -27,6 +27,12 @@ export const BucketDataObjectValidator:any = {
             required:false,
             requiredMessage : ""
         },
+        uuid : {
+            regexp:String.raw`(^\S{24}$)|(^$)`,
+            message:"uuid format is invalid.",
+            required:false,
+            requiredMessage : ""
+        },          
 
     },
 

@@ -32,7 +32,19 @@ export const FlagDataObjectValidator:any = {
             message:"Flag description must be in the range of 30 and 200 characters.",
             required:false,
             requiredMessage : ""
-        },        
+        },
+        uuid : {
+            regexp:String.raw`(^\S{24}$)|(^$)`,
+            message:"uuid format is invalid.",
+            required:false,
+            requiredMessage : ""
+        },                  
+        bucket_uuid : {
+            regexp:String.raw`(^\S{24}$)|(^$)`,
+            message:"bucket uuid format is invalid.",
+            required:true,
+            requiredMessage : "Bucket uuid is required."
+        },                  
 
     },
 

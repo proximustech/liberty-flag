@@ -35,7 +35,7 @@ export class FlagModel implements IDisposable {
     async updateOne(flag:FlagDataObject){
         flag._id = new ObjectId(flag.uuid)
         const result = await this.collection.replaceOne(
-            {uuid: flag.uuid }, 
+            {uuid: String(flag.uuid) }, 
             flag,
             {upsert: false,writeConcern: {w: 1, j: true}}
         )
@@ -47,14 +47,14 @@ export class FlagModel implements IDisposable {
     }
 
     async deleteByUuId(flagUuId:string){
-        const result = await this.collection.deleteOne({ uuid: flagUuId },{writeConcern: {w: 1, j: true}})
+        const result = await this.collection.deleteOne({ uuid: String(flagUuId) },{writeConcern: {w: 1, j: true}})
         if (result.deletedCount == 1 && result.acknowledged) {
             return true
         }
         else return false
     }
     async deleteByBucketUuId(bucketUuId:string){
-        const result = await this.collection.deleteMany({ bucket_uuid: bucketUuId },{writeConcern: {w: 1, j: true}})
+        const result = await this.collection.deleteMany({ bucket_uuid: String(bucketUuId) },{writeConcern: {w: 1, j: true}})
         if (result.acknowledged) {
             return true
         }
@@ -63,7 +63,7 @@ export class FlagModel implements IDisposable {
 
     async getByName(name:string) : Promise<FlagDataObject> {
 
-        const cursor = this.collection.find({name : name});
+        const cursor = this.collection.find({name : String(name)});
 
         while (await cursor.hasNext()) {
             let document = (await cursor.next() as FlagDataObject);
@@ -75,7 +75,7 @@ export class FlagModel implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
 
-        const cursor = this.collection.find({uuid : uuid});
+        const cursor = this.collection.find({uuid : String(uuid)});
 
         while (await cursor.hasNext()) {
             let document = (await cursor.next() as FlagDataObject);
@@ -91,12 +91,12 @@ export class FlagModel implements IDisposable {
     }
 
     async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
-        const cursor = this.collection.find({bucket_uuid: bucketUuId});
+        const cursor = this.collection.find({bucket_uuid: String(bucketUuId)});
         return (await cursor.toArray() as FlagDataObject[])
     }
 
     async getAllByContextUuid(contextUuId:string) : Promise<FlagDataObject[]> {
-        const cursor = this.collection.find({"contexts.bucket_context_uuid": contextUuId});
+        const cursor = this.collection.find({"contexts.bucket_context_uuid": String(contextUuId)});
         return (await cursor.toArray() as FlagDataObject[])
     }        
 

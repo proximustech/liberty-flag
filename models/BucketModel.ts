@@ -34,7 +34,7 @@ export class BucketModel implements IDisposable {
     async updateOne(bucket:BucketDataObject){
         bucket._id = new ObjectId(bucket.uuid)
         const result = await this.collection.replaceOne(
-            {uuid: bucket.uuid }, 
+            {uuid: String(bucket.uuid) }, 
             bucket,
             {upsert: false,writeConcern: {w: 1, j: true}}
         )
@@ -45,7 +45,7 @@ export class BucketModel implements IDisposable {
     }
 
     async deleteByUuId(bucketUuId:string){
-        const result = await this.collection.deleteOne({ uuid: bucketUuId },{writeConcern: {w: 1, j: true}})
+        const result = await this.collection.deleteOne({ uuid: String(bucketUuId) },{writeConcern: {w: 1, j: true}})
         if (result.deletedCount == 1 && result.acknowledged) {
             return true
         }
@@ -54,7 +54,7 @@ export class BucketModel implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
-        const cursor = this.collection.find({uuid : uuid});
+        const cursor = this.collection.find({uuid : String(uuid)});
 
         while (await cursor.hasNext()) {
             let document = (await cursor.next() as BucketDataObject);

@@ -34,7 +34,7 @@ export class TagModel implements IDisposable {
     async updateOne(tag:TagDataObject){
         tag._id = new ObjectId(tag.uuid)
         const result = await this.collection.replaceOne(
-            {uuid: tag.uuid }, 
+            {uuid: String(tag.uuid) }, 
             tag,
             {upsert: false,writeConcern: {w: 1, j: true}}
         ) 
@@ -45,7 +45,7 @@ export class TagModel implements IDisposable {
     }
 
     async deleteByUuId(tagUuId:string){
-        const result = await this.collection.deleteOne({ uuid: tagUuId },{writeConcern: {w: 1, j: true}})
+        const result = await this.collection.deleteOne({ uuid: String(tagUuId) },{writeConcern: {w: 1, j: true}})
         if (result.deletedCount == 1 && result.acknowledged) {
             return true
         }
@@ -54,7 +54,7 @@ export class TagModel implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<TagDataObject> {
 
-        const cursor = this.collection.find({uuid : uuid});
+        const cursor = this.collection.find({uuid : String(uuid)});
 
         while (await cursor.hasNext()) {
             let document = (await cursor.next() as TagDataObject);

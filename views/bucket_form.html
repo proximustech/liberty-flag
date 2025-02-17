@@ -66,7 +66,7 @@
     }
 
     app.md.context_listener=(contextIndex,element)=>{
-        document.getElementById(`context_${contextIndex}`).summary=element.value;
+        document.getElementById(`context_${contextIndex}`).summary=app.escapeHTML(element.value);
         app.md.bucket_form.bucket.contexts[contextIndex].name = element.value
 
         if(element.value===""){

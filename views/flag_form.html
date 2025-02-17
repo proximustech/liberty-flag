@@ -365,6 +365,7 @@
         let options = document.getElementById(`string_engine_value_config_${contextUuid}`).value.split('|')
         options.forEach(option => {
             option = option.trim()
+            option = app.escapeHTML(option)
             if (option!=="") {
                 let selected = ""
                 if (option===actualSelectedValue) {

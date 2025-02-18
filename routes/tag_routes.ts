@@ -3,8 +3,9 @@ import Router from "koa-router"
 import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
+import { RouteService } from "../../../services/route_service";
 
 import koaBody from 'koa-body';
 
@@ -70,6 +71,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.md.tag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement            
+            RouteService.setCsrfToken(viewVars,ctx)
 
             return ctx.render('plugins/_'+prefix+'/views/tag_form', viewVars);
         } catch (error) {
@@ -96,6 +98,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
+
+            if (ctx.request.body.csrfToken !== ctx.cookies.get("csrfToken")) {
+                throw new ExceptionCsrfTokenFailed(ExceptionCsrfTokenFailed.ExceptionCsrfTokenFailed);
+            }
+
             let tag = (JSON.parse(ctx.request.body.json) as TagDataObject)
 
             let dbResultOk=false
@@ -145,6 +152,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
                 
             }
+            else if (error instanceof ExceptionCsrfTokenFailed) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: Csrf Control Failed for user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+                
+            }             
             else {
                 logger.error(error)
 
@@ -160,6 +176,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
+
+            if (ctx.request.query.csrfToken !== ctx.cookies.get("csrfToken")) {
+                throw new ExceptionCsrfTokenFailed(ExceptionCsrfTokenFailed.ExceptionCsrfTokenFailed);
+            }
+
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
@@ -197,6 +218,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
                 
             }
+            else if (error instanceof ExceptionCsrfTokenFailed) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: Csrf Control Failed for user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.tag')
+                
+            }              
             else {
                 logger.error(error)
 

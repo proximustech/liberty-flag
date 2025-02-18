@@ -7,8 +7,9 @@ import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
+import { RouteService } from "../../../services/route_service";
 
 import koaBody from 'koa-body';
 
@@ -124,6 +125,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.md.flag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement                            
+                RouteService.setCsrfToken(viewVars,ctx)
 
                 return ctx.render('plugins/_'+prefix+'/views/flag_form', viewVars);
                 
@@ -162,6 +164,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(prefix,userPermissions)
 
         try {
+
+            if (ctx.request.body.csrfToken !== ctx.cookies.get("csrfToken")) {
+                throw new ExceptionCsrfTokenFailed(ExceptionCsrfTokenFailed.ExceptionCsrfTokenFailed);
+            }
+
             let flag = (JSON.parse(ctx.request.body.json) as FlagDataObject)
     
             let dbResultOk = false
@@ -211,6 +218,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
                 
             }
+            else if (error instanceof ExceptionCsrfTokenFailed) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: Csrf Control Failed for user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
+                
+            }               
             else {
                 logger.error(error)
 
@@ -228,6 +244,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(prefix,userPermissions)
 
         try {
+
+            if (ctx.request.query.csrfToken !== ctx.cookies.get("csrfToken")) {
+                throw new ExceptionCsrfTokenFailed(ExceptionCsrfTokenFailed.ExceptionCsrfTokenFailed);
+            }
+
             let uuid:any = ctx.request.query.uuid || ""
 
             if (uuid !=="") {
@@ -265,6 +286,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
                 
             }
+            else if (error instanceof ExceptionCsrfTokenFailed) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: Csrf Control Failed for user " + ctx.session.passport.user.uuid + " traying to WRITE on " + prefix +'.flag')
+                
+            }              
             else {
                 logger.error(error)
 

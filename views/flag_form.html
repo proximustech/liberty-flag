@@ -38,7 +38,7 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/flag",
-                data:"json="+JSON.stringify(flag),
+                data:"csrfToken=<%= csrfToken %>"+"&json="+JSON.stringify(flag),
                 processData: false,
                 dataType:"text"
             })
@@ -74,7 +74,7 @@
     app.md.deleteFlag=(uuid) => {
         let result = $.ajax({
             type:"DELETE",
-            url:"<%= prefix %>/flag?uuid="+uuid,
+            url:"<%= prefix %>/flag?uuid="+uuid+"&csrfToken=<%= csrfToken %>",
         })
         .done(function() {      
             setTimeout(() =>{

@@ -106,7 +106,7 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/bucket",
-                data:"json="+JSON.stringify(bucket),
+                data:"csrfToken=<%= csrfToken %>"+"&json="+JSON.stringify(bucket),
                 processData: false,
                 dataType:"text"
             })
@@ -144,7 +144,7 @@
     app.md.deleteBucket=(uuid)=> {
         let result = $.ajax({
             type:"DELETE",
-            url:"<%= prefix %>/bucket?uuid="+uuid,
+            url:"<%= prefix %>/bucket?uuid="+uuid+"&csrfToken=<%= csrfToken %>",
         })
         .done(function() {      
             setTimeout(() =>{

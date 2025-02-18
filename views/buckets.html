@@ -3,11 +3,11 @@
 </script>
 
 <div class="alert alert-light module_title" role="alert">   
-    <strong>Buckets</strong>
+    <strong><sl-icon name="bucket" label="Buckets"></sl-icon> Buckets</strong>
 </div>
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
     <button class="btn btn-primary" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">
-        <i class="bi bi-plus-circle"></i>Add
+        <i class="bi bi-plus-circle"></i> Add
     </button>
 <% } %>
 <div style="width: 50%;position: absolute;right: 23px;top:93px">

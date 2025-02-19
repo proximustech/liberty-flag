@@ -1,3 +1,11 @@
+<% 
+let flagValueStats={
+    on:0,
+    off:0,
+    conditioned:0,
+    string:0,
+}
+%>
 <script>
     app.md = {}
 </script>
@@ -23,6 +31,7 @@
 </div>
 <br>
 <br>
+<div id="flagValuesChart" style="height: 100px;width: 100%;"></div>
 <table 
     id="flags_table" 
     data-toggle="table" 
@@ -66,23 +75,28 @@
                                             <% if (context.engine == "string") { %>
                                                 <p class="card-text"><strong>Engine:</strong> String</p>
                                                 <input type='text' class="form-control" value='<%= context.engine_parameters.string.value %>' disabled='disabled'>
+                                                <% flagValueStats.string = flagValueStats.string +1 %>
                                             <% } else if (context.engine == "boolean") { %>
                                                 <p class="card-text"><strong>Engine:</strong> True/False</p>
                                                 <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" <% if(context.engine_parameters.boolean.status){ %> checked <% } %>  disabled="disabled">
-                                                </div>                                    
+                                                    <input class="form-check-input" type="checkbox" role="switch" style="font-size:large" <% if(context.engine_parameters.boolean.status){ flagValueStats.on = flagValueStats.on + 1; %> checked <% } else { flagValueStats.off = flagValueStats.off +1 } %>  disabled="disabled">
+                                                </div>                                  
                                             <% } else if (context.engine == "boolean_conditioned_false") { %>
                                                 <p class="card-text"><strong>Engine:</strong> False (AND)</p>
                                                 <p class="card-text"><%= context.engine_parameters.boolean_conditioned_false.conditions.length %> Conditions</p>
+                                                <% flagValueStats.conditioned = flagValueStats.conditioned +1 %> 
                                             <% } else if (context.engine == "boolean_conditioned_true") { %>
                                                 <p class="card-text"><strong>Engine:</strong> True (AND)</p>
                                                 <p class="card-text"><%= context.engine_parameters.boolean_conditioned_true.conditions.length %> Conditions</p>
+                                                <% flagValueStats.conditioned = flagValueStats.conditioned +1 %> 
                                             <% } else if (context.engine == "boolean_conditionedor_false") { %>
                                                 <p class="card-text"><strong>Engine:</strong> False (OR)</p>
                                                 <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_false.conditions.length %> Conditions</p>
+                                                <% flagValueStats.conditioned = flagValueStats.conditioned +1 %> 
                                             <% } else if (context.engine == "boolean_conditionedor_true") { %>
                                                 <p class="card-text"><strong>Engine:</strong> True (OR)</p>
                                                 <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
+                                                <% flagValueStats.conditioned = flagValueStats.conditioned +1 %> 
                                             <% } %>
                                             <div class="alert alert-light" role="alert" style="margin-top: 7px;">
                                                 Tags:
@@ -101,7 +115,57 @@
     <% } %>
 
 </table>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+
 <script>
+
+    app.md.flagValueStats = JSON.parse(`<%- JSON.stringify(flagValueStats) %>`)
+
     app.md.flags_table = $('#flags_table')
     app.md.flags_table.bootstrapTable()
+
+
+    am5.ready(function() {
+
+        let root = am5.Root.new("flagValuesChart");
+
+        let chart = root.container.children.push(
+        am5percent.PieChart.new(root, {
+            endAngle: 270
+        }));
+
+        let series = chart.series.push(
+        am5percent.PieSeries.new(root, {
+            valueField: "value",
+            categoryField: "category",
+            endAngle: 270,
+            alignLabels: true
+        }));
+
+        series.labels.template.set("text", "{category}: [bold]{valuePercentTotal.formatNumber('0')}%");        
+
+        series.states.create("hidden", {
+            endAngle: -90
+        });
+
+        series.data.setAll([{
+            category: "On",
+            value: app.md.flagValueStats.on
+            }, {
+            category: "Off",
+            value: app.md.flagValueStats.off
+            }, {
+            category: "Cond.",
+            value: app.md.flagValueStats.conditioned
+            }, {
+            category: "String",
+            value: app.md.flagValueStats.string
+        }]);
+
+        series.appear(1000, 100);
+
+    });
+
+
 </script>

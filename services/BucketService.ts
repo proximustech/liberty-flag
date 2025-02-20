@@ -87,6 +87,16 @@ export class BucketService implements IDisposable {
         }             
     }
 
+    async deleteFromTags(tagUuId:string){
+        if (this.userCanWrite) {
+            return await this.bucketModel.deleteFromTags(tagUuId) 
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }     
+    }    
+
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
         if (this.userCanRead) {

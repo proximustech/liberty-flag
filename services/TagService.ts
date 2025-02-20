@@ -3,17 +3,23 @@ import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObj
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { TagDataObject,TagDataObjectValidator } from "../dataObjects/TagDataObject";
 import { TagModel } from "../models/TagModel";
+import { FlagService } from "./FlagService";
+import { BucketService } from "./BucketService";
 
 export class TagService implements IDisposable {
     
     private tagModel:TagModel
+    private flagService: FlagService;
+    private bucketService: BucketService;
     private userPermissions:any
     private serviceSecurityElement:string
     private userCanRead:boolean
     private userCanWrite:boolean
 
-    constructor(tagModel:TagModel,serviceSecurityElementPrefix:string,userPermissions:any){
+    constructor(tagModel:TagModel,flagService:FlagService,bucketService:BucketService,serviceSecurityElementPrefix:string,userPermissions:any){
         this.tagModel= tagModel
+        this.flagService=flagService
+        this.bucketService=bucketService
         this.serviceSecurityElement=serviceSecurityElementPrefix+".tag"
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])
@@ -60,6 +66,8 @@ export class TagService implements IDisposable {
 
     async deleteByUuId(tagUuId:string){
         if (this.userCanWrite) {
+            await this.bucketService.deleteFromTags(tagUuId)
+            await this.flagService.deleteFromTags(tagUuId)
             return await this.tagModel.deleteByUuId(tagUuId) 
            
         }

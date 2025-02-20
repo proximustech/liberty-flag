@@ -122,6 +122,16 @@ export class FlagService implements IDisposable {
         }     
     }
 
+    async deleteFromTags(tagUuId:string){
+        if (this.userCanWrite) {
+            return await this.flagModel.deleteFromTags(tagUuId) 
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }     
+    }
+
     async getByName(name:string) : Promise<FlagDataObject> {
 
         if (this.userCanRead) {

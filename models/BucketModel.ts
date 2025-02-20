@@ -52,6 +52,17 @@ export class BucketModel implements IDisposable {
         else return false             
     }
 
+    async deleteFromTags(tagUuId:string){
+
+        //@ts-ignore
+        const result = await this.collection.updateMany({tags:tagUuId},{$pull:{tags:tagUuId}},{writeConcern: {w: 1, j: true}})
+
+        if (result.acknowledged) {
+            return true
+        }
+        else return false
+    }    
+
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
         const cursor = this.collection.find({uuid : String(uuid)});

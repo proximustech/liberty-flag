@@ -109,15 +109,12 @@ let flagValueStats={
     <% } %>
 
 </table>
-<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
-
 <script>
-
     app.md.flagValueStats = JSON.parse(`<%- JSON.stringify(flagValueStats) %>`)
-    app.setSmartTable('flags_table')
 
-    am5.ready(function() {
+        app.setSmartTable('flags_table')
+
+        am5.ready(function() {
 
         let root = am5.Root.new("flagValuesChart");
 
@@ -157,6 +154,5 @@ let flagValueStats={
         series.appear(1000, 100);
 
     });
-
 
 </script>

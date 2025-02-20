@@ -115,10 +115,7 @@ let flagValueStats={
 <script>
 
     app.md.flagValueStats = JSON.parse(`<%- JSON.stringify(flagValueStats) %>`)
-
-    app.md.flags_table = $('#flags_table')
-    app.md.flags_table.bootstrapTable()
-
+    app.setSmartTable('flags_table')
 
     am5.ready(function() {
 

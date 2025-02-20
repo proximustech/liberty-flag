@@ -51,16 +51,10 @@
         <td>
             <div class="lp_container">
                 <div class="lp_contrast_container">
-                    <table style="width: 100%;border-style: none;">
-                        <tr>
-                            <td style="width: 50%;"><strong>Name:</strong> <%= flag.name %></td>
-                            <td style="width: 50%;text-align: right;">
-                                <span>
-                                    <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
-                                </span>                                                       
-                            </td>
-                        </tr>
-                    </table>
+                    <div>
+                        <button class="list_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                    </div>                                                       
+                    <strong>Name:</strong> <%= flag.name %>
                 </div>
                 <div class="register_container_body">
                     <strong>Description:</strong> <%= flag.description %>

@@ -32,16 +32,10 @@
             <td>
                 <div class="lp_container">
                     <div class="lp_contrast_container">
-                        <table style="width: 100%;border-style: none;">
-                            <tr>
-                                <td style="width: 50%;"><strong>Name:</strong> <%= context.name %></td>
-                                <td style="width: 50%;text-align: right;">
-                                    <span>
-                                        <button class="list_button" onclick="app.drawer.innerHTML='';app.ajax('content_view','/<%= prefix %>/context?uuids=<%= context.uuids %>');"><i class="bi bi-eye"></i></button>
-                                    </span>                                                       
-                                </td>
-                            </tr>
-                        </table>
+                        <div>
+                            <button class="list_button" onclick="app.drawer.innerHTML='';app.ajax('content_view','/<%= prefix %>/context?uuids=<%= context.uuids %>');"><i class="bi bi-eye"></i></button>
+                        </div>
+                        <strong>Name:</strong> <%= context.name %>
                     </div>
                     <div class="register_container_body">
     

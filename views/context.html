@@ -117,6 +117,13 @@ let flagValueStats={
         am5.ready(function() {
 
         let root = am5.Root.new("flagValuesChart");
+        let themes = []
+        themes.push(am5themes_Kelly.new(root))
+        themes.push(am5themes_Animated.new(root))
+        if (app.isSmallScreen()) {
+            themes.push(am5themes_Responsive.new(root))
+        }
+        root.setThemes(themes);
 
         let chart = root.container.children.push(
         am5percent.PieChart.new(root, {

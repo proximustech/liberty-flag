@@ -70,6 +70,16 @@ export class FlagModel implements IDisposable {
         }
         else return false
     }
+    async deleteFromContexts(contextUuId:string){
+
+        //@ts-ignore
+        const result = await this.collection.updateMany({"contexts.bucket_context_uuid":contextUuId},{$pull:{contexts:{bucket_context_uuid:contextUuId}}},{writeConcern: {w: 1, j: true}})
+
+        if (result.acknowledged) {
+            return true
+        }
+        else return false
+    }
 
     async getByName(name:string) : Promise<FlagDataObject> {
 

@@ -60,13 +60,27 @@ export class BucketService implements IDisposable {
             throw new ExceptionRecordAlreadyExists("Name already exists")
         }  
         
+        let oldBucket = await this.getByUuId(bucket.uuid)
+        let oldBucketContextUuIds:string[] = []
+        oldBucket.contexts.forEach(oldBucketContext => {
+            oldBucketContextUuIds.push(oldBucketContext.uuid)
+            
+        });         
+
         if (this.userCanWrite) {
+            let newBucketContextUuIds:string[] = []
             bucket.contexts.forEach(context => {
                 if (context.uuid ==="") {
                     context.uuid = Uuid.createMongoUuId()
                 }
+                newBucketContextUuIds.push(context.uuid)
+            });
+            oldBucketContextUuIds.forEach(oldBucketContextUuid => {
+                if ( !newBucketContextUuIds.includes(oldBucketContextUuid)) {
+                    this.flagService.deleteFromContexts(oldBucketContextUuid)
+                }
                 
-            });             
+            });        
             return await this.bucketModel.updateOne(bucket)            
         }
         else{

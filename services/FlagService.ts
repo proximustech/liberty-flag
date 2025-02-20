@@ -131,6 +131,15 @@ export class FlagService implements IDisposable {
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
         }     
     }
+    async deleteFromContexts(contextUuId:string){
+        if (this.userCanWrite) {
+            return await this.flagModel.deleteFromContexts(contextUuId) 
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }     
+    }
 
     async getByName(name:string) : Promise<FlagDataObject> {
 

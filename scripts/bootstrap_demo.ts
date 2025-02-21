@@ -130,7 +130,7 @@ async function main() {
   bucketContext_prod.uuid = Uuid.createMongoUuId()
 
   let bucket = new BucketDataObject()
-  bucket.name = "Demo.Web.APP"
+  bucket.name = "Client.Services"
   bucket.contexts.push(bucketContext_dev)
   bucket.contexts.push(bucketContext_qa)
   bucket.contexts.push(bucketContext_prod)
@@ -159,6 +159,8 @@ async function main() {
 
   let buckets = await bucketService.getAll()
   bucket = buckets[buckets.length -1]
+
+  //***********
 
   let flagContext = new FlagContextDataObject()
   flagContext.engine = "boolean"
@@ -218,6 +220,8 @@ async function main() {
     }       
   }
 
+  //***********
+
   flagContext = new FlagContextDataObject()
   flagContext.engine = "string"
   flagContext.engine_parameters = {
@@ -275,14 +279,136 @@ async function main() {
 
     }     
   }
-  
-  console.log(bucket.contexts[2].uuid)     
 
+  //***********
+
+  flagContext = new FlagContextDataObject()
+  flagContext.engine = "boolean"
+  flagContext.engine_parameters = {
+    "boolean": {
+      "status": false
+    },
+    "boolean_conditioned_true": {
+      "conditions": []
+    },
+    "boolean_conditioned_false": {
+      "conditions": []
+    },
+    "boolean_conditionedor_true": {
+      "conditions": []
+    },
+    "boolean_conditionedor_false": {
+      "conditions": []
+    },
+    "string": {
+      "value": "",
+      "configuration": ""
+    }
+  }
+
+  flag = new FlagDataObject()
+  flag.bucket_uuid = bucket.uuid
+  flag.name = "outbound.calling"
+
+  flagContext.bucket_context_uuid = bucket.contexts[0].uuid
+  flag.contexts.push(flagContext)
+  secondFlagContext = {...flagContext}
+  secondFlagContext.bucket_context_uuid = bucket.contexts[1].uuid
+  flag.contexts.push(secondFlagContext)
+  thirdFlagContext = {...flagContext}
+  thirdFlagContext.bucket_context_uuid = bucket.contexts[2].uuid
+  flag.contexts.push(thirdFlagContext)
+
+  try {
+      await flagService.create(flag)
+  } catch (error) {
+    if (error instanceof ExceptionNotAuthorized) {         
+      console.log("Operation NOT Allowed")
+      
+    }
+    else if (error instanceof ExceptionRecordAlreadyExists) {
+      console.log("Record Exists")
+        
+    }
+    else if (error instanceof ExceptionInvalidObject) {
+        console.log(error.errorMessages[0])
+        
+    }
+    else {
+        console.error(error)
+
+    }       
+  }
+
+  //***********
+
+  flagContext = new FlagContextDataObject()
+  flagContext.engine = "string"
+  flagContext.engine_parameters = {
+    "boolean": {
+      "status": false
+    },
+    "boolean_conditioned_true": {
+      "conditions": []
+    },
+    "boolean_conditioned_false": {
+      "conditions": []
+    },
+    "boolean_conditionedor_true": {
+      "conditions": []
+    },
+    "boolean_conditionedor_false": {
+      "conditions": []
+    },
+    "string": {
+      "value": "bank",
+      "configuration": "bank|health"
+    }
+  }
+
+  flag = new FlagDataObject()
+  flag.bucket_uuid = bucket.uuid
+  flag.name = "campaign"
+
+  flagContext.bucket_context_uuid = bucket.contexts[0].uuid
+  flag.contexts.push(flagContext)
+  secondFlagContext = {...flagContext}
+  secondFlagContext.bucket_context_uuid = bucket.contexts[1].uuid
+  flag.contexts.push(secondFlagContext)
+  thirdFlagContext = {...flagContext}
+  thirdFlagContext.bucket_context_uuid = bucket.contexts[2].uuid
+  flag.contexts.push(thirdFlagContext)
+
+  try {
+    await flagService.create(flag)
+  } catch (error) {
+    if (error instanceof ExceptionNotAuthorized) {         
+      console.log("Operation NOT Allowed")
+      
+    }
+    else if (error instanceof ExceptionRecordAlreadyExists) {
+      console.log("Record Exists")
+        
+    }
+    else if (error instanceof ExceptionInvalidObject) {
+        console.log(error.errorMessages[0])
+        
+    }
+    else {
+        console.error(error)
+
+    }     
+  }
+
+  //////////////////////////////////////
+  
+  
   await randomDbPopulation(bucketService,flagService)
 
   flagService.dispose()
   bucketService.dispose()
-
+  
+  console.log(bucket.contexts[2].uuid)     
   process.exit()
 
 }

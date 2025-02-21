@@ -9,7 +9,7 @@ import { FlagServiceFactory } from "../factories/FlagServiceFactory"
 import { Uuid,Random } from "../../../services/utilities";
 import { ExceptionNotAuthorized, ExceptionRecordAlreadyExists, ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 
-
+const faker=require("faker")
 
 async function createFlag(flagService:FlagService,bucket:BucketDataObject,flagName:string) {
 
@@ -17,7 +17,7 @@ async function createFlag(flagService:FlagService,bucket:BucketDataObject,flagNa
   flagContext.engine = "boolean"
   flagContext.engine_parameters = {
     "boolean": {
-      "status": true
+      "status": Math.random() < 0.5
     },
     "boolean_conditioned_true": {
       "conditions": []
@@ -90,18 +90,20 @@ async function createBucketWithFlags(bucketService:BucketService,flagService:Fla
 
 async function randomDbPopulation(bucketService:BucketService,flagService:FlagService) {
 
-  let bucketsNumber = 10
-  let flagNamesNumber=10
+  let bucketsNumber = 5
+  let flagNamesNumber=5
 
   for (let bucketIndex = 0; bucketIndex < bucketsNumber; bucketIndex++) {
     let flagNames:any=[]
     for (let flagNameIndex = 0; flagNameIndex < flagNamesNumber; flagNameIndex++) {
-      flagNames.push(Random.getRandomString())
+      flagNames.push(faker.hacker.noun()+'.'+ faker.hacker.adjective())
     }
-    let bucketName:string = Random.getRandomString()
+    let bucketName:string = faker.name.jobDescriptor()
     try {
       await createBucketWithFlags(bucketService,flagService,bucketName,flagNames)
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 }
@@ -128,12 +130,32 @@ async function main() {
   bucketContext_prod.uuid = Uuid.createMongoUuId()
 
   let bucket = new BucketDataObject()
-  bucket.name = "Demo Web APP"
+  bucket.name = "Demo.Web.APP"
   bucket.contexts.push(bucketContext_dev)
   bucket.contexts.push(bucketContext_qa)
   bucket.contexts.push(bucketContext_prod)
 
-  await bucketService.create(bucket)
+  try {
+    await bucketService.create(bucket)
+  } catch (error) {
+    if (error instanceof ExceptionNotAuthorized) {         
+      console.log("Operation NOT Allowed")
+      
+    }
+    else if (error instanceof ExceptionRecordAlreadyExists) {
+      console.log("Record Exists")
+        
+    }
+    else if (error instanceof ExceptionInvalidObject) {
+        console.log(error.errorMessages[0])
+        
+    }
+    else {
+        console.error(error)
+
+    }     
+  }
+
 
   let buckets = await bucketService.getAll()
   bucket = buckets[buckets.length -1]

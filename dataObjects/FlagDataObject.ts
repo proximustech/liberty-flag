@@ -200,7 +200,15 @@ export const FlagDataObjectValidator:any = {
                 
             }            
         } catch (error) {
-            
+
+            if (error instanceof TypeError) {
+                result.isValid = false
+                result.messages =[{
+                    field:"Flag context",
+                    message:error.message
+                }]  
+            }
+        
         }
 
 

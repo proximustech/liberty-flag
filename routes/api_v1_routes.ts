@@ -24,7 +24,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         try {
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
-            if (accessToken === env.LIBERTY_FLAG_ACCESS_TOKEN) {
+            if (accessToken === env.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {    
         
                     let responseFlags:any = []
@@ -105,7 +105,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let name = ctx.request.body["name"] || ""
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
-            if (accessToken === env.LIBERTY_FLAG_ACCESS_TOKEN) {
+            if (accessToken === env.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "" && name !== "") {    
         
                     let returnValue:any = []
@@ -194,7 +194,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         try {
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
-            if (accessToken === env.LIBERTY_FLAG_ACCESS_TOKEN) {
+            if (accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {
 
                     let flagsContextConfig = ctx.request.body["flags-config"] || ""

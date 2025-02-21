@@ -81,9 +81,21 @@ export class FlagModel implements IDisposable {
         else return false
     }
 
-    async getByName(name:string) : Promise<FlagDataObject> {
+    async getByNameAndBucketUuid(name:string,bucketUuid:string) : Promise<FlagDataObject> {
 
-        const cursor = this.collection.find({name : String(name)});
+        const cursor = this.collection.find({name : String(name),bucket_uuid:String(bucketUuid)});
+
+        while (await cursor.hasNext()) {
+            let document = (await cursor.next() as FlagDataObject);
+            return document
+        }
+
+        return new FlagDataObject()
+    }
+
+    async getByNameAndContextKey(name:string,contextKey:string) : Promise<FlagDataObject> {
+
+        const cursor = this.collection.find({name : String(name),"contexts.bucket_context_uuid":String(contextKey)});
 
         while (await cursor.hasNext()) {
             let document = (await cursor.next() as FlagDataObject);

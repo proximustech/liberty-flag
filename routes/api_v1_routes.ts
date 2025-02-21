@@ -5,6 +5,7 @@ import { FlagDataObject } from "../dataObjects/FlagDataObject";
 import { env } from 'node:process';
 import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
+import { FlagEngineService } from "../services/FlagEngineService";
 
 import koaBody from 'koa-body';
 
@@ -62,6 +63,96 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     ctx.body = {
                         status: 'error',
                         message: 'No valid Context Key'
+                    }
+                    
+                }            
+            }
+            else {
+                logger.warn('API - get-flags-config - Invalid Access Token: "'+ accessToken + '"' )
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    message: 'Invalid Access Token'
+                }            
+            }            
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: unauthorized user traying to READ on " + prefix +'.flag')
+                
+            }
+
+            else {
+                logger.error(error)
+
+            }               
+        } finally{
+            flagService.dispose()
+        }
+
+    })
+
+    router.post(apiPrefix+'/get-flag-value',koaBody(), async (ctx:Context) => {
+
+        let userPermissions:any = [['','liberty_flag.flag','read']]
+        const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
+
+        try {
+            let name = ctx.request.body["name"] || ""
+            let contextKey = ctx.request.body["context-key"] || ""
+            let accessToken = ctx.request.body["access-token"] || ""
+            if (accessToken === env.LIBERTY_FLAG_ACCESS_TOKEN) {
+                if (contextKey !== "" && name !== "") {    
+        
+                    let returnValue:any = []
+                    let flag:FlagDataObject = await flagService.getByNameAndContextKey(name,contextKey)
+            
+                    if (flag.uuid === "") {
+                        logger.warn(`API - get-flag-value - No flag for Context Key and name: ${contextKey} and ${name}` )
+
+                        ctx.status=400
+                        ctx.body = {
+                            status: 'error',
+                            message: 'No valid Context Key and Name'
+                        }                        
+                    }
+                    else {
+
+                        flag.contexts.forEach(context => {
+                            if(context.bucket_context_uuid === contextKey ){
+
+                                if (context.engine !== "boolean" && context.engine !== "string") {
+                                    logger.warn(`API - get-flag-value - No flag for Context Key and name: ${contextKey} and ${name}` )
+
+                                    ctx.status=400
+                                    ctx.body = {
+                                        status: 'error',
+                                        message: 'No valid Context Key and Name'
+                                    }                                      
+                                }
+                                else {
+                                    returnValue = FlagEngineService.getValueFromContext(context)
+                                    ctx.body = {
+                                        status: 'success',
+                                        value: returnValue
+                                    }
+                                }
+                            }                        
+                        });
+
+
+                    }
+
+                } else {
+                    logger.warn(`API - get-flag-value - No valid Context Key and Name: ${contextKey} and ${name}` )
+                    ctx.status=400
+                    ctx.body = {
+                        status: 'error',
+                        message: 'No valid Context Key and Name'
                     }
                     
                 }            

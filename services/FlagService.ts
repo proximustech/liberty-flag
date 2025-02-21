@@ -46,7 +46,7 @@ export class FlagService implements IDisposable {
     async updateOne(newFlag:FlagDataObject,oldFlag:any = false){
 
         if (oldFlag === false) {
-            oldFlag = await this.getByName(newFlag.name)
+            oldFlag = await this.getByNameAndBucketUuid(newFlag.name,newFlag.bucket_uuid)
         }     
         let userValidationResult=FlagDataObjectValidator.validateFunction(newFlag,FlagDataObjectValidator.validateSchema,oldFlag)
 
@@ -76,7 +76,7 @@ export class FlagService implements IDisposable {
         for (let flagsContextConfigIndex = 0; flagsContextConfigIndex < flagsContextConfig.length; flagsContextConfigIndex++) {
             const flagContextConfig = flagsContextConfig[flagsContextConfigIndex];
 
-            let oldFlag = await this.getByName(flagContextConfig.flag_name)
+            let oldFlag = await this.getByNameAndContextKey(flagContextConfig.flag_name,contextKey)
             let newFlag = JSON.parse(JSON.stringify(oldFlag)) as FlagDataObject
             newFlag.contexts.forEach(context => {
                 if (context.bucket_context_uuid === contextKey) {
@@ -141,10 +141,22 @@ export class FlagService implements IDisposable {
         }     
     }
 
-    async getByName(name:string) : Promise<FlagDataObject> {
+    async getByNameAndBucketUuid(name:string,bucketUuid:string) : Promise<FlagDataObject> {
 
         if (this.userCanRead) {
-            return await this.flagModel.getByName(name)
+            return await this.flagModel.getByNameAndBucketUuid(name,bucketUuid)
+
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }            
+
+    }
+
+    async getByNameAndContextKey(name:string,contextKey:string) : Promise<FlagDataObject> {
+
+        if (this.userCanRead) {
+            return await this.flagModel.getByNameAndContextKey(name,contextKey)
 
         }
         else{

@@ -8,6 +8,7 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
+import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
 
 import koaBody from 'koa-body';
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
@@ -372,6 +373,61 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         finally{
             tagService.dispose()
             flagService.dispose()
+            bucketService.dispose()
+        }
+    })
+
+    router.get('/context_stats', async (ctx:Context) => {
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
+
+        try {
+
+            let uuids:any = ctx.request.query.uuids || ""
+            let bucketUuid = uuids.split(",")[0]
+            let contextUuid = uuids.split(",")[1]
+            let bucket = await bucketService.getByUuId(bucketUuid)
+            let contextName = ""
+            bucket.contexts.forEach(context => {
+                if (context.uuid===contextUuid) {
+                    contextName=context.name
+                    
+                }
+            });
+
+            let buckets = await bucketService.getAll()
+            viewVars.matchedContextsUuids=[]
+
+            for (let bucketIndex = 0; bucketIndex < buckets.length; bucketIndex++) {
+                const bucket = buckets[bucketIndex];
+                bucket.contexts.forEach(context => {
+                    if (context.name===contextName) {
+                        viewVars.matchedContextsUuids.push([bucket.name,context.uuid])
+                    }
+                });
+                
+            }
+            viewVars.dataPulseManager = DataPulseManagerServiceFactory.create()
+            viewVars.contextName = contextName
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+
+            return ctx.render('plugins/_'+prefix+'/views/context_stats', viewVars);
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                
+            }
+            else {
+                logger.error(error)
+
+            }  
+        }
+        finally{
             bucketService.dispose()
         }
     })    

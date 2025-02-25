@@ -5,6 +5,7 @@ import { FlagDataObject } from "../dataObjects/FlagDataObject";
 import { env } from 'node:process';
 import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
+import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
 import { FlagEngineService } from "../services/FlagEngineService";
 
 import koaBody from 'koa-body';
@@ -26,6 +27,19 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let accessToken = ctx.request.body["access-token"] || ""
             if (accessToken === env.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {    
+
+                    let dataPulse = ctx.request.body["data-pulse"] || ""
+                    if (dataPulse != "") {
+                        try {
+                            let dataPulseManager = DataPulseManagerServiceFactory.create()
+                            dataPulseManager.save(contextKey,dataPulse)
+                                
+                        } catch (error) {
+                            logger.error(error)
+                        }
+                    }                          
+                        
+                  
         
                     let responseFlags:any = []
                     let flags:Array<FlagDataObject> = await flagService.getAllByContextUuid(contextKey)

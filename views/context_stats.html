@@ -5,9 +5,9 @@ let script =""
 <script>
     app.md = {}
 </script>
-<div class="alert alert-primary" role="alert">
+<div class="alert alert-primary module_title" role="alert">
     <strong>Context:</strong> <%= contextName %><br>
-    <strong>API Request Frequency by Client ID</strong>
+    <strong>API Request Usage by Client ID</strong>
 </div>
 
 
@@ -164,16 +164,13 @@ let script =""
             </div>
             <div class="register_container_body">
                 <div class="card-body">
-                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= contextStats.length * 50 %>px;width: 100%;"></div>                                  
+                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= contextStats.length * 60 %>px;width: 100%;"></div>                                  
                         <p class="card-text"></p>
                 </div>                                
             </div>                
         </div>                           
     <% }) %>
 <% } %>
-<div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
-    <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>   
-</div>
 <script>
     <%- script %>
 </script>

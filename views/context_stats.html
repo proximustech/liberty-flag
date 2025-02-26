@@ -1,6 +1,7 @@
 <% 
 let contextDataPulse=[]
 let script =""
+let statsByContext = {}
 %>
 <script>
     app.md = {}
@@ -39,10 +40,16 @@ let script =""
             })
         });
 
-        script += `app.graphShowBars("contextsChart_${Buffer.from(bucketName, 'utf8').toString('base64')}",JSON.parse('${JSON.stringify(contextStats)}'));`
+        statsByContext[bucketContextUuid]=contextStats
+        script += `app.graphShowBars('contextsChart_${Buffer.from(bucketName, 'utf8').toString('base64')}',app.md.statsByContext['${bucketContextUuid}']);`
+
     %>
         <div class="lp_container">
             <div class="lp_contrast_container">
+                <div>
+                  <button class="list_button" onclick="app.graphShowBars('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>']);" ><i class="bi bi-bar-chart"></i></button>
+                  <button class="list_button" onclick="app.graphShowPie('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>']);" ><i class="bi bi-pie-chart"></i></button>
+                </div>                
                 <strong>Bucket Name:</strong> <%= bucketName %>
             </div>
             <div class="register_container_body">
@@ -55,5 +62,6 @@ let script =""
     <% }) %>
 <% } %>
 <script>
+  app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
     <%- script %>
 </script>

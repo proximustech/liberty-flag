@@ -10,7 +10,6 @@ let script =""
     <strong>API Request Usage by Client ID</strong>
 </div>
 
-
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
     <% matchedContextsUuids.forEach(matchedContext => { 
         let bucketName = matchedContext[0]
@@ -30,8 +29,7 @@ let script =""
                 }
             }
             
-        });
-        
+        });     
 
         let contextStats=[]
         clientIdCounterMap.forEach((value,key) => {
@@ -41,130 +39,15 @@ let script =""
             })
         });
 
-        script += `
-        am5.ready(function() {
-            let root = am5.Root.new("contextsChart_${Buffer.from(bucketName, 'utf8').toString('base64')}");
-            let themes = []
-            themes.push(am5themes_Kelly.new(root))
-            themes.push(am5themes_Animated.new(root))
-            if (app.isSmallScreen()) {
-                themes.push(am5themes_Responsive.new(root))
-            }
-            root.setThemes(themes);
-
-            /*            
-            let chart = root.container.children.push(
-            am5percent.PieChart.new(root, {
-                endAngle: 270
-            }));
-
-            let series = chart.series.push(
-            am5percent.PieSeries.new(root, {
-                valueField: "value",
-                categoryField: "category",
-                endAngle: 270,
-                alignLabels: true
-            }));
-            
-            series.labels.template.set("text", "{category}: [bold]{valuePercentTotal.formatNumber('0')}%");        
-            
-            series.states.create("hidden", {
-                endAngle: -90
-            });
-            
-            series.data.setAll(JSON.parse('${JSON.stringify(contextStats)}'));
-            series.appear(1000, 100);
-
-            */
-
-            let chart = root.container.children.push(am5xy.XYChart.new(root, {
-              panX: false,
-              panY: false,
-              wheelX: "panX",
-              wheelY: "zoomX",
-              paddingLeft: 0,
-              layout: root.verticalLayout
-            }));
-
-
-            // Create axes
-            // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
-            let yRenderer = am5xy.AxisRendererY.new(root, {
-              cellStartLocation: 0.1,
-              cellEndLocation: 0.9,
-              minorGridEnabled: true
-            });
-
-            yRenderer.grid.template.set("location", 1);
-
-            let yAxis = chart.yAxes.push(
-              am5xy.CategoryAxis.new(root, {
-                categoryField: "category",
-                renderer: yRenderer,
-                tooltip: am5.Tooltip.new(root, {})
-              })
-            );
-
-            let xAxis = chart.xAxes.push(
-              am5xy.ValueAxis.new(root, {
-                min: 0,
-                renderer: am5xy.AxisRendererX.new(root, {
-                  strokeOpacity: 0.1,
-                  minGridDistance:70
-                })
-              })
-            );
-
-
-            // Add series
-            // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
-            let series = chart.series.push(am5xy.ColumnSeries.new(root, {
-              name: "Category",
-              xAxis: xAxis,
-              yAxis: yAxis,
-              valueXField: "value",
-              categoryYField: "category",
-              sequencedInterpolation: true,
-
-            }));
-
-            series.columns.template.setAll({
-              height: am5.percent(70)
-            });
-
-            series.columns.template.adapters.add("fill", function (fill, target) {
-              return chart.get("colors").getIndex(series.columns.indexOf(target));
-            });
-
-            series.columns.template.adapters.add("stroke", function (stroke, target) {
-              return chart.get("colors").getIndex(series.columns.indexOf(target));
-            });
-
-            // Add cursor
-            // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
-            var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-              behavior: "zoomY"
-            }));
-
-            cursor.lineX.set("visible", false);
-
-            yAxis.data.setAll(JSON.parse('${JSON.stringify(contextStats)}'));
-            series.data.setAll(JSON.parse('${JSON.stringify(contextStats)}'));
-
-            series.appear();
-            chart.appear(1000, 100);
-
-
-        });            
-        `
+        script += `app.graphShowBars("contextsChart_${Buffer.from(bucketName, 'utf8').toString('base64')}",JSON.parse('${JSON.stringify(contextStats)}'));`
     %>
         <div class="lp_container">
             <div class="lp_contrast_container">
-                <strong>Bucket Name:</strong> <%= bucketName %> 
+                <strong>Bucket Name:</strong> <%= bucketName %>
             </div>
             <div class="register_container_body">
                 <div class="card-body">
-                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= contextStats.length * 60 %>px;width: 100%;"></div>                                  
+                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= contextStats.length * 60 %>px;width: 100%;"></div>
                         <p class="card-text"></p>
                 </div>                                
             </div>                

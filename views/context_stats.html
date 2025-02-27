@@ -10,7 +10,7 @@ let statsByContext = {}
     <strong>Context:</strong> <%= contextName %><br>
     <strong>API Request Usage by Client ID</strong>
 </div>
-
+<div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
     <% matchedContextsUuids.forEach(matchedContext => { 
         let bucketName = matchedContext[0]
@@ -62,6 +62,7 @@ let statsByContext = {}
     <% }) %>
 <% } %>
 <script>
-  app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
+    app.renderBreadCrumbs("breadCrumbsContainer","content_view")
+    app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
     <%- script %>
 </script>

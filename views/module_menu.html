@@ -5,17 +5,17 @@
 <div id="libertyFlag_module_menu_content" class="lp_contrast_container" style="display: none">
   <sl-tree style="--indent-size:7px">
       <% if (UserHasPermissionOnElement(userPermissions,['liberty_flag.bucket'],['read'])) { %>
-      <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/buckets');app.app_menu_inteligentClose()" >
+      <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/buckets','Buckets',true);app.app_menu_inteligentClose()" >
         <sl-icon name="bucket" label="Buckets"></sl-icon>
         Buckets
       </sl-tree-item>
-      <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/contexts');app.app_menu_inteligentClose()" >
+      <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/contexts','Contexts',true);app.app_menu_inteligentClose()" >
         <sl-icon name="circle-half" label="Contexts"></sl-icon>
         Contexts
       </sl-tree-item>
       <% } %>
       <% if (UserHasPermissionOnElement(userPermissions,['liberty_flag.tag'],['read'])) { %>
-        <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/tags');app.app_menu_inteligentClose()" >
+        <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/tags','Tags',true);app.app_menu_inteligentClose()" >
           <sl-icon name="tag" label="Tags"></sl-icon>
           Tags
         </sl-tree-item>

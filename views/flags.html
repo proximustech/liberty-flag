@@ -5,25 +5,13 @@
 <div class="alert alert-light module_title" role="alert">
     <strong><i class="bi bi-flag"></i> Flags</strong> - Bucket: <%= bucket.name %>
 </div>
-<span class="dropdown">
-  <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Options
-  </button>
-  <ul class="dropdown-menu">
-    <li>
-        <a class="dropdown-item" style="height:40px" onclick="app.ajax('content_view','/<%= prefix %>/buckets');">
-            <i class="bi bi-arrow-left-circle"></i> Back to Buckets
-        </a>        
-    </li>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
-        <li>
-            <a class="dropdown-item" style="height:40px" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
-                <i class="bi bi-plus-circle"></i> Add Flag
-            </a>        
-        </li>
-    <% } %>
-  </ul>
-</span>
+
+<% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+    <button type="button" class="btn btn-primary" onclick="app.ajax('app_drawer', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>');app.drawer.show();">
+        <i class="bi bi-plus-circle"></i> Add
+    </button>        
+<% } %>
+
 <div style="width: 50%;position: absolute;right: 23px;top:93px">
     <sl-input id="flag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
         <sl-icon name="search" slot="prefix"></sl-icon>
@@ -31,6 +19,7 @@
 </div>
 <br>
 <br>
+<div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
 <table 
     id="flags_table" 
     data-toggle="table" 
@@ -104,4 +93,5 @@
 </table>
 <script>
     app.setSmartTable('flags_table')
+    app.renderBreadCrumbs("breadCrumbsContainer","content_view")
 </script>

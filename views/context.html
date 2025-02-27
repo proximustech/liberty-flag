@@ -12,18 +12,6 @@ let flagValueStats={
 <div class="alert alert-light module_title" role="alert">
     <strong>Context:</strong> <%= contextName %>
 </div>
-<span class="dropdown">
-  <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Options
-  </button>
-  <ul class="dropdown-menu">
-    <li>
-        <a class="dropdown-item" style="height:40px" onclick="app.ajax('content_view','/<%= prefix %>/contexts');">
-            <i class="bi bi-arrow-left-circle"></i> Back to Contexts
-        </a>        
-    </li>
-  </ul>
-</span>
 <div style="width: 50%;position: absolute;right: 23px;top:93px">
     <sl-input id="flag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
         <sl-icon name="search" slot="prefix"></sl-icon>
@@ -31,6 +19,7 @@ let flagValueStats={
 </div>
 <br>
 <br>
+<div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
 <div id="flagValuesChart" style="height: 100px;width: 100%;"></div>
 <table 
     id="flags_table" 
@@ -104,47 +93,15 @@ let flagValueStats={
                         </td>
                     </tr>
                 <% } %>
-            <% }) %>
-        <% }) %>
+                <% }) %>
+                <% }) %>
     <% } %>
 
 </table>
 <script>
+    app.renderBreadCrumbs("breadCrumbsContainer","content_view")
     app.md.flagValueStats = JSON.parse(`<%- JSON.stringify(flagValueStats) %>`)
-
-        app.setSmartTable('flags_table')
-
-        am5.ready(function() {
-
-        let root = am5.Root.new("flagValuesChart");
-        let themes = []
-        themes.push(am5themes_Kelly.new(root))
-        themes.push(am5themes_Animated.new(root))
-        if (app.isSmallScreen()) {
-            themes.push(am5themes_Responsive.new(root))
-        }
-        root.setThemes(themes);
-
-        let chart = root.container.children.push(
-        am5percent.PieChart.new(root, {
-            endAngle: 270
-        }));
-
-        let series = chart.series.push(
-        am5percent.PieSeries.new(root, {
-            valueField: "value",
-            categoryField: "category",
-            endAngle: 270,
-            alignLabels: true
-        }));
-
-        series.labels.template.set("text", "{category}: [bold]{valuePercentTotal.formatNumber('0')}%");        
-
-        series.states.create("hidden", {
-            endAngle: -90
-        });
-
-        series.data.setAll([{
+    app.graphShowPie('flagValuesChart',[{
             category: "On",
             value: app.md.flagValueStats.on
             }, {
@@ -158,8 +115,5 @@ let flagValueStats={
             value: app.md.flagValueStats.string
         }]);
 
-        series.appear(1000, 100);
-
-    });
-
+        app.setSmartTable('flags_table')
 </script>

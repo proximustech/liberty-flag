@@ -1,6 +1,5 @@
 <% 
 let contextDataPulse=[]
-let script =""
 let statsByContext = {}
 %>
 <script>
@@ -16,15 +15,17 @@ let statsByContext = {}
         let bucketName = matchedContext[0]
         let bucketContextUuid = matchedContext[1]
 
-        let dataPulseCounterMap = new Map()
+        let stringTypeKeysDataMaps = {}
         
         contextDataPulse=dataPulseManager.getFromDateRange(bucketContextUuid,new Date,new Date)
+        let stringTypeKeys=[]
         contextDataPulse.forEach(pulse => {
             if ("data_map" in pulse) {
                 let dataMap = pulse.data_map
                 Object.keys(dataMap).forEach(dataMapItemKey => {
                     let dataMapItemValue = dataMap[dataMapItemKey]
-                    if (typeof dataMapItemValue === "string" &&  !isNaN(dataMapItemValue) && !isNaN(parseFloat(dataMapItemValue))) {
+                    //is numeric
+                    //if (typeof dataMapItemValue === "string" &&  !isNaN(dataMapItemValue) && !isNaN(parseFloat(dataMapItemValue))) {
                         /*
                         if (dataPulseCounterMap.has(dataMapItemKey)) {
                             dataPulseCounterMap.set(dataMapItemKey,dataPulseCounterMap.get(dataMapItemKey)+1)
@@ -34,46 +35,60 @@ let statsByContext = {}
                             
                         } 
                         */                       
-                    }
-                    else{
-                        if (dataPulseCounterMap.has(dataMapItemValue)) {
-                            dataPulseCounterMap.set(dataMapItemValue,dataPulseCounterMap.get(dataMapItemValue)+1)
+                    //}
+                    //else{
+                        stringTypeKeys.push(dataMapItemKey)
+                        if (!(dataMapItemKey in stringTypeKeysDataMaps)) {
+                            stringTypeKeysDataMaps[dataMapItemKey]= new Map()
+                        }
+
+                        if (stringTypeKeysDataMaps[dataMapItemKey].has(dataMapItemValue)) {
+                            stringTypeKeysDataMaps[dataMapItemKey].set(dataMapItemValue,stringTypeKeysDataMaps[dataMapItemKey].get(dataMapItemValue)+1)
                         
                         } else {
-                            dataPulseCounterMap.set(dataMapItemValue,0)
+                            stringTypeKeysDataMaps[dataMapItemKey].set(dataMapItemValue,0)
                             
                         }                         
-                    }
+                    //}
                 });
 
             }
             
-        });     
+        });   
 
-        let contextStats=[]
-        dataPulseCounterMap.forEach((value,key) => {
-            contextStats.push({
-                category:key,
-                value:value
-            })
+        let statsByStringTypeKey={}
+        stringTypeKeys = new Set(stringTypeKeys)  
+        stringTypeKeys.forEach(stringTypeKey => {
+            let statsArray=[]
+            stringTypeKeysDataMaps[stringTypeKey].forEach((value,key) => {
+                statsArray.push({
+                    category:key,
+                    value:value
+                })
+            });
+            statsByStringTypeKey[stringTypeKey]=statsArray
         });
 
-        statsByContext[bucketContextUuid]=contextStats
-        script += `app.graphShowBars('contextsChart_${Buffer.from(bucketName, 'utf8').toString('base64')}',app.md.statsByContext['${bucketContextUuid}']);`
+
+        statsByContext[bucketContextUuid]=statsByStringTypeKey    
 
     %>
         <div class="lp_container">
             <div class="lp_contrast_container">
-                <div>
-                  <button class="list_button" onclick="app.graphShowBars('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>']);" ><i class="bi bi-bar-chart"></i></button>
-                  <button class="list_button" onclick="app.graphShowPie('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>']);" ><i class="bi bi-pie-chart"></i></button>
-                </div>                
                 <strong>Bucket Name:</strong> <%= bucketName %>
             </div>
             <div class="register_container_body">
                 <div class="card-body">
-                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= contextStats.length * 80 %>px;width: 100%;"></div>
-                        <p class="card-text"></p>
+                    <% if(Array.from(stringTypeKeys).length > 0){ %>
+                        <select id="select_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" onchange="if(this.value !=='')app.graphShowPie('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>'][this.value]);">
+                            <option value="">Select...</option>
+                            <% stringTypeKeys.forEach(stringTypeKey => { %>
+                                <option value="<%=stringTypeKey %>"><%=stringTypeKey %></option>
+                            <%}); %>
+                        </select>
+                    <% } %>
+                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= 200*(Array.from(stringTypeKeys).length > 1) %>px;width: 100%;"></div>
+                    <p class="card-text"></p>
                 </div>                                
             </div>                
         </div>                           
@@ -82,5 +97,4 @@ let statsByContext = {}
 <script>
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
     app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
-    <%- script %>
 </script>

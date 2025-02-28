@@ -34,7 +34,8 @@
                     <div class="lp_contrast_container">
                         <div>
                             <button class="list_button" onclick="app.drawer.innerHTML='';app.ajax('content_view','/<%= prefix %>/context?uuids=<%= context.uuids %>');"><i class="bi bi-flag"></i></button>
-                            <button class="list_button" onclick="app.drawer.innerHTML='';app.ajax('content_view','/<%= prefix %>/context_stats?uuids=<%= context.uuids %>');"><i class="bi bi-bar-chart-line"></i></button>
+                            <button class="list_button" style="width: 70px;" onclick="app.drawer.innerHTML='';app.ajax('content_view','/<%= prefix %>/context_stats?uuids=<%= context.uuids %>');"><i class="bi bi-bar-chart-line"></i> <i class="bi bi-flower3"></i></button>
+                            <button class="list_button" style="width: 70px;" onclick="app.drawer.innerHTML='';app.ajax('content_view','/<%= prefix %>/context_data_pulse_stats?uuids=<%= context.uuids %>');"><i class="bi bi-bar-chart-line"></i> <i class="bi bi-envelope-paper-heart"></i></button>
                         </div>
                         <strong>Name:</strong> <%= context.name %>
                     </div>

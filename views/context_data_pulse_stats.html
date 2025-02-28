@@ -1,0 +1,86 @@
+<% 
+let contextDataPulse=[]
+let script =""
+let statsByContext = {}
+%>
+<script>
+    app.md = {}
+</script>
+<div class="alert alert-primary module_title" role="alert">
+    <strong>Context:</strong> <%= contextName %><br>
+    <strong>Data Pulse Graphs</strong>
+</div>
+<div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
+<% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
+    <% matchedContextsUuids.forEach(matchedContext => { 
+        let bucketName = matchedContext[0]
+        let bucketContextUuid = matchedContext[1]
+
+        let dataPulseCounterMap = new Map()
+        
+        contextDataPulse=dataPulseManager.getFromDateRange(bucketContextUuid,new Date,new Date)
+        contextDataPulse.forEach(pulse => {
+            if ("data_map" in pulse) {
+                let dataMap = pulse.data_map
+                Object.keys(dataMap).forEach(dataMapItemKey => {
+                    let dataMapItemValue = dataMap[dataMapItemKey]
+                    if (typeof dataMapItemValue === "string" &&  !isNaN(dataMapItemValue) && !isNaN(parseFloat(dataMapItemValue))) {
+                        /*
+                        if (dataPulseCounterMap.has(dataMapItemKey)) {
+                            dataPulseCounterMap.set(dataMapItemKey,dataPulseCounterMap.get(dataMapItemKey)+1)
+                        
+                        } else {
+                            dataPulseCounterMap.set(dataMapItemKey,0)
+                            
+                        } 
+                        */                       
+                    }
+                    else{
+                        if (dataPulseCounterMap.has(dataMapItemValue)) {
+                            dataPulseCounterMap.set(dataMapItemValue,dataPulseCounterMap.get(dataMapItemValue)+1)
+                        
+                        } else {
+                            dataPulseCounterMap.set(dataMapItemValue,0)
+                            
+                        }                         
+                    }
+                });
+
+            }
+            
+        });     
+
+        let contextStats=[]
+        dataPulseCounterMap.forEach((value,key) => {
+            contextStats.push({
+                category:key,
+                value:value
+            })
+        });
+
+        statsByContext[bucketContextUuid]=contextStats
+        script += `app.graphShowBars('contextsChart_${Buffer.from(bucketName, 'utf8').toString('base64')}',app.md.statsByContext['${bucketContextUuid}']);`
+
+    %>
+        <div class="lp_container">
+            <div class="lp_contrast_container">
+                <div>
+                  <button class="list_button" onclick="app.graphShowBars('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>']);" ><i class="bi bi-bar-chart"></i></button>
+                  <button class="list_button" onclick="app.graphShowPie('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>']);" ><i class="bi bi-pie-chart"></i></button>
+                </div>                
+                <strong>Bucket Name:</strong> <%= bucketName %>
+            </div>
+            <div class="register_container_body">
+                <div class="card-body">
+                    <div id="contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" style="height: <%= contextStats.length * 80 %>px;width: 100%;"></div>
+                        <p class="card-text"></p>
+                </div>                                
+            </div>                
+        </div>                           
+    <% }) %>
+<% } %>
+<script>
+    app.renderBreadCrumbs("breadCrumbsContainer","content_view")
+    app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
+    <%- script %>
+</script>

@@ -115,7 +115,7 @@
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
         <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])){ %>
-        <button type="button" class="btn btn-primary" onclick="app.md.submitTag(this)">Save</sl-button>
+        <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitTag(this)">Save</sl-button>
         <% } %>
     </div>
 

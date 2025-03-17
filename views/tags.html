@@ -5,7 +5,7 @@
     <strong><sl-icon name="tag" label="Tags"></sl-icon> Tags</strong>
 </div>
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { %>
-    <button type="button" class="btn btn-primary" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
+    <button type="button" class="lf_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/tag_form', {target:'#app_drawer', swap:'innerHTML'});">
         <i class="bi bi-plus-circle"></i> Add
     </button>
 <% } %>

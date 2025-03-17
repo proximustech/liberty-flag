@@ -7,7 +7,7 @@
 </div>
 
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
-    <button type="button" class="btn btn-primary" onclick="app.ajax('app_drawer', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>');app.drawer.show();">
+    <button type="button" class="lf_button" onclick="app.ajax('app_drawer', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>');app.drawer.show();">
         <i class="bi bi-plus-circle"></i> Add
     </button>        
 <% } %>

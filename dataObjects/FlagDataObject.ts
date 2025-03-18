@@ -106,7 +106,7 @@ export const FlagDataObjectValidator:any = {
                 let flagContextValidationResult = FlagContextDataObjectValidator.validateFunction(flagContext,FlagContextDataObjectValidator.validateSchema)
 
                 if (flagContextValidationResult.isValid) {
-                    if (oldData !== false) {
+                    if (oldData !== false && oldData.contexts.length > flagContextIndex) {
                         if (data.contexts[flagContextIndex].engine==="string" || oldData.contexts[flagContextIndex].engine==="string") {
                             if (data.contexts[flagContextIndex].engine==="string" && oldData.contexts[flagContextIndex].engine==="string") {
                                 //Allowed

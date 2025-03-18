@@ -6,7 +6,7 @@
     <strong><sl-icon name="bucket" label="Buckets"></sl-icon> Buckets</strong>
 </div>
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
-    <button class="lf_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">
+    <button class="lp_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form', {target:'#app_drawer', swap:'innerHTML'});">
         <i class="bi bi-plus-circle"></i> Add
     </button>
 <% } %>
@@ -40,11 +40,11 @@
             <div class="lp_container">
                 <div class="lp_contrast_container">
                     <div>
-                        <button class="lf_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
+                        <button class="lp_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>', {target:'#app_drawer', swap:'innerHTML'});">
                             <i class="bi bi-pencil"></i>
                         </button>
                         <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['read','write'])) { %>
-                            <button class="lf_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>');">
+                            <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>');">
                                 <i class="bi bi-flag"></i>
                             </button>
                         <% } %>                        

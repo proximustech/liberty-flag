@@ -45,8 +45,10 @@ export const BucketDataObjectValidator:any = {
 
         //This code will run well in backend but not in the browser
         try {
+            let contextNamesArray:any = []
             for (let contextsIndex = 0; contextsIndex < data.contexts.length; contextsIndex++) {
                 const context = data.contexts[contextsIndex];
+                contextNamesArray.push(context.name)
                 let contextValidationResult=BucketContextDataObjectValidator.validateFunction(context,BucketContextDataObjectValidator.validateSchema)
                 if (!contextValidationResult.isValid) {
                     result.isValid = false
@@ -54,6 +56,15 @@ export const BucketDataObjectValidator:any = {
                     break                
                 }
             }
+            let contextNamesSet = new Set(contextNamesArray)
+            if (contextNamesSet.size != contextNamesArray.length ) {
+                result.isValid = false
+                result.messages = [{
+                    field:"name",
+                    message:"Duplicated Context Names is NOT allowed."
+                }]                
+            }
+
         } catch (error) {}
 
         return result

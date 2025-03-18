@@ -73,6 +73,9 @@
                                         <% } else if (context.engine == "boolean_conditionedor_true") { %>
                                             <p class="card-text">Engine: True (OR)</p>
                                             <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
+                                        <% } else if (context.engine == "numeric") {%>
+                                            <p class="card-text">Engine: Numeric</p>
+                                            <input type='text' class="form-control" value='<%= context.engine_parameters.numeric.value %>' disabled='disabled'>                                            
                                         <% } %>
         
                                     </div>

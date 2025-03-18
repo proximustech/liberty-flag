@@ -4,6 +4,7 @@ let flagValueStats={
     off:0,
     conditioned:0,
     string:0,
+    numeric:0,
 }
 %>
 <script>
@@ -80,6 +81,10 @@ let flagValueStats={
                                                 <p class="card-text"><strong>Engine:</strong> True (OR)</p>
                                                 <p class="card-text"><%= context.engine_parameters.boolean_conditionedor_true.conditions.length %> Conditions</p>
                                                 <% flagValueStats.conditioned = flagValueStats.conditioned +1 %> 
+                                            <% } else if (context.engine == "numeric") {%>
+                                                <p class="card-text"><strong>Engine:</strong> Numeric</p>
+                                                <input type='text' class="form-control" value='<%= context.engine_parameters.numeric.value %>' disabled='disabled'>
+                                                <% flagValueStats.numeric = flagValueStats.numeric +1 %>                                                
                                             <% } %>
                                             <div class="alert alert-light" role="alert" style="margin-top: 7px;">
                                                 Tags:
@@ -101,19 +106,29 @@ let flagValueStats={
 <script>
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
     app.md.flagValueStats = JSON.parse(`<%- JSON.stringify(flagValueStats) %>`)
-    app.graphShowPie('flagValuesChart',[{
-            category: "On",
-            value: app.md.flagValueStats.on
-            }, {
-            category: "Off",
-            value: app.md.flagValueStats.off
-            }, {
-            category: "Cond.",
-            value: app.md.flagValueStats.conditioned
-            }, {
-            category: "String",
-            value: app.md.flagValueStats.string
-        }]);
+    app.graphShowPie('flagValuesChart',[
+            {
+                category: "On",
+                value: app.md.flagValueStats.on
+            }, 
+            {
+                category: "Off",
+                value: app.md.flagValueStats.off
+            }, 
+            {
+                category: "Cond.",
+                value: app.md.flagValueStats.conditioned
+            }, 
+            {
+                category: "String",
+                value: app.md.flagValueStats.string
+            },
+            {
+                category: "Numeric",
+                value: app.md.flagValueStats.numeric
+            },
+        ]
+    );
 
         app.setSmartTable('flags_table')
 </script>

@@ -4,6 +4,7 @@ import { IllegalCharacters as IllegalCharactersRegexp, IllegalCharactersValidati
 import { EngineBooleanConditionedConditionDataObjectValidator } from "./EngineBooleanConditionedDataObject";
 import { EngineStringDataObjectValidator } from "./EngineStringDataObject";
 import { EngineBooleanDataObjectValidator } from "./EngineBooleanDataObject";
+import { EngineNumericDataObjectValidator } from "./EngineNumericDataObject";
 
 export class FlagDataObject {
     _id:any = ""
@@ -115,7 +116,21 @@ export const FlagDataObjectValidator:any = {
                                 result.isValid=false
                                 result.messages.push({
                                     field:"engine",
-                                    message:"Can NOT change type of engine between string and boolean"
+                                    message:"Can NOT change the type of engine between string and others."
+                                })
+                            }
+    
+                            
+                        }
+                        if (data.contexts[flagContextIndex].engine==="numeric" || oldData.contexts[flagContextIndex].engine==="numeric") {
+                            if (data.contexts[flagContextIndex].engine==="numeric" && oldData.contexts[flagContextIndex].engine==="numeric") {
+                                //Allowed
+                            }
+                            else{
+                                result.isValid=false
+                                result.messages.push({
+                                    field:"engine",
+                                    message:"Can NOT change the type of engine between numeric and others."
                                 })
                             }
     
@@ -179,6 +194,15 @@ export const FlagDataObjectValidator:any = {
                         if (!engineStringValidationResult.isValid) {
                             result.isValid = false
                             result.messages = result.messages.concat(engineStringValidationResult.messages)                   
+                            break
+                        }
+                    }                     
+                    if ('numeric' in flagContext.engine_parameters && flagContext.engine==="numeric"){
+
+                        let engineNumericValidationResult = EngineNumericDataObjectValidator.validateFunction(flagContext.engine_parameters.numeric,EngineNumericDataObjectValidator.validateSchema,EngineNumericDataObjectValidator.extraValidateFunction)
+                        if (!engineNumericValidationResult.isValid) {
+                            result.isValid = false
+                            result.messages = result.messages.concat(engineNumericValidationResult.messages)                   
                             break
                         }
                     }                     
@@ -261,7 +285,7 @@ export const FlagContextDataObjectValidator:any = {
             requiredMessage : "bucket_context_uuid is required."
         },
         engine : {
-            regexp:"^(string|boolean|boolean_conditioned_true|boolean_conditioned_false|boolean_conditionedor_true|boolean_conditionedor_false)$",
+            regexp:"^(numeric|string|boolean|boolean_conditioned_true|boolean_conditioned_false|boolean_conditionedor_true|boolean_conditionedor_false)$",
             message:"Invalid context engine",
             required:true,
             requiredMessage : "The context engine is required."

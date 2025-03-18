@@ -128,6 +128,7 @@
         let booleanConditionedOrTrueIsSelected = ""
         let booleanConditionedOrFalseIsSelected = ""
         let stringIsSelected = ""
+        let numericIsSelected = ""
 
         if (app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="boolean") {
             booleanIsSelected="selected"
@@ -141,6 +142,8 @@
             booleanConditionedOrFalseIsSelected = "selected"
         } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="string") {
             stringIsSelected = "selected"
+        } else if(app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(`${bucketContext.uuid}`)].engine==="numeric") {
+            numericIsSelected = "selected"
         }
 
         let disabled = "disabled='disabled'"
@@ -159,6 +162,7 @@
                         <option value="boolean_conditionedor_true" ${booleanConditionedOrTrueIsSelected} >True (OR)</option>
                         <option value="boolean_conditionedor_false" ${booleanConditionedOrFalseIsSelected} >False (OR)</option>
                         <option value="string" ${stringIsSelected} >String</option>
+                        <option value="numeric" ${numericIsSelected} >Numeric</option>
                     </select> 
                     <div id="engine_container_${bucketContext.uuid}" style="padding:5px"></div>
                 </sl-details>
@@ -185,6 +189,7 @@
             newFlagContext.engine_parameters.boolean_conditionedor_true={conditions:[]}
             newFlagContext.engine_parameters.boolean_conditionedor_false={conditions:[]}
             newFlagContext.engine_parameters.string={value:"",configuration:""}
+            newFlagContext.engine_parameters.numeric={value:"",min_value:"",max_value:""}
 
             app.md.flag_form.flag.contexts.push(newFlagContext)
 
@@ -355,6 +360,19 @@
                 <input type='text' class='form-control' id='string_engine_value_config_${contextUuid}' value='${stringValueConfiguration}' onchange="app.md.setSelectOptionsForStringEngineConfiguration('${contextUuid}');app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.configuration=this.value;app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.string.value=''" ${disabled} placeholder='Separate the options with pipe |' />
             `
             app.md.setSelectOptionsForStringEngineConfiguration(contextUuid)     
+        } else if (engine === "numeric" ) {
+            let numericValue = app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.numeric.value
+            let minNumericValue = app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.numeric.min_value
+            let maxNumericValue = app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId(contextUuid)].engine_parameters.numeric.max_value
+            document.getElementById('engine_container_'+contextUuid).innerHTML = `
+                <label style='margin-bottom:4px'>Value</label>
+                <input type='number' class='form-control' id="numeric_engine_value_${contextUuid}" style="width:100%;margin-bottom:7px" value='${numericValue}' onchange="app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.numeric.value=this.value" ${disabled} />
+                <label style='margin-bottom:4px'>Max Value</label>
+                <input type='number' class='form-control' id="numeric_engine_max_value_${contextUuid}" style="width:100%;margin-bottom:7px" value='${maxNumericValue}' onchange="app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.numeric.max_value=this.value" ${disabled} />
+                <label style='margin-bottom:4px'>Min Value</label>
+                <input type='number' class='form-control' id="numeric_engine_min_value_${contextUuid}" style="width:100%;margin-bottom:7px" value='${minNumericValue}' onchange="app.md.flag_form.flag.contexts[app.md.getFlagContextIndexByUuId('${contextUuid}')].engine_parameters.numeric.min_value=this.value" ${disabled} />
+
+            `  
         }
     }
 

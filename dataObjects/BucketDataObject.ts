@@ -61,7 +61,7 @@ export const BucketDataObjectValidator:any = {
                 result.isValid = false
                 result.messages = [{
                     field:"name",
-                    message:"Duplicated Context Names is NOT allowed."
+                    message:"Duplicated Context Names are NOT allowed."
                 }]                
             }
 

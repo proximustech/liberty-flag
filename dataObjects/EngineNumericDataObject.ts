@@ -11,15 +11,15 @@ export const EngineNumericDataObjectValidator:any = {
         },             
         min_value : {
             regexp:String.raw`^\d+$`,
-            message:"The numeric value MUST be a number",
+            message:"The MIN numeric value MUST be a number",
             required:true,
-            requiredMessage : "The numeric value is required."
+            requiredMessage : "The MIN numeric value is required."
         },             
         max_value : {
             regexp:String.raw`^\d+$`,
-            message:"The numeric value MUST be a number",
+            message:"The MAX numeric value MUST be a number",
             required:true,
-            requiredMessage : "The numeric value is required."
+            requiredMessage : "The MAX numeric value is required."
         },             
 
     },

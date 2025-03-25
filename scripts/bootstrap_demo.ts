@@ -30,7 +30,12 @@ async function createFlag(flagService:FlagService,bucket:BucketDataObject,flagNa
   "string": {
     "value": "",
     "configuration": ""
-  }
+  },
+  "numeric":{
+    "value":"",
+    "min_value":"",
+    "max_value":""
+  }  
 }) {
 
   let flagContext = new FlagContextDataObject()
@@ -214,6 +219,11 @@ async function main() {
     "string": {
       "value": "Light",
       "configuration": "Light|Dark|Wall"
+    },
+    "numeric":{
+      "value":"",
+      "min_value":"",
+      "max_value":""
     }
   })
   await createFlag(flagService,bucket,"outbound.calling")
@@ -236,6 +246,38 @@ async function main() {
     "string": {
       "value": "bank",
       "configuration": "bank|health"
+    },
+    "numeric":{
+      "value":"",
+      "min_value":"",
+      "max_value":""
+    }
+  })
+
+  await createFlag(flagService,bucket,"app.dashes-number","numeric",{
+    "boolean": {
+      "status": false
+    },
+    "boolean_conditioned_true": {
+      "conditions": []
+    },
+    "boolean_conditioned_false": {
+      "conditions": []
+    },
+    "boolean_conditionedor_true": {
+      "conditions": []
+    },
+    "boolean_conditionedor_false": {
+      "conditions": []
+    },
+    "string": {
+      "value": "bank",
+      "configuration": "bank|health"
+    },
+    "numeric":{
+      "value":"10",
+      "min_value":"0",
+      "max_value":"15"
     }
   })
 

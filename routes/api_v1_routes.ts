@@ -2,11 +2,11 @@ import Router from "koa-router"
 import { Context } from "koa";
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 import { FlagDataObject } from "../dataObjects/FlagDataObject";
-import { env } from 'node:process';
 import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
 import { FlagEngineService } from "../services/FlagEngineService";
+import { Config } from "../values/config";
 
 import koaBody from 'koa-body';
 
@@ -25,7 +25,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         try {
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
-            if (accessToken === env.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
+            if (accessToken === Config.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {    
 
                     let dataPulse = ctx.request.body["data-pulse"] || ""
@@ -119,7 +119,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let name = ctx.request.body["name"] || ""
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
-            if (accessToken === env.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
+            if (accessToken === Config.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "" && name !== "") {    
         
                     let returnValue:any = []
@@ -208,7 +208,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         try {
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
-            if (accessToken === env.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
+            if (accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {
 
                     let flagsContextConfig = ctx.request.body["flags-config"] || ""

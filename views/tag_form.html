@@ -120,5 +120,11 @@
     </div>
 
 <script>
-    document.getElementById('tag_form_tab_group').show('general')
+    $(document).ready(function() {
+        document.getElementById('tag_form_tab_group').show('general')
+
+        if (app.md.tag_form.tag.name==="") {
+            setTimeout(()=>{document.getElementById("tag_name").focus()},500)        
+        }        
+    });    
 </script>

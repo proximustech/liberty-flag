@@ -228,11 +228,14 @@
     </div>
 
 <script>
-    app.md.addContextsToList()
-    document.getElementById('bucket_form_tab_group').show('general')
-
     $(document).ready(function() {
+        app.md.addContextsToList()
+        document.getElementById('bucket_form_tab_group').show('general')
+
+        if (app.md.bucket_form.bucket.name==="") {
+            setTimeout(()=>{document.getElementById("bucket_name").focus()},500)        
+        }
+
         $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
     });
-
 </script>

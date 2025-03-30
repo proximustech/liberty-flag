@@ -725,15 +725,19 @@
 </div>
 
 <script>
-    app.md.addFlagContextsToList()
     $(document).ready(function() {
+        app.md.addFlagContextsToList()
         $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
-
+        
         if (app.md.flag_form.bucket_context_uuid !=="") {  
             document.getElementById('flag_form_tab_group').show('values')
             document.getElementById(`bucket_context_value_config_${app.md.flag_form.bucket_context_uuid}`).show()
         } else {
             document.getElementById('flag_form_tab_group').show('general')
-        }        
+        }
+        if (app.md.flag_form.flag.name==="") {
+            setTimeout(()=>{document.getElementById("flag_name").focus()},500)        
+        }
+        
     });    
 </script>

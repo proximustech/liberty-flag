@@ -16,8 +16,8 @@ export const BucketDataObjectValidator:any = {
 
     validateSchema : {
         name : {
-            regexp:String.raw`^\S{5,30}$`,
-            message:"Bucket name must be in the range of 5 and 30 characters without spaces.",
+            regexp:String.raw`(?=^\S.*\S$)(?=.{5,30})`,
+            message:"Bucket name must be in the range of 5 and 30 characters.",
             required:true,
             requiredMessage : "Bucket name is required."
         },

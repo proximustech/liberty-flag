@@ -23,8 +23,7 @@
             })
             .done(function() {
                 setTimeout(() => {
-                    app.setViewForPendingOperation('content_view') 
-                    htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
+                    app.ajax('content_view', '/<%= prefix %>/tags')
                     app.drawer.hide();
                     app.toastShow('Saved','Tag saved successfully.',{type:"success"})           
                     
@@ -58,8 +57,7 @@
         })
         .done(function() {      
             setTimeout(() =>{
-                app.setViewForPendingOperation('content_view')
-                htmx.ajax('GET', '/<%= prefix %>/tags', {target:'#content_view', swap:'innerHTML'})
+                app.ajax('content_view', '/<%= prefix %>/tags')
                 app.drawer.hide();
                 app.dialog.hide()
                 app.toastShow('Deleted','Tag deleted successfully.',{type:"success"}) 

@@ -47,7 +47,7 @@ let flagValueStats={
                             <div class="lp_container">
                                 <div class="lp_contrast_container">
                                     <div>
-                                        <button class="lp_button" onclick="app.drawer.innerHTML='';app.setViewForPendingOperation('app_drawer');app.drawer.show();htmx.ajax('GET', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= flag.bucket_uuid %>&bucket_context_uuid=<%= context.bucket_context_uuid %>', {target:'#app_drawer', swap:'innerHTML'});"><i class="bi bi-pencil"></i></button>
+                                        <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/flag_form?uuid=<%= flag.uuid %>&bucket_uuid=<%= flag.bucket_uuid %>&bucket_context_uuid=<%= context.bucket_context_uuid %>');"><i class="bi bi-pencil"></i></button>
                                     </div>
                                     <strong>Bucket Name:</strong> <%= bucketUuidMap.get(flag.bucket_uuid) %> <strong>Flag Name:</strong> <%= flag.name %>                                                                                            
                                 </div>

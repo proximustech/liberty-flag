@@ -113,8 +113,7 @@
             .done(function() {
                 setTimeout(() => {
                     //$("#content_view").load("<%= prefix %>/buckets");
-                    app.setViewForPendingOperation('content_view') 
-                    htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
+                    app.ajax('content_view', '/<%= prefix %>/buckets')
                     app.drawer.hide();
                     app.toastShow('Saved','Bucket saved successfully.',{type:"success"})           
                     
@@ -148,8 +147,7 @@
         })
         .done(function() {      
             setTimeout(() =>{
-                app.setViewForPendingOperation('content_view')
-                htmx.ajax('GET', '/<%= prefix %>/buckets', {target:'#content_view', swap:'innerHTML'})
+                app.ajax('content_view', '/<%= prefix %>/buckets')
                 app.drawer.hide();
                 app.dialog.hide()
                 app.toastShow('Deleted','Bucket deleted successfully.',{type:"success"}) 

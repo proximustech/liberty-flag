@@ -7,7 +7,7 @@ import { BucketServiceFactory } from "../factories/BucketServiceFactory"
 import { FlagServiceFactory } from "../factories/FlagServiceFactory"
 
 import { Uuid,Random } from "../../../services/utilities";
-import { ExceptionNotAuthorized, ExceptionRecordAlreadyExists, ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized, ExceptionRecordAlreadyExists, ExceptionInvalidObject } from "../../../types/exceptions";
 
 const faker=require("faker")
 

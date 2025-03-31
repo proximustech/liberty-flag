@@ -1,5 +1,5 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exceptions";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { TagDataObject,TagDataObjectValidator } from "../dataObjects/TagDataObject";
 import { TagModel } from "../models/TagModel";

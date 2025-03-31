@@ -1,5 +1,5 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-import { ExceptionNotAuthorized,ExceptionInvalidObject,ExceptionDataBaseUnExpectedResult } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject,ExceptionDataBaseUnExpectedResult } from "../../../types/exceptions";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { FlagDataObject,FlagDataObjectValidator } from "../dataObjects/FlagDataObject";
 import { FlagModel } from "../models/FlagModel";

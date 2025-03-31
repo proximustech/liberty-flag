@@ -4,7 +4,7 @@ import { MongoService } from "../services/MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { TagDataObject } from "../dataObjects/TagDataObject";
 import { Uuid } from "../../../services/utilities";
-import { ExceptionRecordAlreadyExists } from "../../../types/exception_custom_errors";
+import { ExceptionRecordAlreadyExists } from "../../../types/exceptions";
 
 export class TagModel implements IDisposable {
     

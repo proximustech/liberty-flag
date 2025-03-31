@@ -5,7 +5,7 @@ import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
 import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";

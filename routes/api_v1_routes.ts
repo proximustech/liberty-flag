@@ -2,7 +2,7 @@ import Router from "koa-router"
 import { Context } from "koa";
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 import { FlagDataObject } from "../dataObjects/FlagDataObject";
-import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exceptions";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
 import { FlagEngineService } from "../services/FlagEngineService";

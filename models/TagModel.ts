@@ -4,6 +4,7 @@ import { MongoService } from "../services/MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
 import { TagDataObject } from "../dataObjects/TagDataObject";
 import { Uuid } from "../../../services/utilities";
+import { ExceptionRecordAlreadyExists } from "../../../types/exception_custom_errors";
 
 export class TagModel implements IDisposable {
     
@@ -24,7 +25,14 @@ export class TagModel implements IDisposable {
     async create(tag:TagDataObject){
         tag.uuid = Uuid.createMongoUuId()
         tag._id = new ObjectId(tag.uuid)        
-        const result = await this.collection.insertOne(tag,{writeConcern: {w: 1, j: true}})
+        const result = await this.collection.insertOne(tag,{writeConcern: {w: 1, j: true}}).catch((error) => {
+            if (error.code === 11000) {
+                throw new ExceptionRecordAlreadyExists("Name already exists")
+            } else {
+              console.log(error);
+              throw new Error("DB Unexpected Error");
+            }
+        });
         if (result.insertedId == tag._id && result.acknowledged) {
             return true
         }
@@ -37,7 +45,14 @@ export class TagModel implements IDisposable {
             {uuid: String(tag.uuid) }, 
             tag,
             {upsert: false,writeConcern: {w: 1, j: true}}
-        ) 
+        ).catch((error) => {
+            if (error.code === 11000) {
+                throw new ExceptionRecordAlreadyExists("Name already exists")
+            } else {
+              console.log(error);
+              throw new Error("DB Unexpected Error");
+            }
+        }); 
         if (result.acknowledged && result.matchedCount == 1) {
             return true
         }

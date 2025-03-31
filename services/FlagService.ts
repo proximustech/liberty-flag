@@ -1,5 +1,5 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject,ExceptionDataBaseUnExpectedResult } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject,ExceptionDataBaseUnExpectedResult } from "../../../types/exception_custom_errors";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { FlagDataObject,FlagDataObjectValidator } from "../dataObjects/FlagDataObject";
 import { FlagModel } from "../models/FlagModel";
@@ -28,11 +28,7 @@ export class FlagService implements IDisposable {
 
         if (!userValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
-        }
-
-        if (await this.fieldValueExists(flag.bucket_uuid,flag.uuid,"name",flag.name)) {
-            throw new ExceptionRecordAlreadyExists("Name already exists")
-        }        
+        }    
 
         if (this.userCanWrite) {
             return await this.flagModel.create(flag)            
@@ -53,10 +49,6 @@ export class FlagService implements IDisposable {
         if (!userValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
-        
-        if (await this.fieldValueExists(newFlag.bucket_uuid,newFlag.uuid,"name",newFlag.name)) {
-            throw new ExceptionRecordAlreadyExists("Name already exists")
-        }  
 
         if (this.userCanWrite) {
             return await this.flagModel.updateOne(newFlag)

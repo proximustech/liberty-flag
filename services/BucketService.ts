@@ -1,5 +1,5 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { BucketDataObject,BucketContextDataObject,BucketDataObjectValidator} from "../dataObjects/BucketDataObject";
 import { BucketModel } from "../models/BucketModel";
@@ -30,10 +30,6 @@ export class BucketService implements IDisposable {
         if (!roleValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,roleValidationResult.messages)
         }        
-
-        if (await this.fieldValueExists(bucket.uuid,"name",bucket.name)) {
-            throw new ExceptionRecordAlreadyExists("Name already exists")
-        }  
         
         if (this.userCanWrite) {
             bucket.contexts.forEach(context => {
@@ -54,11 +50,7 @@ export class BucketService implements IDisposable {
 
         if (!roleValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,roleValidationResult.messages)
-        }        
-
-        if (await this.fieldValueExists(bucket.uuid,"name",bucket.name)) {
-            throw new ExceptionRecordAlreadyExists("Name already exists")
-        }  
+        } 
         
         let oldBucket = await this.getByUuId(bucket.uuid)
         let oldBucketContextUuIds:string[] = []

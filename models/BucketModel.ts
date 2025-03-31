@@ -2,8 +2,9 @@ import { IDisposable } from "../../../interfaces/disposable_interface";
 
 import { MongoService } from "../services/MongoService";
 import { ObjectId,MongoClient,Db,Collection } from 'mongodb';
-import { BucketContextDataObject, BucketDataObject } from "../dataObjects/BucketDataObject";
+import { BucketDataObject } from "../dataObjects/BucketDataObject";
 import { Uuid } from "../../../services/utilities";
+import { ExceptionRecordAlreadyExists } from "../../../types/exception_custom_errors";
 
 export class BucketModel implements IDisposable {
     
@@ -24,7 +25,14 @@ export class BucketModel implements IDisposable {
     async create(bucket:BucketDataObject){
         bucket.uuid = Uuid.createMongoUuId()
         bucket._id = new ObjectId(bucket.uuid)
-        const result = await this.collection.insertOne(bucket,{writeConcern: {w: 1, j: true}})
+        const result = await this.collection.insertOne(bucket,{writeConcern: {w: 1, j: true}}).catch((error) => {
+            if (error.code === 11000) {
+                throw new ExceptionRecordAlreadyExists("Name already exists")
+            } else {
+              console.log(error);
+              throw new Error("DB Unexpected Error");
+            }
+        });
         if (result.insertedId == bucket._id && result.acknowledged) {
             return true
         }
@@ -37,7 +45,14 @@ export class BucketModel implements IDisposable {
             {uuid: String(bucket.uuid) }, 
             bucket,
             {upsert: false,writeConcern: {w: 1, j: true}}
-        )
+        ).catch((error) => {
+            if (error.code === 11000) {
+                throw new ExceptionRecordAlreadyExists("Name already exists")
+            } else {
+              console.log(error);
+              throw new Error("DB Unexpected Error");
+            }
+        });
         if (result.acknowledged && result.matchedCount == 1) {
             return true
         }

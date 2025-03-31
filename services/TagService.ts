@@ -1,5 +1,5 @@
 import { IDisposable } from "../../../interfaces/disposable_interface";
-import { ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
+import { ExceptionNotAuthorized,ExceptionInvalidObject } from "../../../types/exception_custom_errors";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { TagDataObject,TagDataObjectValidator } from "../dataObjects/TagDataObject";
 import { TagModel } from "../models/TagModel";
@@ -32,10 +32,6 @@ export class TagService implements IDisposable {
         if (!roleValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,roleValidationResult.messages)
         }        
-
-        if (await this.fieldValueExists(tag.uuid,"name",tag.name)) {
-            throw new ExceptionRecordAlreadyExists("Name already exists")
-        }  
         
         if (this.userCanWrite) {
             return await this.tagModel.create(tag)            
@@ -51,10 +47,6 @@ export class TagService implements IDisposable {
         if (!roleValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,roleValidationResult.messages)
         }        
-
-        if (await this.fieldValueExists(tag.uuid,"name",tag.name)) {
-            throw new ExceptionRecordAlreadyExists("Name already exists")
-        }  
         
         if (this.userCanWrite) {
             return await this.tagModel.updateOne(tag)            

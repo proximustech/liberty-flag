@@ -433,7 +433,7 @@
                     <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                     <input id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                     <label id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                    <select id="engine_boolean_conditioned_true_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                    <select id="engine_boolean_conditioned_true_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                         <option value="equal" ${selectedEqual} > (=) Equal</option>
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
                         <option value="less_than" ${selectedLessThan} > (<) Less than</option>
@@ -485,7 +485,7 @@
                     <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                     <input id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                     <label id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                    <select id="engine_boolean_conditioned_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                    <select id="engine_boolean_conditioned_false_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                         <option value="equal" ${selectedEqual} > (=) Equal</option>
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
                         <option value="less_than" ${selectedLessThan} > (<) Less than</option>
@@ -536,7 +536,7 @@
                 <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedOrTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                 <label id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                <select id="engine_boolean_conditionedor_true_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                <select id="engine_boolean_conditionedor_true_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
@@ -585,7 +585,7 @@
                 <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedOrFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
                 <label id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
-                <select id="engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${newConditionNumber}" class="js-example-basic-single" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
+                <select id="engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>

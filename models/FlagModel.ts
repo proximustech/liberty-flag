@@ -34,9 +34,9 @@ export class FlagModel implements IDisposable {
             }
         });
         if (result.insertedId == flag._id && result.acknowledged) {
-            return true
+            return flag.uuid
         }
-        else return false
+        else return "false"
         
     }
 

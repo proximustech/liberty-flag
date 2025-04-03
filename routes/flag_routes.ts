@@ -175,7 +175,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             if (flag.uuid !== "") {
                 dbResultOk = await flagService.updateOne(flag) 
             } else {
-                dbResultOk = await flagService.create(flag)
+                dbResultOk = true
+                let createdFlagUuid = await flagService.create(flag)
+                if (createdFlagUuid === "false") {
+                    dbResultOk = false
+                }                
             }
             if (dbResultOk) {
                 ctx.body = {

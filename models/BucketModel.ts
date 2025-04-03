@@ -34,9 +34,9 @@ export class BucketModel implements IDisposable {
             }
         });
         if (result.insertedId == bucket._id && result.acknowledged) {
-            return true
+            return bucket.uuid
         }
-        else return false        
+        else return "false"
     }
 
     async updateOne(bucket:BucketDataObject){

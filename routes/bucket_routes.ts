@@ -138,7 +138,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 if (bucket.uuid !== "") {
                     dbResultOk = await bucketService.updateOne(bucket)
                 } else {
-                    dbResultOk = await bucketService.create(bucket)
+                    dbResultOk = true
+                    let createdBucketUuid = await bucketService.create(bucket)
+                    if (createdBucketUuid === "false") {
+                        dbResultOk = false
+                    }                      
                 }
                 if (dbResultOk) {
                     ctx.body = {

@@ -34,9 +34,9 @@ export class TagModel implements IDisposable {
             }
         });
         if (result.insertedId == tag._id && result.acknowledged) {
-            return true
+            return tag.uuid
         }
-        else return false           
+        else return "false"
     }
 
     async updateOne(tag:TagDataObject){

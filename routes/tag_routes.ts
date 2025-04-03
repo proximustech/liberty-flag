@@ -109,7 +109,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             if (tag.uuid !== "") {
                 dbResultOk = await tagService.updateOne(tag) 
             } else {
-                dbResultOk = await tagService.create(tag)
+                dbResultOk = true
+                let createdTagUuid = await tagService.create(tag)
+                if (createdTagUuid === "false") {
+                    dbResultOk = false
+                }
             }
             if (dbResultOk) {
                 ctx.body = {

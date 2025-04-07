@@ -1,9 +1,7 @@
 <script>
     app.md = {}
 </script>
-<div class="alert alert-light module_title" role="alert">
-    <strong><sl-icon name="circle-half" label="Contexts"></sl-icon> Contexts</strong>
-</div>
+
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
     <div style="width: 50%;position: absolute;right: 23px;top:93px">
         <sl-input id="context_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
@@ -52,4 +50,5 @@
 <% } %>
 <script>
     app.setSmartTable('contexts_table')
+    app.setModuleTitle(`<strong><sl-icon name="circle-half" label="Contexts"></sl-icon> Contexts</strong>`)
 </script>

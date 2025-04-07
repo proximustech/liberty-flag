@@ -10,9 +10,7 @@ let flagValueStats={
 <script>
     app.md = {}
 </script>
-<div class="alert alert-light module_title" role="alert">
-    <strong>Context:</strong> <%= contextName %>
-</div>
+
 <div style="width: 50%;position: absolute;right: 23px;top:93px">
     <sl-input id="flag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
         <sl-icon name="search" slot="prefix"></sl-icon>
@@ -131,4 +129,5 @@ let flagValueStats={
     );
 
         app.setSmartTable('flags_table')
+        app.setModuleTitle(`<strong>Context:</strong> <%= contextName %>`)
 </script>

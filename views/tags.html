@@ -1,9 +1,7 @@
 <script>
     app.md = {}
 </script>
-<div class="alert alert-light module_title" role="alert">
-    <strong><sl-icon name="tag" label="Tags"></sl-icon> Tags</strong>
-</div>
+
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.tag'],['write'])) { %>
     <button type="button" class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/tag_form');">
         <i class="bi bi-plus-circle"></i> Add
@@ -51,4 +49,5 @@
 </table>
 <script>
     app.setSmartTable('tags_table')
+    app.setModuleTitle(`<strong><sl-icon name="tag" label="Tags"></sl-icon> Tags</strong>`)
 </script>

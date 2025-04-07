@@ -2,10 +2,6 @@
     app.md = {}
 </script>
 <% let bucketContextsMap = getUuidMapFromBucketContextsList(bucket.contexts) %>
-<div class="alert alert-light module_title" role="alert">
-    <strong><i class="bi bi-flag"></i> Flags</strong> - Bucket: <%= bucket.name %>
-</div>
-
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
     <button type="button" class="lp_button" onclick="app.ajax('app_drawer', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>');app.drawer.show();">
         <i class="bi bi-plus-circle"></i> Add
@@ -97,4 +93,5 @@
 <script>
     app.setSmartTable('flags_table')
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
+    app.setModuleTitle(`<strong><i class="bi bi-flag"></i> of</strong>: <%= bucket.name %>`)
 </script>

@@ -1,19 +1,20 @@
 <script>
     app.md = {} 
 </script>
-
-<% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
-    <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form');">
-        <i class="bi bi-plus-circle"></i> Add
-    </button>
-<% } %>
-<div style="width: 50%;position: absolute;right: 23px;top:93px">
-    <sl-input id="bucket_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
-        <sl-icon name="search" slot="prefix"></sl-icon>
-    </sl-input>    
+<div class="lp_contrast_container module_fixed_bar">
+    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
+        <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form');">
+            <i class="bi bi-plus-circle"></i> Add
+        </button>
+    <% } %>
+    <div style="max-width: 250px;">
+        <sl-input id="bucket_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
+            <sl-icon name="search" slot="prefix"></sl-icon>
+        </sl-input>    
+    </div>
 </div>
-   
-
+<br>
+<br>
 <br>
 <br>
 <table 

@@ -60,7 +60,11 @@ let statsByContext = {}
 <% } %>
 <script>
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
-    app.setModuleTitle(`<strong><%= contextName %>: API Request Usage by Client ID</strong>`)
+    app.md.title = `<strong><%= contextName %>: API Usage by Client</strong>`
+    if (app.isSmallScreen()) {
+        app.md.title = `<strong><%= contextName %>: API Usage</strong>`
+    }
+    app.setModuleTitle(app.md.title)
     app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
     <%- script %>
 </script>

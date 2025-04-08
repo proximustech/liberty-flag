@@ -93,6 +93,10 @@ let statsByContext = {}
 <% } %>
 <script>
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
-    app.setModuleTitle(`<strong><%= contextName %>: Data Pulse Graphs</strong>`)
+    app.md.title = `<strong><%= contextName %>: Data Pulse Graphs</strong>`
+    if (app.isSmallScreen()) {
+        app.md.title = `<strong><%= contextName %>: DPG</strong>`
+    }
+    app.setModuleTitle(app.md.title)
     app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
 </script>

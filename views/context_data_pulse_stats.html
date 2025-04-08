@@ -5,10 +5,7 @@ let statsByContext = {}
 <script>
     app.md = {}
 </script>
-<div class="alert alert-primary module_title" role="alert">
-    <strong>Context:</strong> <%= contextName %><br>
-    <strong>Data Pulse Graphs</strong>
-</div>
+
 <div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
     <% matchedContextsUuids.forEach(matchedContext => { 
@@ -96,5 +93,6 @@ let statsByContext = {}
 <% } %>
 <script>
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
+    app.setModuleTitle(`<strong><%= contextName %>: Data Pulse Graphs</strong>`)
     app.md.statsByContext = JSON.parse('<%-JSON.stringify(statsByContext) %>')
 </script>

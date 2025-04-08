@@ -97,5 +97,10 @@
 <script>
     app.setSmartTable('flags_table')
     app.renderBreadCrumbs("breadCrumbsContainer","content_view")
-    app.setModuleTitle(`<strong><i class="bi bi-flag"></i> of</strong>: <%= bucket.name %>`)
+    app.md.title = `<strong><i class="bi bi-flag"></i> Flags of bucket</strong>: <%= bucket.name %>`
+    if (app.isSmallScreen()) {
+        app.md.title = `<strong><i class="bi bi-flag"></i></strong>: <%= bucket.name %>`
+    }
+    app.setModuleTitle(app.md.title)
+
 </script>

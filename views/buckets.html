@@ -3,9 +3,12 @@
 </script>
 <div class="lp_contrast_container module_fixed_bar">
     <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
-        <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form');">
-            <i class="bi bi-plus-circle"></i> Add
-        </button>
+        <div class="btn-group" role="group" aria-label="" style="margin-bottom: 10px;">
+            <button class="btn btn-sm btn-outline-secondary" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form');">
+                <i class="bi bi-plus-circle"></i> Add
+            </button>
+
+        </div>
     <% } %>
     <div style="max-width: 250px;">
         <sl-input id="bucket_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>

@@ -58,9 +58,16 @@ export class TagService implements IDisposable {
 
     async deleteByUuId(tagUuId:string){
         if (this.userCanWrite) {
-            await this.bucketService.deleteFromTags(tagUuId)
-            await this.flagService.deleteFromTags(tagUuId)
-            return await this.tagModel.deleteByUuId(tagUuId) 
+            let returnValue = false
+            if (await this.bucketService.deleteFromTags(tagUuId)) {
+                if (await this.flagService.deleteFromTags(tagUuId)) {
+                    if (await this.tagModel.deleteByUuId(tagUuId)) {
+                        returnValue = true
+                    }
+                }
+            }
+
+            return returnValue
            
         }
         else{

@@ -3,7 +3,7 @@
 </script>
 
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
-    <div class="lp_contrast_container module_fixed_bar">
+    <div class="lp_contrast_container lp_module_fixed_bar">
         <div style="max-width: 250px;">
             <sl-input id="context_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
                 <sl-icon name="search" slot="prefix"></sl-icon>
@@ -39,7 +39,7 @@
                         </div>
                         <strong>Name:</strong> <%= context.name %>
                     </div>
-                    <div class="register_container_body">
+                    <div class="lp_register_container_body">
     
                     </div>                
                 </div>

@@ -1,7 +1,7 @@
 <script>
     app.md = {} 
 </script>
-<div class="lp_contrast_container module_fixed_bar">
+<div class="lp_contrast_container lp_module_fixed_bar">
     <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
         <div class="btn-group" role="group" aria-label="" style="margin-bottom: 10px;">
             <button class="btn btn-sm btn-outline-secondary" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form');">
@@ -52,7 +52,7 @@
                     </div>
                     <strong>Name:</strong> <%= bucket.name %>                                                    
                 </div>
-                <div class="register_container_body">
+                <div class="lp_register_container_body">
                     <strong>Description:</strong> <%= bucket.description %>
                     <div class="alert alert-light" role="alert" style="margin-top: 7px;">
                         <% bucket.tags.forEach(tagUuid=> { %>

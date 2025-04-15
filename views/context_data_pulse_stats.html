@@ -6,7 +6,7 @@ let statsByContext = {}
     app.md = {}
 </script>
 
-<div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
+<div class="lp_bread_crumbs_container" id="lp_bread_crumbs_container"></div>
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
     <% matchedContextsUuids.forEach(matchedContext => { 
         let bucketName = matchedContext[0]
@@ -74,7 +74,7 @@ let statsByContext = {}
             <div class="lp_contrast_container">
                 <strong>Bucket Name:</strong> <%= bucketName %>
             </div>
-            <div class="register_container_body">
+            <div class="lp_register_container_body">
                 <div class="card-body">
                     <% if(Array.from(stringTypeKeys).length > 0){ %>
                         <select id="select_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>" onchange="if(this.value !=='')app.graphShowPie('contextsChart_<%= Buffer.from(bucketName, 'utf8').toString('base64') %>',app.md.statsByContext['<%= bucketContextUuid %>'][this.value]);">
@@ -92,7 +92,7 @@ let statsByContext = {}
     <% }) %>
 <% } %>
 <script>
-    app.renderBreadCrumbs("breadCrumbsContainer","content_view")
+    app.renderBreadCrumbs("lp_bread_crumbs_container","content_view")
     app.md.title = `<strong><%= contextName %>: Data Pulse Graphs</strong>`
     if (app.isSmallScreen()) {
         app.md.title = `<strong><%= contextName %>: DPG</strong>`

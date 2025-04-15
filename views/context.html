@@ -10,8 +10,8 @@ let flagValueStats={
 <script>
     app.md = {}
 </script>
-<div class="lp_contrast_container module_fixed_bar">
-    <div class="breadCrumbsContainer" id="breadCrumbsContainer"></div>
+<div class="lp_contrast_container lp_module_fixed_bar">
+    <div class="lp_bread_crumbs_container" id="lp_bread_crumbs_container"></div>
     <div style="max-width: 250px;">
         <sl-input id="flag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
             <sl-icon name="search" slot="prefix"></sl-icon>
@@ -52,7 +52,7 @@ let flagValueStats={
                                     </div>
                                     <strong>Bucket Name:</strong> <%= bucketUuidMap.get(flag.bucket_uuid) %> <strong>Flag Name:</strong> <%= flag.name %>                                                                                            
                                 </div>
-                                <div class="register_container_body">
+                                <div class="lp_register_container_body">
                                         <div class="card-body">
                                             <p></p>
                                             <p></p>
@@ -105,7 +105,7 @@ let flagValueStats={
 
 </table>
 <script>
-    app.renderBreadCrumbs("breadCrumbsContainer","content_view")
+    app.renderBreadCrumbs("lp_bread_crumbs_container","content_view")
     app.md.flagValueStats = JSON.parse(`<%- JSON.stringify(flagValueStats) %>`)
     app.graphShowPie('flagValuesChart',[
             {

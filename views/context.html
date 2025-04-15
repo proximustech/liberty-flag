@@ -132,5 +132,10 @@ let flagValueStats={
     );
 
         app.setSmartTable('flags_table')
-        app.setModuleTitle(`<strong>Context:</strong> <%= contextName %>`)
+        if (app.isSmallScreen()) {
+            app.setModuleTitle(`<strong>C:</strong><%= contextName %>`)
+        } else {
+            app.setModuleTitle(`<strong>Context:</strong> <%= contextName %>`)
+            
+        }
 </script>

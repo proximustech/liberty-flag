@@ -86,15 +86,25 @@ export class TagService implements IDisposable {
         }  
     }
 
-    async getAll() : Promise<TagDataObject[]> {
+    async getAll(filter:any={},limit=0,skip=0) : Promise<TagDataObject[]> {
         if (this.userCanRead) {
-            return await this.tagModel.getAll()
+            return await this.tagModel.getAll(filter,limit,skip)
            
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
         } 
     }
+
+    async getCount(filter={}) : Promise<number> {
+        if (this.userCanRead) {
+            return await this.tagModel.getCount(filter)
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }        
+    } 
     
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
         if (this.userCanRead) {

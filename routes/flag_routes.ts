@@ -31,11 +31,26 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             if (bucketUuid !=="") {
 
+                let searchValue:any = ctx.request.query.search_value || ""
+                let listRegistersNumber:number = parseInt(ctx.request.query.list_registers_number as string) || 10
+                let listPageNumber:number = parseInt(ctx.request.query.list_page_number as string) || 1            
+    
+                let filter:any = {bucket_uuid:bucketUuid}
+                if (searchValue !== "") {
+                    filter["name"] = searchValue
+                }
+    
+                let documentsCount:number = await flagService.getCount(filter)
+                viewVars.listPagesTotalNumber= Math.ceil(documentsCount / listRegistersNumber)
+                let skipRegistersNumber = (listPageNumber * listRegistersNumber) - listRegistersNumber
+    
+                viewVars.listPageNumber = listPageNumber
+                viewVars.searchValue = searchValue
+                viewVars.flags = await flagService.getAll(filter,listRegistersNumber,skipRegistersNumber)
                 viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
-
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 viewVars.getUuidMapFromBucketContextsList = BucketService.getUuidMapFromContextsList
-                viewVars.flags = await flagService.getAllByBucketUuid(bucketUuid)
+                
 
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.md.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         

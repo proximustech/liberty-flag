@@ -11,12 +11,14 @@
 
         </div>
     <% } %>
-    <div style="max-width: 250px;">
-        <sl-input id="tag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
+    <div style="max-width: 250px;margin-bottom: 10px;">
+        <sl-input id="tag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/tags?search_value=${this.value}`)" value="<%= searchValue %>">
             <sl-icon name="search" slot="prefix"></sl-icon>
         </sl-input>    
     </div>
+    <div id="list_navigation_bar"></div>
 </div>
+<br>
 <br>
 <br>
 <br>
@@ -57,4 +59,5 @@
 <script>
     app.setSmartTable('tags_table')
     app.setModuleTitle(`<strong><sl-icon name="tag" label="Tags"></sl-icon> Tags</strong>`)
+    app.renderListNavigationBar("list_navigation_bar",<%= listPagesTotalNumber %>,<%= listPageNumber %>,'<%= prefix %>/tags',document.getElementById("tag_search_box").value)  
 </script>

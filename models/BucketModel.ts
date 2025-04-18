@@ -90,10 +90,48 @@ export class BucketModel implements IDisposable {
         return new BucketDataObject()
     }
 
-    async getAll() : Promise<BucketDataObject[]> {
-        const cursor = this.collection.find({});
+    async getAll(filter:any={},limit=0,skip=0) : Promise<BucketDataObject[]> {
+        for (const [key, value] of Object.entries(filter)) {
+            filter[key]=new RegExp(`.*${value}.*`)
+        } 
+
+        let limitStage = [{
+            $limit : limit
+        }]
+        let skipStage = [{
+            $skip : skip
+        }]        
+
+        let pipeline = [
+            { 
+                $match: filter
+            },
+            { 
+                $sort: { name : 1 }
+            }
+        ] 
+
+        if (skip > 0) {
+            //@ts-ignore
+            pipeline = pipeline.concat(skipStage)
+        }        
+        if (limit > 0) {
+            //@ts-ignore
+            pipeline = pipeline.concat(limitStage)
+        }             
+
+        const cursor = this.collection.aggregate(pipeline);
         return (await cursor.toArray() as BucketDataObject[])
     }
+
+    async getCount(filter:any={}) : Promise<number> {
+        let localFilter = structuredClone(filter)
+
+        for (const [key, value] of Object.entries(localFilter)) {
+            localFilter[key]=new RegExp(`.*${value}.*`)
+        }         
+        return await this.collection.countDocuments(localFilter);
+    }  
     
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
         let filter:any = {}

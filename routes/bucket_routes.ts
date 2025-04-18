@@ -26,8 +26,23 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
+            let searchValue:any = ctx.request.query.search_value || ""
+            let listRegistersNumber:number = parseInt(ctx.request.query.list_registers_number as string) || 10
+            let listPageNumber:number = parseInt(ctx.request.query.list_page_number as string) || 1            
+
+            let filter:any = {}
+            if (searchValue !== "") {
+                filter["name"] = searchValue
+            }
+
+            let documentsCount:number = await bucketService.getCount(filter)
+            viewVars.listPagesTotalNumber= Math.ceil(documentsCount / listRegistersNumber)
+            let skipRegistersNumber = (listPageNumber * listRegistersNumber) - listRegistersNumber
+
+            viewVars.listPageNumber = listPageNumber
+            viewVars.searchValue = searchValue
+            viewVars.buckets = await bucketService.getAll(filter,listRegistersNumber,skipRegistersNumber)
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
-            viewVars.buckets = await bucketService.getAll()
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.md.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
@@ -326,6 +341,14 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
 
+            let searchValue:any = ctx.request.query.search_value || ""
+            let filter:any = {}
+            if (searchValue !== "") {
+                filter["name"] = searchValue
+            }
+
+            viewVars.searchValue = searchValue
+            viewVars.flags = await flagService.getAll(filter)  
             let uuids:any = ctx.request.query.uuids || ""
             let bucketUuid = uuids.split(",")[0]
             let contextUuid = uuids.split(",")[1]
@@ -351,10 +374,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 
             }
 
+            viewVars.uuids= uuids
             viewVars.bucketUuidMap = bucketService.getUuidMapFromList(await bucketService.getAll())
             viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
             viewVars.contextName = contextName
-            viewVars.flags = await flagService.getAll()
+
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.md.context.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 

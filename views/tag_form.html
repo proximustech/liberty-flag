@@ -23,7 +23,7 @@
             })
             .done(function() {
                 setTimeout(() => {
-                    app.ajax('content_view', '/<%= prefix %>/tags')
+                    app.reloadLastBreadCrumb('content_view')
                     app.drawer.hide();
                     app.toastShow('Saved','Tag saved successfully.',{type:"success"})           
                     

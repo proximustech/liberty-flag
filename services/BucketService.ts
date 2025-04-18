@@ -114,15 +114,25 @@ export class BucketService implements IDisposable {
         }  
     }
 
-    async getAll() : Promise<BucketDataObject[]> {
+    async getAll(filter:any={},limit=0,skip=0) : Promise<BucketDataObject[]> {
         if (this.userCanRead) {
-            return await this.bucketModel.getAll()
+            return await this.bucketModel.getAll(filter,limit,skip)
            
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
         } 
     }
+
+    async getCount(filter={}) : Promise<number> {
+        if (this.userCanRead) {
+            return await this.bucketModel.getCount(filter)
+           
+        }
+        else{
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+        }        
+    }     
     
     async fieldValueExists(processedDocumentUuid:string,fieldName:string,fieldValue:any) : Promise<Boolean> {
         if (this.userCanRead) {

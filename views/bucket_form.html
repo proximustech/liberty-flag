@@ -113,7 +113,7 @@
             .done(function() {
                 setTimeout(() => {
                     //$("#content_view").load("<%= prefix %>/buckets");
-                    app.ajax('content_view', '/<%= prefix %>/buckets')
+                    app.reloadLastBreadCrumb('content_view')
                     app.drawer.hide();
                     app.toastShow('Saved','Bucket saved successfully.',{type:"success"})           
                     

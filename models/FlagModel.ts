@@ -132,10 +132,54 @@ export class FlagModel implements IDisposable {
         return new FlagDataObject()
     }
 
-    async getAll() : Promise<FlagDataObject[]> {
-        const cursor = this.collection.find({});
+    async getAll(filter:any={},limit=0,skip=0) : Promise<FlagDataObject[]> {
+        for (const [key, value] of Object.entries(filter)) {
+            if (key != "bucket_uuid") {
+                filter[key]=new RegExp(`.*${value}.*`)
+                
+            }
+        } 
+
+        let limitStage = [{
+            $limit : limit
+        }]
+        let skipStage = [{
+            $skip : skip
+        }]        
+
+        let pipeline = [
+            { 
+                $match: filter
+            },
+            { 
+                $sort: { name : 1 }
+            }
+        ] 
+
+        if (skip > 0) {
+            //@ts-ignore
+            pipeline = pipeline.concat(skipStage)
+        }        
+        if (limit > 0) {
+            //@ts-ignore
+            pipeline = pipeline.concat(limitStage)
+        }             
+
+        const cursor = this.collection.aggregate(pipeline);
         return (await cursor.toArray() as FlagDataObject[])
     }
+
+    async getCount(filter:any={}) : Promise<number> {
+        let localFilter = structuredClone(filter)
+
+        for (const [key, value] of Object.entries(localFilter)) {
+            if (key != "bucket_uuid") {
+                localFilter[key]=new RegExp(`.*${value}.*`)
+                
+            }
+        }         
+        return await this.collection.countDocuments(localFilter);
+    }      
 
     async getAllByBucketUuid(bucketUuId:string) : Promise<FlagDataObject[]> {
         const cursor = this.collection.find({bucket_uuid: String(bucketUuId)});

@@ -13,12 +13,15 @@
         </div>
     <% } %>
     
-    <div style="max-width: 250px;">
-        <sl-input id="flag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
+    <div style="max-width: 250px;margin-bottom: 10px;">
+        <sl-input id="flag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>&search_value=${this.value}`)" value="<%= searchValue %>" >
             <sl-icon name="search" slot="prefix"></sl-icon>
         </sl-input>    
     </div>
+    <div id="list_navigation_bar"></div>
 </div>
+<br>
+<br>
 <br>
 <br>
 <br>
@@ -105,5 +108,6 @@
         app.md.title = `<strong><i class="bi bi-flag"></i></strong>:<%= bucket.name %>`
     }
     app.setModuleTitle(app.md.title)
+    app.renderListNavigationBar("list_navigation_bar",<%= listPagesTotalNumber %>,<%= listPageNumber %>,'<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>',document.getElementById("flag_search_box").value)  
 
 </script>

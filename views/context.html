@@ -12,12 +12,12 @@ let flagValueStats={
 </script>
 <div class="lp_contrast_container lp_module_fixed_bar">
     <div class="lp_bread_crumbs_container" id="lp_bread_crumbs_container"></div>
-    <div style="max-width: 250px;">
-        <sl-input id="flag_search_box" placeholder="Search..." size="medium" autocomplete="one-time-code" pill>
+    <div style="max-width: 250px;margin-bottom: 10px;">
+        <sl-input id="flag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/context?uuids=<%=uuids%>&search_value=${this.value}`)" value="<%= searchValue %>">
             <sl-icon name="search" slot="prefix"></sl-icon>
         </sl-input>    
     </div>
-
+    <div id="list_navigation_bar"></div>
 </div>
 <br>
 <br>
@@ -131,11 +131,11 @@ let flagValueStats={
         ]
     );
 
-        app.setSmartTable('flags_table')
-        if (app.isSmallScreen()) {
-            app.setModuleTitle(`<strong>C:</strong><%= contextName %>`)
-        } else {
-            app.setModuleTitle(`<strong>Context:</strong> <%= contextName %>`)
-            
-        }
+    app.setSmartTable('flags_table')
+    if (app.isSmallScreen()) {
+        app.setModuleTitle(`<strong>C:</strong><%= contextName %>`)
+    } else {
+        app.setModuleTitle(`<strong>Context:</strong> <%= contextName %>`)
+        
+    }
 </script>

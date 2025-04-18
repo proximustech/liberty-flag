@@ -123,7 +123,7 @@
                 try {
                     app.unsetElementForPendingOperation(triggerElement)
                     for (messageData of JSON.parse(data.responseText).messages) {
-                        app.toastShow('Form data Error',messageData.message,{type:"error"})
+                        app.toastShow('Form data Error:',messageData.message,{closable:true,type:"error"})
                         break;
                     }
 

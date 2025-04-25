@@ -416,6 +416,7 @@
         let selectedDifferent = ""
         let selectedLessThan = ""
         let selectedGreaterThan = ""
+        let isIn = ""
 
         if (condition.operator_parameter==="equal") {
             selectedEqual="selected"
@@ -425,6 +426,8 @@
             selectedLessThan="selected"
         } else if(condition.operator_parameter==="greater_than") {
             selectedGreaterThan="selected"
+        } else if(condition.operator_parameter==="is_in") {
+            isIn="selected"
         }
 
         let html =`
@@ -438,6 +441,7 @@
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
                         <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                         <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
+                        <option value="is_in" ${isIn} >.[.]. Is IN</option>
                     </select>                        
                     <input id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                     <label id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
@@ -468,6 +472,7 @@
         let selectedDifferent = ""
         let selectedLessThan = ""
         let selectedGreaterThan = ""
+        let isIn = ""
 
         if (condition.operator_parameter==="equal") {
             selectedEqual="selected"
@@ -477,6 +482,8 @@
             selectedLessThan="selected"
         } else if(condition.operator_parameter==="greater_than") {
             selectedGreaterThan="selected"
+        } else if(condition.operator_parameter==="is_in") {
+            isIn="selected"
         }
 
         let html =`
@@ -490,6 +497,7 @@
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
                         <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                         <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
+                        <option value="is_in" ${isIn} >.[.]. Is IN</option>
                     </select>                        
                     <input id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                     <label id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
@@ -519,6 +527,7 @@
         let selectedDifferent = ""
         let selectedLessThan = ""
         let selectedGreaterThan = ""
+        let isIn = ""
 
         if (condition.operator_parameter==="equal") {
             selectedEqual="selected"
@@ -528,6 +537,8 @@
             selectedLessThan="selected"
         } else if(condition.operator_parameter==="greater_than") {
             selectedGreaterThan="selected"
+        } else if(condition.operator_parameter==="is_in") {
+            isIn="selected"
         }
 
         let html =`
@@ -541,6 +552,7 @@
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
+                    <option value="is_in" ${isIn} >.[.]. Is IN</option>
                 </select>                        
                 <input id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                 <label id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
@@ -568,6 +580,7 @@
         let selectedDifferent = ""
         let selectedLessThan = ""
         let selectedGreaterThan = ""
+        let isIn = ""
 
         if (condition.operator_parameter==="equal") {
             selectedEqual="selected"
@@ -577,6 +590,8 @@
             selectedLessThan="selected"
         } else if(condition.operator_parameter==="greater_than") {
             selectedGreaterThan="selected"
+        } else if(condition.operator_parameter==="is_in") {
+            isIn="selected"
         }
 
         let html =`
@@ -590,6 +605,7 @@
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
                     <option value="less_than" ${selectedLessThan} > (<) Less than</option>
                     <option value="greater_than" ${selectedGreaterThan} > (>) Greater than</option>
+                    <option value="is_in" ${isIn} >.[.]. Is IN</option>
                 </select>                        
                 <input id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
                 <label id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>

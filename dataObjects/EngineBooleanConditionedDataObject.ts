@@ -26,7 +26,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
             requiredMessage : ""
         },
         operator_parameter : {
-            regexp:"^(equal|different|less_than|greater_than)$",
+            regexp:"^(equal|different|less_than|greater_than|is_in)$",
             message:"The operator_parameter MUST be one of: equal,different,less_than,greater_than",
             required:true,
             requiredMessage : "Boolean condition (True IF ALL): Operator is required."

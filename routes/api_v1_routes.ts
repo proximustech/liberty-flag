@@ -23,6 +23,20 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
 
         try {
+
+            let contentTypeHeader = "";
+            try {
+                contentTypeHeader=ctx.get('Content-Type')
+            } catch (error) {}
+            if (contentTypeHeader!="application/json") {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    message: 'Content-Type Header MUST be application/json'
+                } 
+                return                 
+            }
+
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
             if (accessToken === Config.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
@@ -116,6 +130,19 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
 
         try {
+
+            let contentTypeHeader = "";
+            try {
+                contentTypeHeader=ctx.get('Content-Type')
+            } catch (error) {}
+            if (contentTypeHeader!="application/json") {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    message: 'Content-Type Header MUST be application/json'
+                } 
+                return                 
+            }
             let name = ctx.request.body["name"] || ""
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
@@ -206,6 +233,20 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
 
         try {
+
+            let contentTypeHeader = "";
+            try {
+                contentTypeHeader=ctx.get('Content-Type')
+            } catch (error) {}
+            if (contentTypeHeader!="application/json") {
+                ctx.status=400
+                ctx.body = {
+                    status: 'error',
+                    message: 'Content-Type Header MUST be application/json'
+                } 
+                return                 
+            }
+
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
             if (accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {

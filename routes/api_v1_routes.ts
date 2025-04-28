@@ -23,7 +23,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(apiSecurityPrefix,userPermissions)
 
         try {
-
+            /*
             let contentTypeHeader = "";
             try {
                 contentTypeHeader=ctx.get('Content-Type')
@@ -36,6 +36,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 } 
                 return                 
             }
+            */
 
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""
@@ -234,6 +235,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
         try {
 
+            /*
             let contentTypeHeader = "";
             try {
                 contentTypeHeader=ctx.get('Content-Type')
@@ -246,6 +248,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 } 
                 return                 
             }
+            */
 
             let contextKey = ctx.request.body["context-key"] || ""
             let accessToken = ctx.request.body["access-token"] || ""

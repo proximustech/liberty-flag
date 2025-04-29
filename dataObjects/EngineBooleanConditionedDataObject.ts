@@ -56,7 +56,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
         for (const [fieldName, fieldSchema] of Object.entries(validateSchema)) {
 
             fieldRegexp = validateSchema[fieldName]["regexp"]
-            fieldValue = data[fieldName].toString()
+            fieldValue = data[fieldName]
     
             if (fieldValue === "") {
                 if (validateSchema[fieldName]["required"]) {
@@ -74,6 +74,12 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                     })                    
                 }
                 
+            } else if(typeof(fieldName) !== "string" || typeof(fieldValue) !== "string"){
+                result.isValid=false
+                result.messages.push({
+                    field:fieldName,
+                    message: "Boolean Conditions: First, Second and Operator parameters MUST be of type string. Even numbers."
+                }) 
             } else {
                 let regexpValidator = new RegExp(fieldRegexp);
                 if (!regexpValidator.test(fieldValue)) {
@@ -85,7 +91,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                 }
                 else {
                     try {
-                        //This code executes well in the backend but not in the brower. Leaving this validation section to the backend
+                        //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
                         let illegalCharactersRegexp = new RegExp(IllegalCharactersRegexp)                
                         if(illegalCharactersRegexp.test(fieldValue)){
                             result.isValid=false
@@ -99,7 +105,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                 }                 
                 
                 if ( fieldName==="second_parameter" && secondParameterMustBeNumeric) {
-                    if (!(!isNaN(parseFloat(fieldValue)) && isFinite(fieldValue))) {
+                    if (!(!isNaN(parseFloat(fieldValue)) && isFinite(parseInt(fieldValue)))) {
                         result.isValid=false
                         result.messages.push({
                             field:fieldName,
@@ -107,8 +113,7 @@ export const EngineBooleanConditionedConditionDataObjectValidator:any = {
                         })
                     }                    
                 }
-                
-                
+                             
             }
     
         }

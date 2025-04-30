@@ -49,56 +49,16 @@ export const FlagDataObjectValidator:any = {
 
     },
 
-    validateFunction : (data:any,validateSchema:any,oldData:any=false) => {
-        let fieldRegexp = ""
-        let fieldValue = ""
+    validateFunction : DataObjectValidateFunction,
+    extraValidateFunction : (data:any,extraData:any={oldData:false}) => {
+
+        let oldData:any=extraData.oldData
+
         let result:any = {
             isValid :true,
             messages:[]
-        }
-    
-        result.isValid = true
-    
-        for (const [fieldName, fieldSchema] of Object.entries(validateSchema)) {
-            fieldRegexp = validateSchema[fieldName]["regexp"]
-            fieldValue = data[fieldName].toString()
-    
-            if (fieldValue === "") {
-                if (validateSchema[fieldName]["required"]) {
-                    result.isValid=false
-                    result.messages.push({
-                        field:fieldName,
-                        message:validateSchema[fieldName]["requiredMessage"]
-                    })                
-                } 
-                
-            } else {
-                let regexpValidator = new RegExp(fieldRegexp);
-                if (!regexpValidator.test(fieldValue)) {
-                    result.isValid=false
-                    result.messages.push({
-                        field:fieldName,
-                        message:validateSchema[fieldName]["message"]
-                    })
-                }
-                else {
-                    try {
-                        //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
-                        let illegalCharactersRegexp = new RegExp(IllegalCharactersRegexp)                
-                        if(illegalCharactersRegexp.test(fieldValue)){
-                            result.isValid=false
-                            result.messages.push({
-                                field:fieldName,
-                                message:IllegalCharactersValidationMessage
-                            })
-                        }                                       
-                    } catch (error) {}
-    
-                }         
-                
-            }
-    
-        }
+        } 
+
         //This code executes well in the backend but not in the browser. Leaving this validation section to the backend
         try {
             for (let flagContextIndex = 0; flagContextIndex < data.contexts.length; flagContextIndex++) {
@@ -229,12 +189,11 @@ export const FlagDataObjectValidator:any = {
                 result.isValid = false
                 result.messages =[{
                     field:"Flag context",
-                    message:error.message
+                    message:"Java Script Error: "+ error.message
                 }]  
             }
         
         }
-
 
         return result
     }

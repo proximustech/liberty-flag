@@ -24,7 +24,8 @@ export class FlagService implements IDisposable {
 
     async create(flag:FlagDataObject){
 
-        let userValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema)
+        let validationExtraData:any={oldData:false}
+        let userValidationResult=FlagDataObjectValidator.validateFunction(flag,FlagDataObjectValidator.validateSchema,FlagDataObjectValidator.extraValidateFunction,validationExtraData)
 
         if (!userValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
@@ -39,12 +40,13 @@ export class FlagService implements IDisposable {
         
     }
 
-    async updateOne(newFlag:FlagDataObject,oldFlag:any = false){
-
-        if (oldFlag === false) {
-            oldFlag = await this.getByNameAndBucketUuid(newFlag.name,newFlag.bucket_uuid)
-        }     
-        let userValidationResult=FlagDataObjectValidator.validateFunction(newFlag,FlagDataObjectValidator.validateSchema,oldFlag)
+    async updateOne(newFlag:FlagDataObject,oldData:any = false){
+        let validationExtraData:any={oldData:false}
+        if (oldData === false) {
+            validationExtraData.oldData = await this.getByNameAndBucketUuid(newFlag.name,newFlag.bucket_uuid)
+        }
+        else validationExtraData.oldData = oldData
+        let userValidationResult=FlagDataObjectValidator.validateFunction(newFlag,FlagDataObjectValidator.validateSchema,FlagDataObjectValidator.extraValidateFunction,validationExtraData)
 
         if (!userValidationResult.isValid) {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)

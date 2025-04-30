@@ -25,7 +25,7 @@ export const EngineNumericDataObjectValidator:any = {
     },
 
     validateFunction : DataObjectValidateFunction,
-    extraValidateFunction : (data:any) => {
+    extraValidateFunction : (data:any,extraData:any={}) => {
         let result:any = {
             isValid :false,
             messages:[{

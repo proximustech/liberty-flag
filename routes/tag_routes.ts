@@ -3,7 +3,7 @@ import Router from "koa-router"
 import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { TagDataObject,TagDataObjectValidator,TagDataObjectSpecs } from "../dataObjects/TagDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
+import { ExceptionSessionInvalid,ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
 
@@ -17,6 +17,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     let logger = LoggerServiceFactory.create()
 
     router.get('/tags', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }        
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
@@ -61,6 +66,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
     
     router.get('/tag_form', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
@@ -109,6 +119,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.post('/tag',koaBody(), async (ctx:Context) => {
         
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,userPermissions)
         try {
@@ -190,6 +204,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.delete('/tag',koaBody(), async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,userPermissions)

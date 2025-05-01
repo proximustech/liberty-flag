@@ -7,7 +7,7 @@ import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { FlagDataObject,FlagDataObjectValidator,FlagDataObjectSpecs, FlagContextDataObject } from "../dataObjects/FlagDataObject";
 import { EngineBooleanConditionedDataObject,EngineBooleanConditionedConditionDataObject,EngineBooleanConditionedConditionDataObjectValidator } from "../dataObjects/EngineBooleanConditionedDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
+import { ExceptionSessionInvalid,ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
 
@@ -21,6 +21,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     let logger = LoggerServiceFactory.create()
 
     router.get('/flags', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = FlagServiceFactory.create(prefix,viewVars.userPermissions)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
@@ -87,6 +92,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.get('/flag_form', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
@@ -175,6 +185,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.post('/flag',koaBody(), async (ctx:Context) => {
 
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = FlagServiceFactory.create(prefix,userPermissions)
 
@@ -258,6 +272,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.delete('/flag',koaBody(), async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = FlagServiceFactory.create(prefix,userPermissions)

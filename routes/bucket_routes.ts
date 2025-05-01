@@ -5,7 +5,7 @@ import { TagServiceFactory } from "../factories/TagServiceFactory";
 import { BucketDataObject,BucketDataObjectValidator,BucketDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { BucketContextDataObject,BucketContextDataObjectValidator,BucketContextDataObjectSpecs } from "../dataObjects/BucketDataObject";
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
-import { ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
+import { ExceptionSessionInvalid,ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
 import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
@@ -21,6 +21,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     let logger = LoggerServiceFactory.create()
 
     router.get('/buckets', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
@@ -69,6 +74,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.get('/bucket_form', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const tagService = TagServiceFactory.create(prefix,viewVars.userPermissions)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
@@ -137,6 +147,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.post('/bucket',koaBody(), async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
 
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
 
@@ -222,6 +236,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.delete('/bucket',koaBody(), async (ctx:Context) => {
 
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
     
         const bucketService = BucketServiceFactory.create(prefix,userPermissions)
@@ -288,6 +306,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.get('/contexts', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
         try {
@@ -335,6 +358,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.get('/context', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         let userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const flagService = FlagServiceFactory.create(prefix,userPermissions)        
         const bucketService = BucketServiceFactory.create(prefix,userPermissions)
@@ -406,6 +434,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })
 
     router.get('/context_stats', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
 
@@ -461,6 +494,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     })    
 
     router.get('/context_data_pulse_stats', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
         viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
         const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
 

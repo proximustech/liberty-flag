@@ -170,20 +170,20 @@
     <sl-tab-group id="bucket_form_tab_group">
         <sl-tab slot="nav" panel="general">General</sl-tab>
         <sl-tab slot="nav" panel="contexts">Contexts</sl-tab>
-        <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
+        <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write'])) { %>
             <sl-tab slot="nav" panel="operations">Operations</sl-tab>
          
         <% } %>
     
         <sl-tab-panel name="general">
 
-            <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { fieldsEnabled = true }%>
+            <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write'])) { fieldsEnabled = true }%>
 
             <%- bucketFieldRender("bucket","name",bucket.name,bucketMetadata.name,fieldsEnabled) %>
             <%- bucketFieldRender("bucket","description",bucket.description,bucketMetadata.description,fieldsEnabled) %>
         
             <label style='margin-bottom:7px;font-size:17px'>Tags</label>
-            <select id="bucket_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%" >
+            <select id="bucket_tags" class="js-example-basic-single" multiple="multiple" style="width:100%">
                 <% tags.forEach(tag => { %>
                     <option value="<%= tag.uuid %>" <% if(bucket.tags.includes(tag.uuid)){ %> selected <% } %> ><%= tag.name %></option>
                  
@@ -193,7 +193,7 @@
         </sl-tab-panel>
         <sl-tab-panel name="contexts">
             <div style="text-align: right;">
-                <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])) { %>
+                <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write'])) { %>
                     <button type="button" class="btn btn-outline-primary" style="margin-top: 5px;margin-bottom: 9px;"  onclick="app.md.createContext()">
                         <i class="bi bi-plus-circle"></i> Add Context
                     </button>            
@@ -203,7 +203,8 @@
 
         </sl-tab-panel>
         <sl-tab-panel name="operations">
-            <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write']) && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+            <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write']) && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+                <%- pluginOperations %>      
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
                         Deleting a Bucket involves making it's associated flags completely UNAVAILABLE.
@@ -213,14 +214,13 @@
                     <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Bucket','Are you sure to delete the bucket <strong><%= bucket.name %></strong> ?','app.md.deleteBucket(`<%= bucket.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Bucket</button>
                     <br>
                 </sl-details>
-    
             <% } %>
         </sl-tab-panel> 
     </sl-tab-group>
 
     <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['write'])){ %>
+        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write'])){ %>
             <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitBucket(this)">Save</sl-button>
         <% } %>        
     </div>
@@ -234,6 +234,6 @@
             setTimeout(()=>{document.getElementById("bucket_name").focus()},500)        
         }
 
-        $('.js-example-basic-single').select2({width:'resolve',placeholder: 'Select the tags you want.'});
+        $("#bucket_tags").select2({width:'resolve',placeholder:'Select the tags you want.'});
     });
 </script>

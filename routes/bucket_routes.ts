@@ -9,6 +9,8 @@ import { ExceptionSessionInvalid,ExceptionCsrfTokenFailed,ExceptionNotAuthorized
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
 import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
+import { DynamicViews } from "../../../services/dynamic_views_service";
+import { dynamicViewsDefinition } from "../values/dynamic_views"
 
 import koaBody from 'koa-body';
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
@@ -86,6 +88,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             let uuid:any = ctx.request.query.uuid || ""
             let bucket:BucketDataObject = new BucketDataObject()
+            viewVars.pluginOperations = ""
+            await DynamicViews.addViewVarContent(dynamicViewsDefinition,"bucket_form","pluginOperations",viewVars,ctx)            
 
             viewVars.tags = await tagService.getAll()
 

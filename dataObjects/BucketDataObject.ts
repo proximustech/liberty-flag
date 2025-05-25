@@ -9,7 +9,8 @@ export class BucketDataObject {
     tags:Array<string> = []
     description:string = ""
     contexts:Array<BucketContextDataObject> = []
-    subBuckets:Array<BucketDataObject> = []
+    sub_buckets:Array<BucketDataObject> = []
+    temp_data:any = {}
 }
 
 export const BucketDataObjectValidator:any = {

@@ -5,6 +5,7 @@ import { BucketDataObject,BucketContextDataObject,BucketDataObjectValidator} fro
 import { BucketModel } from "../models/BucketModel";
 import { Uuid } from "../../../services/utilities";
 import { FlagService } from "./FlagService";
+import { exposedMiddlewareTargets as middlewareTargets } from "../values/middlewares"
 
 export class BucketService implements IDisposable {
     
@@ -37,7 +38,8 @@ export class BucketService implements IDisposable {
                     context.uuid = Uuid.createMongoUuId()
                 }
                 
-            });            
+            });
+            bucket=middlewareTargets["BucketServiceCrudMiddleware"].beforeCreate(bucket)
             return await this.bucketModel.create(bucket)            
         }
         else{
@@ -72,7 +74,8 @@ export class BucketService implements IDisposable {
                     this.flagService.deleteFromContexts(oldBucketContextUuid)
                 }
                 
-            });        
+            });
+            bucket=await middlewareTargets["BucketServiceCrudMiddleware"].beforeUpdate(bucket)
             return await this.bucketModel.updateOne(bucket)            
         }
         else{
@@ -83,6 +86,7 @@ export class BucketService implements IDisposable {
     async deleteByUuId(bucketUuId:string){
         if (this.userCanWrite) {
             if (await this.flagService.deleteByBucketUuId(bucketUuId)) {
+                middlewareTargets["BucketServiceCrudMiddleware"].beforeDelete(bucketUuId)
                 return await this.bucketModel.deleteByUuId(bucketUuId) 
                 
             } else return false

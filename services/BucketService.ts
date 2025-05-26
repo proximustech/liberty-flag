@@ -61,7 +61,7 @@ export class BucketService implements IDisposable {
             
         });         
 
-        if (this.userCanWrite) {
+        if (this.userCanWrite || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+bucket.uuid],["write"])) {
             let newBucketContextUuIds:string[] = []
             bucket.contexts.forEach(context => {
                 if (context.uuid ==="") {

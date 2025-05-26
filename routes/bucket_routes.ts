@@ -11,6 +11,7 @@ import { RouteService } from "../../../services/route_service";
 import { DataPulseManagerServiceFactory } from "../factories/DatePulseManagerServiceFactory";
 import { DynamicViews } from "../../../services/dynamic_views_service";
 import { dynamicViewsDefinition } from "../values/dynamic_views"
+import { exposedMiddlewareTargets as middlewareTargets } from "../values/middlewares"
 
 import koaBody from 'koa-body';
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
@@ -96,7 +97,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             if (uuid !=="") {
                 bucket = await bucketService.getByUuId(uuid) 
                 viewVars.editing = true
-                
+                bucket=await middlewareTargets["BucketServiceCrudMiddleware"].beforeFormShow(bucket)
             }
             else {
                 viewVars.editing = false

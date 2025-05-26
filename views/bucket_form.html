@@ -2,6 +2,8 @@
     app.md.bucket_form={}
     app.md.bucket_form.prefix=<%- JSON.stringify(prefix) %>
     app.md.bucket_form.bucket=JSON.parse(`<%- JSON.stringify(bucket) %>`)
+    app.md.mainDataObject=app.md.bucket_form.bucket
+    app.md.mainDataObjectIdentifier="<%= prefix %>.bucket."+app.md.mainDataObject.uuid
     app.md.bucket_form.bucketValidateSchema = JSON.parse(`<%- JSON.stringify(bucketValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- bucketValidateFunction %>`)
 

@@ -3,6 +3,7 @@ import { ExceptionNotAuthorized,ExceptionInvalidObject,ExceptionDataBaseUnExpect
 import { UserHasPermissionOnElement } from "../../users_control/services/UserPermissionsService";
 import { FlagDataObject,FlagDataObjectValidator } from "../dataObjects/FlagDataObject";
 import { FlagModel } from "../models/FlagModel";
+import { exposedMiddlewareTargets as middlewareTargets } from "../values/middlewares"
 
 export class FlagService implements IDisposable {
     
@@ -32,6 +33,7 @@ export class FlagService implements IDisposable {
         }    
 
         if (this.userCanWrite) {
+            flag=middlewareTargets["FlagServiceCrudMiddleware"].beforeCreate(flag)
             return await this.flagModel.create(flag)            
         }
         else{
@@ -53,6 +55,7 @@ export class FlagService implements IDisposable {
         }
 
         if (this.userCanWrite) {
+            newFlag=await middlewareTargets["FlagServiceCrudMiddleware"].beforeUpdate(newFlag)
             return await this.flagModel.updateOne(newFlag)
             
         }
@@ -98,6 +101,7 @@ export class FlagService implements IDisposable {
 
     async deleteByUuId(flagUuId:string){
         if (this.userCanWrite) {
+            middlewareTargets["FlagServiceCrudMiddleware"].beforeDelete(flagUuId)
             return await this.flagModel.deleteByUuId(flagUuId) 
            
         }

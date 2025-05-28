@@ -11,6 +11,10 @@ import {BucketServiceCrudMiddleware} from "../services/BucketServiceCrudMiddlewa
 middlewareTargets[middlewareServiceName]=new BucketServiceCrudMiddleware()
 middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])
 
+middlewareServiceName = "FlagServiceCrudMiddleware"
+import {FlagServiceCrudMiddleware} from "../services/FlagServiceCrudMiddleware"
+middlewareTargets[middlewareServiceName]=new FlagServiceCrudMiddleware()
+middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])
 
 let pluginMiddlewareInjector = undefined
 for (const [pluginMiddlewareServiceName, value] of Object.entries(registeredPlugins)) {

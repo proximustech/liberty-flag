@@ -10,6 +10,9 @@ import { UserHasPermissionOnElement } from "../../users_control/services/UserPer
 import { ExceptionSessionInvalid,ExceptionCsrfTokenFailed,ExceptionNotAuthorized,ExceptionRecordAlreadyExists,ExceptionInvalidObject } from "../../../types/exceptions";
 import { LoggerServiceFactory } from "../../../factories/LoggerServiceFactory";
 import { RouteService } from "../../../services/route_service";
+import { DynamicViews } from "../../../services/dynamic_views_service";
+import { dynamicViewsDefinition } from "../values/dynamic_views"
+import { exposedMiddlewareTargets as middlewareTargets } from "../values/middlewares"
 
 import koaBody from 'koa-body';
 
@@ -110,12 +113,15 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 
                 let flag:FlagDataObject = new FlagDataObject()
+                viewVars.pluginOperations = ""
+                await DynamicViews.addViewVarContent(dynamicViewsDefinition,"flag_form","pluginOperations",viewVars,ctx)                            
                 viewVars.tags = await tagService.getAll()
 
                 if (uuid !=="") {
     
                     flag = await flagService.getByUuId(uuid) 
                     viewVars.editing = true
+                    flag=await middlewareTargets["FlagServiceCrudMiddleware"].beforeFormShow(flag)
                     
                 }
                 else {

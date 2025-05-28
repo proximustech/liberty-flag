@@ -14,6 +14,7 @@ export class FlagDataObject {
     name:string = ""
     tags:Array<string> = []
     description:string = ""
+    temp_data={}
 
     contexts:Array<FlagContextDataObject> = []
 

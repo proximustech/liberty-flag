@@ -2,6 +2,8 @@
     app.md.flag_form={}
     app.md.flag_form.prefix=<%- JSON.stringify(prefix) %>
     app.md.flag_form.flag=JSON.parse(`<%- JSON.stringify(flag) %>`)
+    app.md.mainDataObject=app.md.flag_form.flag
+    app.md.mainDataObjectIdentifier="<%= prefix %>.flag."+app.md.mainDataObject.uuid    
     app.md.flag_form.flagValidateSchema = JSON.parse(`<%- JSON.stringify(flagValidateSchema).replaceAll("\\","\\\\") %>`)
     eval(`<%- flagValidateFunction %>`)
 
@@ -147,7 +149,7 @@
         }
 
         let disabled = "disabled='disabled'"
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
             disabled=""
         }
 
@@ -293,7 +295,7 @@
     app.md.setEngineView=(engine,contextUuid)=>{
 
         let disabled = "disabled='disabled'"
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
             disabled=""
         }
 
@@ -401,7 +403,7 @@
     app.md.addEngineBooleanConditionedTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
             disabled=""
         }
 
@@ -457,7 +459,7 @@
     app.md.addEngineBooleanConditionedFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
             disabled=""
         }
 
@@ -512,7 +514,7 @@
     app.md.addEngineBooleanConditionedOrTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
             disabled=""
         }
 
@@ -567,7 +569,7 @@
     app.md.addEngineBooleanConditionedOrFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag'],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
             disabled=""
         }
           
@@ -680,14 +682,14 @@
     <sl-tab slot="nav" panel="general">General</sl-tab>
     <sl-tab slot="nav" panel="values">Context Values</sl-tab>
 
-    <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write']) ) { %>
+    <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write']) ) { %>
         <sl-tab slot="nav" panel="operations">Operations</sl-tab>
         
     <% } %>
 
     <sl-tab-panel name="general">
                 
-        <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { fieldsEnabled = true }%>
+        <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { fieldsEnabled = true }%>
 
         <%- flagFieldRender("flag","name",flag.name,flagMetadata.name,fieldsEnabled) %>
         <%- flagFieldRender("flag","description",flag.description,flagMetadata.description,fieldsEnabled) %>
@@ -705,7 +707,7 @@
         <% let disabled="disabled='disabled'" %>        
         <% bucket.contexts.forEach(context => { %>
 
-            <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { disabled="" } else { let disabled="disabled='disabled'" }%>
+            <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { disabled="" } else { let disabled="disabled='disabled'" }%>
 
             <div class="alert alert-light" role="alert">
                 <% let checked=""; if (flagContextsUuids.includes(context.uuid)) checked="checked" %>
@@ -717,8 +719,9 @@
     </sl-tab-panel>
     <sl-tab-panel id="contexts_values_config" name="values"></sl-tab-panel>
 
-    <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+    <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { %>
         <sl-tab-panel name="operations">
+            <%- pluginOperations %>
             <sl-details summary="Delete">
                 <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
                     Afer deleting this Flag, the clients will NO longer receive It's configuration.
@@ -735,7 +738,7 @@
 
 <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { %>
         <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitFlag(this)">Save</sl-button>
     <% } %>
 </div>

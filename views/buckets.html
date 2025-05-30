@@ -23,22 +23,22 @@
 <br>
 <br>
 <table 
-    id="buckets_table" 
+    id="buckets_table"
+    data-classes="table"
     data-toggle="table" 
     data-search="true" 
     data-search-align="left" 
     data-search-selector="#bucket_search_box" 
     data-search-highlight="true"
-    data-sortable="true"
     style="border-style: hidden;"   
 >
     <thead>
         <tr>
-            <th data-sortable="true">Order by Name</th>
+            <th></th>
         </tr>
     </thead>
     <% buckets.forEach(bucket => { %>
-    <tr>
+    <tr style="border: hidden;">
         <td>
             <div class="lp_container">
                 <div class="lp_contrast_container">

@@ -27,22 +27,22 @@
 <br>
 <br>
 <table 
-    id="flags_table" 
+    id="flags_table"
+    data-classes="table"
     data-toggle="table" 
     data-search="true" 
     data-search-align="left" 
     data-search-selector="#flag_search_box" 
     data-search-highlight="true"
-    data-sortable="true"
     style="border-style: hidden;"   
 >
     <thead>
         <tr>
-            <th data-sortable="true">Sort by Name</th>
+            <th></th>
         </tr>
     </thead>
     <% flags.forEach(flag => { %>
-    <tr>
+    <tr style="border: hidden;">
         <td>
             <div class="lp_container">
                 <div class="lp_contrast_container">

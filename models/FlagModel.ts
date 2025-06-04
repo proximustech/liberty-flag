@@ -135,7 +135,9 @@ export class FlagModel implements IDisposable {
     async getAll(filter:any={},limit=0,skip=0) : Promise<FlagDataObject[]> {
         for (const [key, value] of Object.entries(filter)) {
             if (key != "bucket_uuid") {
-                filter[key]=new RegExp(`.*${value}.*`)
+                if (typeof(value)==="string") {
+                    filter[key]=new RegExp(`.*${value}.*`)
+                }
                 
             }
         } 
@@ -174,7 +176,9 @@ export class FlagModel implements IDisposable {
 
         for (const [key, value] of Object.entries(localFilter)) {
             if (key != "bucket_uuid") {
-                localFilter[key]=new RegExp(`.*${value}.*`)
+                if (typeof(value)==="string") {
+                    localFilter[key]=new RegExp(`.*${value}.*`)
+                }
                 
             }
         }         

@@ -92,7 +92,9 @@ export class BucketModel implements IDisposable {
 
     async getAll(filter:any={},limit=0,skip=0) : Promise<BucketDataObject[]> {
         for (const [key, value] of Object.entries(filter)) {
-            filter[key]=new RegExp(`.*${value}.*`)
+            if (typeof(value)=="string" ) {
+                filter[key]=new RegExp(`.*${value}.*`)
+            }
         } 
 
         let limitStage = [{
@@ -128,7 +130,9 @@ export class BucketModel implements IDisposable {
         let localFilter = structuredClone(filter)
 
         for (const [key, value] of Object.entries(localFilter)) {
-            localFilter[key]=new RegExp(`.*${value}.*`)
+            if (typeof(value)=="string" ) {
+                localFilter[key]=new RegExp(`.*${value}.*`)
+            }
         }         
         return await this.collection.countDocuments(localFilter);
     }  

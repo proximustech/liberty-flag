@@ -38,7 +38,20 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let listRegistersNumber:number = parseInt(ctx.request.query.list_registers_number as string) || 10
             let listPageNumber:number = parseInt(ctx.request.query.list_page_number as string) || 1            
 
-            let filter:any = {}
+            let filter:any={}
+
+            viewVars.extendedFilterDefinition=""
+            let extendedFilter:any = ctx.request.query.extended_filter || ""
+            if (extendedFilter !== "") {
+                let filterData:any = {}
+                filterData.extendedFilter=extendedFilter
+                filterData.filter = filter
+                filterData.userPermissions = viewVars.userPermissions
+                filterData=middlewareTargets["BucketServiceFilterMiddleware"].setFilter(filterData)
+                filter=filterData.filter
+                viewVars.extendedFilterDefinition = "extended_filter="+extendedFilter+"&"
+            }
+
             if (searchValue !== "") {
                 filter["name"] = searchValue
             }

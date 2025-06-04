@@ -109,7 +109,7 @@ export class BucketService implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
-        if (this.userCanRead) {
+        if (this.userCanRead || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+"."+uuid],["read","write"])) {
             return await this.bucketModel.getByUuId(uuid)
            
         }
@@ -119,7 +119,7 @@ export class BucketService implements IDisposable {
     }
 
     async getAll(filter:any={},limit=0,skip=0) : Promise<BucketDataObject[]> {
-        if (this.userCanRead) {
+        if (this.userCanRead  || ('uuid' in filter)) {
             return await this.bucketModel.getAll(filter,limit,skip)
            
         }
@@ -129,7 +129,7 @@ export class BucketService implements IDisposable {
     }
 
     async getCount(filter={}) : Promise<number> {
-        if (this.userCanRead) {
+        if (this.userCanRead || ('uuid' in filter)) {
             return await this.bucketModel.getCount(filter)
            
         }

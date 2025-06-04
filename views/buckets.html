@@ -46,11 +46,9 @@
                         <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>');">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['read','write'])) { %>
-                            <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?bucket_uuid=<%= bucket.uuid %>');">
-                                <i class="bi bi-flag"></i>
-                            </button>
-                        <% } %>                        
+                        <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>');">
+                            <i class="bi bi-flag"></i>
+                        </button>   
                     </div>
                     <strong>Name:</strong> <%= bucket.name %>                                                    
                 </div>
@@ -69,6 +67,10 @@
 </table>
 <script>
     app.setSmartTable('buckets_table')
-    app.setModuleTitle(`<strong><sl-icon name="bucket" label="Buckets"></sl-icon> Buckets</strong>`)
+    <% if (extendedFilterDefinition.startsWith("extended_filter=mystuf")) { %>
+        app.setModuleTitle(`<strong><sl-icon name="bucket" label="Buckets"></sl-icon> My Buckets</strong>`)    
+    <% } else { %>
+        app.setModuleTitle(`<strong><sl-icon name="bucket" label="Buckets"></sl-icon> Buckets</strong>`)    
+    <% } %>
     app.renderListNavigationBar("list_navigation_bar",<%= listPagesTotalNumber %>,<%= listPageNumber %>,'<%= prefix %>/buckets',document.getElementById("bucket_search_box").value)  
 </script>

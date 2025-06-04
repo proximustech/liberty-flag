@@ -5,7 +5,6 @@ import { registeredPlugins } from "./registered_middleware_plugins";
 let middlewareTargets:any = {}
 let middlewareBaseManagers:any = {}
 
-
 let middlewareServiceName = "BucketServiceCrudMiddleware"
 import {BucketServiceCrudMiddleware} from "../services/BucketServiceCrudMiddleware"
 middlewareTargets[middlewareServiceName]=new BucketServiceCrudMiddleware()
@@ -14,6 +13,16 @@ middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middleware
 middlewareServiceName = "FlagServiceCrudMiddleware"
 import {FlagServiceCrudMiddleware} from "../services/FlagServiceCrudMiddleware"
 middlewareTargets[middlewareServiceName]=new FlagServiceCrudMiddleware()
+middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])
+
+middlewareServiceName = "BucketServiceFilterMiddleware"
+import {BucketServiceFilterMiddleware} from "../services/BucketServiceFilterMiddleware"
+middlewareTargets[middlewareServiceName]=new BucketServiceFilterMiddleware()
+middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])
+
+middlewareServiceName = "FlagServiceFilterMiddleware"
+import {FlagServiceFilterMiddleware} from "../services/FlagServiceFilterMiddleware"
+middlewareTargets[middlewareServiceName]=new FlagServiceFilterMiddleware()
 middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])
 
 let pluginMiddlewareInjector = undefined

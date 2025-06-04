@@ -54,7 +54,7 @@ export class FlagService implements IDisposable {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
 
-        if (this.userCanWrite) {
+        if (this.userCanWrite || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+newFlag.uuid],["write"])) {
             newFlag=await middlewareTargets["FlagServiceCrudMiddleware"].beforeUpdate(newFlag)
             return await this.flagModel.updateOne(newFlag)
             
@@ -141,7 +141,7 @@ export class FlagService implements IDisposable {
 
     async getByNameAndBucketUuid(name:string,bucketUuid:string) : Promise<FlagDataObject> {
 
-        if (this.userCanRead) {
+        if (this.userCanRead || UserHasPermissionOnElement(this.userPermissions,['liberty_flag.bucket.'+bucketUuid],["read","write"])) {
             return await this.flagModel.getByNameAndBucketUuid(name,bucketUuid)
 
         }
@@ -165,7 +165,7 @@ export class FlagService implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
 
-        if (this.userCanRead) {
+        if (this.userCanRead || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+"."+uuid],["read","write"])) {
             return await this.flagModel.getByUuId(uuid)
 
         }
@@ -176,7 +176,7 @@ export class FlagService implements IDisposable {
     }
 
     async getAll(filter:any={},limit=0,skip=0) : Promise<FlagDataObject[]> {
-        if (this.userCanRead) {
+        if (this.userCanRead || ('uuid' in filter)) {
             return await this.flagModel.getAll(filter,limit,skip)
            
         }
@@ -186,7 +186,7 @@ export class FlagService implements IDisposable {
     }
 
     async getCount(filter={}) : Promise<number> {
-        if (this.userCanRead) {
+        if (this.userCanRead || ('uuid' in filter)) {
             return await this.flagModel.getCount(filter)
            
         }

@@ -33,7 +33,7 @@
 
     app.md.addContextToList=(bucketContext,contextIndex)=>{
         let disabled = ""
-        if (!app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket'],['write'])) {
+        if (!app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket',app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid],['write'])) {
             disabled="disabled='disabled'"
         }
         let contextKeyLabel =``
@@ -46,7 +46,7 @@
         }
         
         let deleteButton = ""
-        if (app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket'],['write'])) {
+        if (app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket',app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid],['write'])) {
             deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.md.bucket_form.bucket.contexts.splice(${contextIndex}, 1);app.md.addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
         }
         html = `
@@ -205,8 +205,9 @@
 
         </sl-tab-panel>
         <sl-tab-panel name="operations">
-            <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write']) && UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
-                <%- pluginOperations %>      
+            <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write'])) { %>
+                <%- pluginOperations %>
+                <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
                         Deleting a Bucket involves making it's associated flags completely UNAVAILABLE.
@@ -216,6 +217,11 @@
                     <button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Bucket','Are you sure to delete the bucket <strong><%= bucket.name %></strong> ?','app.md.deleteBucket(`<%= bucket.uuid %>`)')"><i class="bi bi-trash-fill"></i> Delete Bucket</button>
                     <br>
                 </sl-details>
+                <% } else { %>
+                    <div class="alert alert-warning fade show" role="alert">
+                        <p>Only Users with "Write" permission on Flags, Can delete Buckets.</p>
+                    </div>                     
+                <% } %>
             <% } %>
         </sl-tab-panel> 
     </sl-tab-group>

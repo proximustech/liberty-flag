@@ -37,16 +37,32 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
 
+            let filter:any = {}
             if (bucketUuid !=="") {
+                filter = {bucket_uuid:bucketUuid}
 
-                let searchValue:any = ctx.request.query.search_value || ""
-                let listRegistersNumber:number = parseInt(ctx.request.query.list_registers_number as string) || 10
-                let listPageNumber:number = parseInt(ctx.request.query.list_page_number as string) || 1            
-    
-                let filter:any = {bucket_uuid:bucketUuid}
+            }
+            viewVars.extendedFilterDefinition=""
+            let extendedFilter:any = ctx.request.query.extended_filter || ""
+            if (extendedFilter !== "") {
+                let filterData:any = {}
+                filterData.extendedFilter=extendedFilter
+                filterData.filter = filter
+                filterData.userPermissions = viewVars.userPermissions
+                filterData=middlewareTargets["FlagServiceFilterMiddleware"].setFilter(filterData)
+                filter=filterData.filter
+                viewVars.extendedFilterDefinition = "extended_filter="+extendedFilter+"&"
+            }            
+
+            let searchValue:any = ctx.request.query.search_value || ""
+            let listRegistersNumber:number = parseInt(ctx.request.query.list_registers_number as string) || 10
+            let listPageNumber:number = parseInt(ctx.request.query.list_page_number as string) || 1            
+
+            if(Object.keys(filter).length > 0){
+
                 if (searchValue !== "") {
                     filter["name"] = searchValue
-                }
+                }                
     
                 let documentsCount:number = await flagService.getCount(filter)
                 viewVars.listPagesTotalNumber= Math.ceil(documentsCount / listRegistersNumber)
@@ -59,7 +75,6 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
                 viewVars.getUuidMapFromBucketContextsList = BucketService.getUuidMapFromContextsList
                 
-
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
                 viewVars.userHasPermissionOnElement = "app.md.flags_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement         
 
@@ -69,7 +84,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 ctx.status=400
                 ctx.body = {
                     status: 'error',
-                    message: "Invalid Uuid"
+                    message: "Empty Parent Uuid or Owners"
                 }
     
             }
@@ -106,11 +121,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
         const flagService = FlagServiceFactory.create(prefix,viewVars.userPermissions)
         try {
 
+            viewVars.bucketContextUuid = ctx.request.query.bucket_context_uuid || "" // Used to open context automatically
             let uuid:any = ctx.request.query.uuid || ""
             let bucketUuid:any = ctx.request.query.bucket_uuid || ""
-            viewVars.bucketContextUuid = ctx.request.query.bucket_context_uuid || "" // Used to open context automatically
-            if (bucketUuid !== "") {
-                viewVars.bucket = await bucketService.getByUuId(bucketUuid)
+            if (bucketUuid !== "" || uuid !== "" ) {
                 
                 let flag:FlagDataObject = new FlagDataObject()
                 viewVars.pluginOperations = ""
@@ -128,6 +142,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     flag.bucket_uuid=bucketUuid
                     viewVars.editing = false
                 }
+                viewVars.bucket = await bucketService.getByUuId(flag.bucket_uuid)
 
                 viewVars.flagContextsUuids = []
                 flag.contexts.forEach(flagContext => {
@@ -164,7 +179,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 ctx.status=400
                 ctx.body = {
                     status: 'error',
-                    messages: "Invalid bucket uuid"
+                    messages: "Empty Parent Uuid or Owners"
                 }
                 
             }

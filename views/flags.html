@@ -14,7 +14,7 @@
     <% } %>
     
     <div style="max-width: 250px;margin-bottom: 10px;">
-        <sl-input id="flag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/flags?extended_filter=dummy&bucket_uuid=<%= bucket.uuid %>&search_value=${this.value}`)" value="<%= searchValue %>" >
+        <sl-input id="flag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>&search_value=${this.value}`)" value="<%= searchValue %>" >
             <sl-icon name="search" slot="prefix"></sl-icon>
         </sl-input>    
     </div>

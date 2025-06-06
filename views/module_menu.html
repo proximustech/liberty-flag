@@ -6,18 +6,24 @@
   <sl-tree style="--indent-size:7px">
       <% if (UserHasPermissionOnElement(userPermissions,['liberty_flag.bucket'],['read'])) { %>
         <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/contexts','Contexts',true);app.app_menu_inteligentClose()" >
-          <sl-icon name="circle-half" label="Contexts"></sl-icon>
-          Contexts
+          <label style="font-size: larger;">
+            <sl-icon name="circle-half" label="Contexts"></sl-icon>
+            Contexts
+          </label>
         </sl-tree-item>        
         <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/buckets','Buckets',true);app.app_menu_inteligentClose()" >
-          <sl-icon name="bucket" label="Buckets"></sl-icon>
-          Buckets
+          <label style="font-size: larger;">
+            <sl-icon name="bucket" label="Buckets"></sl-icon>
+            Buckets
+          </label>
         </sl-tree-item>
       <% } %>
       <% if (UserHasPermissionOnElement(userPermissions,['liberty_flag.tag'],['read'])) { %>
         <sl-tree-item onclick="app.ajax('content_view','/liberty_flag/tags','Tags',true);app.app_menu_inteligentClose()" >
-          <sl-icon name="tag" label="Tags"></sl-icon>
-          Tags
+          <label style="font-size: larger;">
+            <sl-icon name="tag" label="Tags"></sl-icon>
+            Tags
+          </label>
         </sl-tree-item>
       <% } %>
       <%- pluginsMenus %>

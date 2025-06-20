@@ -5,7 +5,12 @@ import { registeredPlugins } from "./registered_middleware_plugins";
 let middlewareTargets:any = {}
 let middlewareBaseManagers:any = {}
 
-let middlewareServiceName = "BucketServiceCrudMiddleware"
+let middlewareServiceName = "RoutesMiddleware"
+import {RoutesMiddleware} from "../services/RoutesMiddleware"
+middlewareTargets[middlewareServiceName]=new RoutesMiddleware()
+middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])
+
+middlewareServiceName = "BucketServiceCrudMiddleware"
 import {BucketServiceCrudMiddleware} from "../services/BucketServiceCrudMiddleware"
 middlewareTargets[middlewareServiceName]=new BucketServiceCrudMiddleware()
 middlewareBaseManagers[middlewareServiceName] = new MiddlewareManager(middlewareTargets[middlewareServiceName])

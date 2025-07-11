@@ -528,9 +528,46 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
         try {
 
+            let dataPulseManager = DataPulseManagerServiceFactory.create()
+
             let uuids:any = ctx.request.query.uuids || ""
             let bucketUuid = uuids.split(",")[0]
             let contextUuid = uuids.split(",")[1]
+
+            let outputFormat:any = ctx.request.query.output_format || "html"
+            if (outputFormat=="json") {
+
+                let stringTypeKeysDataMaps:any = {}
+                let contextDataPulse = dataPulseManager.getFromDateRange(contextUuid,new Date,new Date)
+
+                contextDataPulse.forEach((pulse: { data_map: any;client_id:string }) => {
+                    if ("data_map" in pulse) {
+                        let dataMap = pulse.data_map
+                        Object.keys(dataMap).forEach(dataMapItemKey => {
+                            let dataMapItemValue = dataMap[dataMapItemKey]
+
+                            if (!(dataMapItemKey in stringTypeKeysDataMaps)) {
+                                stringTypeKeysDataMaps[dataMapItemKey]= {}
+                            }
+    
+                            if ( dataMapItemValue in stringTypeKeysDataMaps[dataMapItemKey]) {
+                                stringTypeKeysDataMaps[dataMapItemKey][dataMapItemValue]=stringTypeKeysDataMaps[dataMapItemKey][dataMapItemValue]+1
+                            
+                            } else {
+                                stringTypeKeysDataMaps[dataMapItemKey][dataMapItemValue] = 1
+                                
+                            }                         
+
+                        });
+        
+                    }
+                    
+                });                
+
+                ctx.body = stringTypeKeysDataMaps
+                return
+            }
+
             let bucket = await bucketService.getByUuId(bucketUuid)
             let contextName = ""
             bucket.contexts.forEach(context => {
@@ -552,7 +589,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 });
                 
             }
-            viewVars.dataPulseManager = DataPulseManagerServiceFactory.create()
+            viewVars.dataPulseManager = dataPulseManager
             viewVars.contextName = contextName
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
 

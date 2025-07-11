@@ -16,6 +16,7 @@ let statsByContext = {}
         
         contextDataPulse=dataPulseManager.getFromDateRange(bucketContextUuid,new Date,new Date)
         let stringTypeKeys=[]
+        // Elaborate totals by key in the Data Pulse
         contextDataPulse.forEach(pulse => {
             if ("data_map" in pulse) {
                 let dataMap = pulse.data_map

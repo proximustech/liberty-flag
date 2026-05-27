@@ -36,8 +36,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 return                 
             }
 
-            let contextKey = ctx.request.body["context-key"] || ""
-            let accessToken = ctx.request.body["access-token"] || ""
+            let contextKey = ctx.headers["x-context-key"] as string || ""
+            let accessToken = ctx.headers["x-access-token"] as string || ""
             if (accessToken === Config.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {    
 
@@ -50,9 +50,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         } catch (error) {
                             logger.error(error)
                         }
-                    }                          
-                        
-                  
+                    }
         
                     let responseFlags:any = []
                     let flags:Array<FlagDataObject> = await flagService.getAllByContextUuid(contextKey)
@@ -143,8 +141,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 return                 
             }
             let name = ctx.request.body["name"] || ""
-            let contextKey = ctx.request.body["context-key"] || ""
-            let accessToken = ctx.request.body["access-token"] || ""
+            let contextKey = ctx.headers["x-context-key"] as string || ""
+            let accessToken = ctx.headers["x-access-token"] as string || ""
             if (accessToken === Config.LIBERTY_FLAG_READ_ACCESS_TOKEN || accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "" && name !== "") {    
         
@@ -246,8 +244,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 return                 
             }
 
-            let contextKey = ctx.request.body["context-key"] || ""
-            let accessToken = ctx.request.body["access-token"] || ""
+            let contextKey = ctx.headers["x-context-key"] as string || ""
+            let accessToken = ctx.headers["x-access-token"] as string || ""
             if (accessToken === Config.LIBERTY_FLAG_WRITE_ACCESS_TOKEN) {
                 if (contextKey !== "") {
 

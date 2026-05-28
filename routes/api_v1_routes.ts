@@ -159,7 +159,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                         }                        
                     }
                     else {
-
+                        //flag was found
                         flag.contexts.forEach(context => {
                             if(context.bucket_context_uuid === contextKey ){
 
@@ -182,6 +182,14 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                             }                        
                         });
 
+                        if (!ctx.body) {
+                            logger.warn(`API - get-flag-value - No valid context for Context Key and name: ${contextKey} and ${name}`)
+                            ctx.status = 404
+                            ctx.body = {
+                                status: 'error',
+                                message: 'No valid context found for the provided Context Key and Name'
+                            }
+                        }
 
                     }
 

@@ -10,6 +10,8 @@ export class MongoService implements IDisposable {
     constructor(){
         // @ts-ignore
         this.client = new MongoClient(Config.LIBERTY_FLAG_PLUGIN_MONGO_URI, {
+            socketTimeoutMS: 5000, 
+            serverSelectionTimeoutMS: 5000
             //serverApi: {
             //    version: ServerApiVersion.v1,
             //    strict: true,

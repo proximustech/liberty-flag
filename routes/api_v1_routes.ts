@@ -113,7 +113,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             else {
                 logger.error(error)
-
+                ctx.status = 500
+                ctx.body = {
+                    status: 'error',
+                    message: 'Internal server error'
+                }
             }               
         } finally{
             flagService.dispose()
@@ -224,7 +228,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             else {
                 logger.error(error)
-
+                ctx.status = 500
+                ctx.body = {
+                    status: 'error',
+                    message: 'Internal server error'
+                }
             }               
         } finally{
             flagService.dispose()
@@ -322,7 +330,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             }
             else {
                 logger.error(error)
-
+                ctx.status = 500
+                ctx.body = {
+                    status: 'error',
+                    message: 'Internal server error'
+                }
             }               
         } finally{
             flagService.dispose()

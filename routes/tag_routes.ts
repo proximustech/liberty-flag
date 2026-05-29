@@ -60,7 +60,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.error(error)
             }
         } finally {
-            tagService.dispose()
+            await tagService.dispose()
 
         }
     })
@@ -112,7 +112,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.error(error)
             }
         } finally {
-            tagService.dispose()
+            await tagService.dispose()
 
         }
     })
@@ -198,7 +198,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             }             
         } finally{
-            tagService.dispose()
+            await tagService.dispose()
         }
 
     })
@@ -268,7 +268,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             }             
         } finally {
-            tagService.dispose()            
+            await tagService.dispose()            
         }
     })
 

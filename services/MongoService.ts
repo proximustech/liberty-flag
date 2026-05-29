@@ -24,8 +24,8 @@ export class MongoService implements IDisposable {
         return this.client
     }
 
-    dispose(){
-        this.client.close()
+    async dispose(): Promise<void> {
+        await this.client.close()
     }   
     
 }

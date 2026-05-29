@@ -148,8 +148,8 @@ export class BucketService implements IDisposable {
         } 
     }
 
-    dispose(){
-        this.bucketModel.dispose()
+    async dispose(): Promise<void> {
+        await this.bucketModel.dispose()
     }      
 
     public static getUuidMapFromContextsList(list:BucketContextDataObject[]) : Map<string, string> {

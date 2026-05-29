@@ -226,8 +226,8 @@ export class FlagService implements IDisposable {
 
     }  
 
-    dispose(){
-        this.flagModel.dispose()
+    async dispose(): Promise<void> {
+        await this.flagModel.dispose()
     }        
 
 }

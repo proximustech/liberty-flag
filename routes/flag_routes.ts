@@ -109,9 +109,9 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.error(error)
             }
         } finally{
-            bucketService.dispose()
-            flagService.dispose()
-            tagService.dispose()
+            await bucketService.dispose()
+            await flagService.dispose()
+            await tagService.dispose()
         }
     })
 
@@ -204,9 +204,9 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.error(error)
             }
         } finally{
-            bucketService.dispose()
-            tagService.dispose()
-            flagService.dispose()
+            await bucketService.dispose()
+            await tagService.dispose()
+            await flagService.dispose()
         }
     })
 
@@ -292,7 +292,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             }              
         } finally{
-            flagService.dispose() 
+            await flagService.dispose() 
         }
   
 
@@ -364,7 +364,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             }              
         } finally {
-            flagService.dispose()            
+            await flagService.dispose()            
 
         }
 

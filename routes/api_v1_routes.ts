@@ -120,7 +120,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
             }               
         } finally{
-            flagService.dispose()
+            await flagService.dispose()
         }
 
     })
@@ -235,7 +235,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
             }               
         } finally{
-            flagService.dispose()
+            await flagService.dispose()
         }
 
     })
@@ -337,7 +337,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 }
             }               
         } finally{
-            flagService.dispose()
+            await flagService.dispose()
         }
 
     })

@@ -116,8 +116,8 @@ export class TagService implements IDisposable {
         } 
     }
 
-    dispose(){
-        this.tagModel.dispose()
+    async dispose(): Promise<void> {
+        await this.tagModel.dispose()
     }      
 
     getUuidMapFromList(list:TagDataObject[]) : Map<string, string> {

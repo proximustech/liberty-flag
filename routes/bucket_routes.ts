@@ -89,8 +89,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.error(error)
             }
         } finally{
-            bucketService.dispose()
-            tagService.dispose()
+            await bucketService.dispose()
+            await tagService.dispose()
 
         }
     })
@@ -165,8 +165,8 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 logger.error(error)
             }
         } finally{
-            tagService.dispose()
-            bucketService.dispose()
+            await tagService.dispose()
+            await bucketService.dispose()
         }
     })
 
@@ -252,7 +252,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     
                 }                 
             } finally {
-                bucketService.dispose()
+                await bucketService.dispose()
             }
             
 
@@ -324,7 +324,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             }  
         } finally {
-            bucketService.dispose()
+            await bucketService.dispose()
         }
 
     })
@@ -377,7 +377,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             }  
         } finally {
-            bucketService.dispose()
+            await bucketService.dispose()
         }
     })
 
@@ -451,9 +451,9 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             }  
         }
         finally{
-            tagService.dispose()
-            flagService.dispose()
-            bucketService.dispose()
+            await tagService.dispose()
+            await flagService.dispose()
+            await bucketService.dispose()
         }
     })
 
@@ -513,7 +513,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             }  
         }
         finally{
-            bucketService.dispose()
+            await bucketService.dispose()
         }
     })    
 
@@ -610,7 +610,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             }  
         }
         finally{
-            bucketService.dispose()
+            await bucketService.dispose()
         }
     })    
 

@@ -433,11 +433,11 @@
         }
 
         let html =`
-            <span id="boolean_condition_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
+            <span id="boolean_condition_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: var(--shadow-default)">
                 <div class="card-body">
                     <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                     <input id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
-                    <label id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                    <label id='engine_boolean_conditioned_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                     <select id="engine_boolean_conditioned_true_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                         <option value="equal" ${selectedEqual} > (=) Equal</option>
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
@@ -446,7 +446,7 @@
                         <option value="is_in" ${isIn} >.[.]. Is IN</option>
                     </select>                        
                     <input id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
-                    <label id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                    <label id='engine_boolean_conditioned_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
 
                 </div>
             </span>
@@ -489,11 +489,11 @@
         }
 
         let html =`
-            <span id="boolean_condition_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
+            <span id="boolean_condition_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: var(--shadow-default)">
                 <div class="card-body">        
                     <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                     <input id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
-                    <label id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                    <label id='engine_boolean_conditioned_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                     <select id="engine_boolean_conditioned_false_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                         <option value="equal" ${selectedEqual} > (=) Equal</option>
                         <option value="different" ${selectedDifferent} > (!=) Different</option>
@@ -502,7 +502,7 @@
                         <option value="is_in" ${isIn} >.[.]. Is IN</option>
                     </select>                        
                     <input id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
-                    <label id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                    <label id='engine_boolean_conditioned_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                 </div>
             </span>            
         `
@@ -544,11 +544,11 @@
         }
 
         let html =`
-        <span id="boolean_conditionor_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
+        <span id="boolean_conditionor_true_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: var(--shadow-default)">
             <div class="card-body">        
                 <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedOrTrueCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
-                <label id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <label id='engine_boolean_conditionedor_true_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                 <select id="engine_boolean_conditionedor_true_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
@@ -557,7 +557,7 @@
                     <option value="is_in" ${isIn} >.[.]. Is IN</option>
                 </select>                        
                 <input id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedOrTrueConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
-                <label id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <label id='engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
             </div>
         </span>            
         `
@@ -597,11 +597,11 @@
         }
 
         let html =`
-        <span id="boolean_conditionor_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)">
+        <span id="boolean_conditionor_false_${contextUuid}_${newConditionNumber}" class="card" style="margin-top:10px;box-shadow: var(--shadow-default)">
             <div class="card-body">        
                 <button type="button" class="btn btn-danger btn-sm" onclick="app.md.deleteEngineBooleanConditionedOrFalseCondition('${contextUuid}',${newConditionNumber})" ${disabled}><i class="bi bi-dash-circle"></i></button> <label style='margin-bottom:7px;font-size:17px'>Condition #${newConditionNumber+1}</label>
                 <input id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.first_parameter}' oninput="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Key' ${disabled} />
-                <label id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <label id='engine_boolean_conditionedor_false_first_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                 <select id="engine_boolean_conditionedor_false_operator_parameter_${contextUuid}_${newConditionNumber}" style="width:100%;margin-bottom:7px" onchange="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" ${disabled}>
                     <option value="equal" ${selectedEqual} > (=) Equal</option>
                     <option value="different" ${selectedDifferent} > (!=) Different</option>
@@ -610,7 +610,7 @@
                     <option value="is_in" ${isIn} >.[.]. Is IN</option>
                 </select>                        
                 <input id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}' class='form-control' style='margin-bottom:7px' type='text' value='${condition.second_parameter}' oninput="app.md.setEngineBooleanConditionatedOrFalseConditionValueConfig('${contextUuid}',${newConditionNumber})" placeholder='Value' ${disabled} />
-                <label id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <label id='engine_boolean_conditionedor_false_second_parameter_${contextUuid}_${newConditionNumber}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
             </div>
         </span>            
         `
@@ -736,7 +736,7 @@
     
 </sl-tab-group>
 
-<div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+<div slot="footer" style="padding: 20px;background-color: var(--color-footer-bg);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
     <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { %>
         <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitFlag(this)">Save</sl-button>

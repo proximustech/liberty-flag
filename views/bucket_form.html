@@ -54,7 +54,7 @@
             <sl-details id="context_${contextIndex}" summary="${bucketContext.name}">
                 <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
                 <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="app.md.context_listener(${contextIndex},this)" value='${bucketContext.name}' ${disabled} />
-                <label id='context_${contextIndex}_validation_message' style='font-size:15px;color:red;margin-left:2px;margin-top:3px'></label>
+                <label id='context_${contextIndex}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                 ${contextKeyLabel}
                 <br>
                 <br>
@@ -226,7 +226,7 @@
         </sl-tab-panel> 
     </sl-tab-group>
 
-    <div slot="footer" style="padding: 20px;background-color: aliceblue;border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+    <div slot="footer" style="padding: 20px;background-color: var(--color-footer-bg);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
         <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
         <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket','liberty_flag.bucket.'+bucket.uuid],['write'])){ %>
             <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitBucket(this)">Save</sl-button>

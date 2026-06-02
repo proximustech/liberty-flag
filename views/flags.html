@@ -50,7 +50,7 @@
                     <div class="alert alert-light" role="alert" style="margin-top: 7px;">
                         <div class="row">
                             <% flag.contexts.forEach(context=> { %>
-                                <span class="card" style="width: 195px;margin:10px;box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2)">
+                                <span class="card" style="width: 195px;margin:10px;box-shadow: var(--shadow-card)">
                                     <div class="card-body">
                                         <h6 class="card-title"><%= bucketContextsMap.get(context.bucket_context_uuid) %></h6>
                                         <% if (context.engine == "string") { %>

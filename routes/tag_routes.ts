@@ -95,7 +95,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.md.tag_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement            
-            RouteService.setCsrfToken(viewVars,ctx)
+            RouteService.setCsrfToken(ctx)
 
             return ctx.render('plugins/_'+prefix+'/views/tag_form', viewVars);
         } catch (error) {

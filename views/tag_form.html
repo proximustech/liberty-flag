@@ -17,7 +17,7 @@
             let result = $.ajax({
                 type:"POST",
                 url:"<%= prefix %>/tag",
-                data:"csrfToken=<%= csrfToken %>"+"&json="+JSON.stringify(tag),
+                data:"csrfToken="+(document.cookie.match(/(?:^|;\s*)csrfToken=([^;]*)/)|| [])[1]+"&json="+JSON.stringify(tag),
                 processData: false,
                 dataType:"text"
             })
@@ -53,7 +53,7 @@
     app.md.deleteTag=(uuid)=> {
         let result = $.ajax({
             type:"DELETE",
-            url:"<%= prefix %>/tag?uuid="+uuid+"&csrfToken=<%= csrfToken %>",
+            url:"<%= prefix %>/tag?uuid="+uuid+"&csrfToken="+(document.cookie.match(/(?:^|;\s*)csrfToken=([^;]*)/)|| [])[1],
         })
         .done(function() {      
             setTimeout(() =>{

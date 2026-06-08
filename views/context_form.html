@@ -42,7 +42,7 @@
     }
 
     app.md.deleteContext=()=> {
-        app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.md._confirmDeleteContext()')
+        app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ?','app.md._confirmDeleteContext()')
     }
 
     app.md._confirmDeleteContext=()=> {
@@ -89,19 +89,36 @@
     <%= context.name %>
 </sl-alert>
 
-<div style="padding: 20px;">
-    <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
-    <input id="context_name" type="text" class="form-control" oninput="app.md.contextListener(this)" value="<%= context.name %>" />
-    <label id='context_validation' style='font-size:15px;color:var(--color-validation);margin-left:2px;margin-top:3px'></label>
-    <% if (context.uuid) { %>
-    <div class="alert alert-warning" role="alert" style="margin-top: 7px">
-        <label style='font-size:small'>Context Key: </label><label style='font-style:italic;font-size:small;font-weight:bold'><%= context.uuid %></label>
-    </div>
-    <% } %>
+<sl-tab-group id="context_form_tab_group">
+    <sl-tab slot="nav" panel="general">General</sl-tab>
     <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['write'])) { %>
-    <button type="button" class="btn btn-outline-danger" style="margin-top:15px;" onclick="app.md.deleteContext()"><i class="bi bi-trash-fill"></i> Delete Context</button>
+        <sl-tab slot="nav" panel="operations">Operations</sl-tab>
     <% } %>
-</div>
+
+    <sl-tab-panel name="general">
+        <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
+        <input id="context_name" type="text" class="form-control" oninput="app.md.contextListener(this)" value="<%= context.name %>" />
+        <label id='context_validation' style='font-size:15px;color:var(--color-validation);margin-left:2px;margin-top:3px'></label>
+        <% if (context.uuid) { %>
+        <div class="alert alert-warning" role="alert" style="margin-top: 7px">
+            <label style='font-size:small'>Context Key: </label><label style='font-style:italic;font-size:small;font-weight:bold'><%= context.uuid %></label>
+        </div>
+        <% } %>
+    </sl-tab-panel>
+    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['write'])) { %>
+    <sl-tab-panel name="operations">
+        <sl-details summary="Delete">
+            <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
+                Deleting a Context involves making its associated flag values completely UNAVAILABLE.
+                <br>
+                <br>
+            </label>
+            <button type="button" class="btn btn-outline-danger" onclick="app.md.deleteContext()"><i class="bi bi-trash-fill"></i> Delete Context</button>
+            <br>
+        </sl-details>
+    </sl-tab-panel>
+    <% } %>
+</sl-tab-group>
 
 <div slot="footer" style="padding: 20px;background-color: var(--color-footer-bg);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
@@ -112,6 +129,7 @@
 
 <script>
     $(document).ready(function() {
+        document.getElementById('context_form_tab_group').show('general')
         document.getElementById("context_name").focus()
     })
 </script>

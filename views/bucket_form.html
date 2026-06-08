@@ -45,20 +45,13 @@
             `
         }
         
-        let deleteButton = ""
-        if (app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket',app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid],['write'])) {
-            deleteButton=`<button type="button" class="btn btn-outline-danger" onclick="app.confirmDelete('Delete Context','Are you sure to delete this Context and make ALL the associated flag <strong>values</strong> UNAVAILABLE ? <small><i>Only after saving the Bucket, this context will be really deleted.</i></small>','app.md.bucket_form.bucket.contexts.splice(${contextIndex}, 1);app.md.addContextsToList();app.dialog.hide()')" ><i class="bi bi-trash-fill"></i> Delete Context</button>`
-        }
         html = `
         <div id="context_${contextIndex}_wrapper" style="margin-bottom: 10px;">
             <sl-details id="context_${contextIndex}" summary="${bucketContext.name}">
-                <label style='margin-bottom:7px;font-size:17px'>Context Name</label>
+                <label style='margin-bottom:7px;font-size:17px'>Edit Context Name</label>
                 <input id="context_name_${contextIndex}" type="text" class="form-control" oninput="app.md.context_listener(${contextIndex},this)" value='${bucketContext.name}' ${disabled} />
                 <label id='context_${contextIndex}_validation_message' style='font-size:15px;color: var(--color-validation);margin-left:2px;margin-top:3px'></label>
                 ${contextKeyLabel}
-                <br>
-                <br>
-                ${deleteButton}
             </sl-details>
         </div>  
         `

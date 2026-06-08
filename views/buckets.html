@@ -41,10 +41,13 @@
                         <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>');">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>');">
-                            <i class="bi bi-flag"></i>
-                        </button>   
-                    </div>
+                    <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>');">
+                        <i class="bi bi-flag"></i>
+                    </button>
+                    <button class="lp_button" title="Edit contexts" onclick="app.md.editContexts('<%= bucket.uuid %>')">
+                        <i class="bi bi-files"></i>
+                    </button>   
+                </div>
                     <strong>Name:</strong> <%= bucket.name %>                                                    
                 </div>
                 <div class="lp_register_container_body">
@@ -68,4 +71,45 @@
         app.setModuleTitle(`<strong><sl-icon name="bucket" label="Buckets"></sl-icon> Buckets</strong>`)    
     <% } %>
     app.renderListNavigationBar("list_navigation_bar",<%= listPagesTotalNumber %>,<%= listPageNumber %>,'<%= prefix %>/buckets',document.getElementById("bucket_search_box").value)  
+
+    app.md.bucketsData = {};
+    <% buckets.forEach(bucket => { %>
+    app.md.bucketsData['<%= bucket.uuid %>'] = <%- JSON.stringify(bucket) %>;
+    <% }) %>
+
+    app.md.prefix = '<%= prefix %>';
+
+    app.md.editContexts = function(bucketUuid) {
+        let bucket = app.md.bucketsData[bucketUuid];
+        if (!bucket || !bucket.contexts || bucket.contexts.length === 0) {
+            app.dialog.innerHTML = '<p>No contexts available for this bucket.</p>';
+            app.dialog.label = 'Edit Context';
+            app.dialog.insertAdjacentHTML('beforeend', '<div slot="footer"><button type="button" class="btn btn-secondary" onclick="app.dialog.hide()">Close</button></div>');
+            app.dialog.show();
+            return;
+        }
+        app.md._editContextBucketUuid = bucketUuid;
+        app.md._showContextList();
+    };
+
+    app.md._showContextList = function() {
+        let bucket = app.md.bucketsData[app.md._editContextBucketUuid];
+        let html = '<div style="margin-bottom: 10px;">';
+        bucket.contexts.forEach((context, index) => {
+            html += '<button type="button" class="btn btn-outline-primary" style="display:block;width:100%;margin-bottom:5px;text-align:left;" onclick="app.md._editContext(' + index + ')">' + app.escapeHTML(context.name) + '</button>';
+        });
+        html += '</div>';
+        app.dialog.innerHTML = html;
+        app.dialog.label = 'Select a context to edit';
+        app.dialog.insertAdjacentHTML('beforeend', '<div slot="footer"><button type="button" class="btn btn-secondary" onclick="app.dialog.hide()">Close</button></div>');
+        app.dialog.show();
+    };
+
+    app.md._editContext = function(contextIndex) {
+        app.dialog.hide();
+        let bucketUuid = app.md._editContextBucketUuid;
+        app.setViewForPendingOperation('app_drawer');
+        app.drawer.show();
+        app.ajax('app_drawer', '/' + app.md.prefix + '/context_form?bucket_uuid=' + bucketUuid + '&context_index=' + contextIndex);
+    };
 </script>

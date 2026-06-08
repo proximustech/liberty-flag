@@ -258,6 +258,51 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     })
 
+    router.get('/context_form', async (ctx:Context) => {
+
+        if (typeof(ctx.session.passport.user)==="undefined") {
+            throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
+        }
+
+        viewVars.userPermissions = await ctx.authorizer.getRoleAndSubjectPermissions(ctx.session.passport.user.role_uuid,ctx.session.passport.user.uuid)
+        const bucketService = BucketServiceFactory.create(prefix,viewVars.userPermissions)
+        try {
+
+            let bucketUuid:any = ctx.request.query.bucket_uuid || ""
+            let contextIndex:number = parseInt(ctx.request.query.context_index as string) || 0
+
+            let bucket = await bucketService.getByUuId(bucketUuid)
+            let context = bucket.contexts[contextIndex] || new BucketContextDataObject()
+
+            viewVars.bucket = bucket
+            viewVars.context = context
+            viewVars.contextIndex = contextIndex
+            viewVars.bucketContextValidateSchema = BucketContextDataObjectValidator.validateSchema
+
+            viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
+            viewVars.userHasPermissionOnElement = "app.md.context_form.userHasPermissionOnElement=" +  UserHasPermissionOnElement
+            RouteService.setCsrfToken(ctx)
+
+            return ctx.render('plugins/_'+prefix+'/views/context_form', viewVars);
+        } catch (error) {
+            if (error instanceof ExceptionNotAuthorized) {
+                ctx.status=401
+                ctx.body = {
+                    status: 'error',
+                    messages: [{message:"Operation NOT Allowed"}]
+                }         
+                logger.warn("SECURITY WARNING: unauthorized user " + ctx.session.passport.user.uuid + " traying to READ on " + prefix +'.bucket')
+                
+            }
+            else {
+                logger.error(error)
+
+            }  
+        } finally{
+            await bucketService.dispose()
+        }
+    })
+
     router.delete('/bucket',koaBody(), async (ctx:Context) => {
 
         if (typeof(ctx.session.passport.user)==="undefined") {

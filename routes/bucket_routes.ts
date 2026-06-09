@@ -274,6 +274,13 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let bucket = await bucketService.getByUuId(bucketUuid)
             let context = bucket.contexts[contextIndex] || new BucketContextDataObject()
 
+            let contextFormData:any = { bucket, context }
+            contextFormData = await middlewareTargets["BucketServiceCrudMiddleware"].beforeContextFormShow(contextFormData)
+            bucket = contextFormData.bucket
+
+            viewVars.pluginOperations = ""
+            await DynamicViews.addViewVarContent(dynamicViewsDefinition, "context_form", "pluginOperations", viewVars, ctx)
+
             viewVars.bucket = bucket
             viewVars.context = context
             viewVars.contextIndex = contextIndex

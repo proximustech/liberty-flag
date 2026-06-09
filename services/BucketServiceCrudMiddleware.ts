@@ -5,6 +5,9 @@ export class BucketServiceCrudMiddleware {
     beforeFormShow(bucket:BucketDataObject):BucketDataObject{
         return bucket
     }
+    beforeContextFormShow(contextFormData:any):any{
+        return contextFormData
+    }
     beforeCreate(bucket:BucketDataObject):BucketDataObject{
         return bucket
     }

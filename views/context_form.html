@@ -16,6 +16,7 @@
             return
         }
         app.md.context_form.bucket.contexts[app.md.context_form.contextIndex].name = nameInput.value
+        if (typeof app.md.context_form_beforeSave === 'function') app.md.context_form_beforeSave()
         app.setElementForPendingOperation(triggerElement)
         let csrfToken = (document.cookie.match(/(?:^|;\s*)csrfToken=([^;]*)/)|| [])[1]
         $.ajax({
@@ -107,6 +108,7 @@
     </sl-tab-panel>
     <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['write'])) { %>
     <sl-tab-panel name="operations">
+        <%- pluginOperations %>
         <sl-details summary="Delete">
             <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
                 Deleting a Context involves making its associated flag values completely UNAVAILABLE.

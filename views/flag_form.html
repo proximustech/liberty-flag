@@ -149,7 +149,15 @@
         }
 
         let disabled = "disabled='disabled'"
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(
+            app.md.flag_form.userPermissions,
+            [
+                app.md.flag_form.prefix+'.flag',
+                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
+                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+bucketContext.uuid
+            ],  
+            ['write'])
+        ) {
             disabled=""
         }
 
@@ -295,7 +303,15 @@
     app.md.setEngineView=(engine,contextUuid)=>{
 
         let disabled = "disabled='disabled'"
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(
+            app.md.flag_form.userPermissions,
+            [
+                app.md.flag_form.prefix+'.flag',
+                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
+                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
+            ],
+            ['write'])
+        ) {
             disabled=""
         }
 
@@ -403,7 +419,15 @@
     app.md.addEngineBooleanConditionedTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(
+            app.md.flag_form.userPermissions,
+            [
+                app.md.flag_form.prefix+'.flag',
+                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
+                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
+            ],
+            ['write'])
+        ) {
             disabled=""
         }
 
@@ -459,7 +483,15 @@
     app.md.addEngineBooleanConditionedFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(
+            app.md.flag_form.userPermissions,
+            [
+                app.md.flag_form.prefix+'.flag',
+                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
+                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
+            ],
+            ['write'])
+        ) {
             disabled=""
         }
 
@@ -514,7 +546,15 @@
     app.md.addEngineBooleanConditionedOrTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(
+            app.md.flag_form.userPermissions,
+            [
+                app.md.flag_form.prefix+'.flag',
+                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
+                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
+            ],
+            ['write'])
+        ) {
             disabled=""
         }
 
@@ -566,10 +606,18 @@
         app.md.engineBooleanConditionedCondition_ValidationListener(newConditionNumber,`engine_boolean_conditionedor_true_second_parameter_${contextUuid}_${newConditionNumber}`,app.md.flag_form.engineBooleanConditionedConditionValidateShema.second_parameter)
     }
 
-    app.md.addEngineBooleanConditionedOrFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
+     app.md.addEngineBooleanConditionedOrFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(app.md.flag_form.userPermissions,[app.md.flag_form.prefix+'.flag',app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid],['write'])) {
+        if (app.md.flag_form.userHasPermissionOnElement(
+            app.md.flag_form.userPermissions,
+            [
+                app.md.flag_form.prefix+'.flag',
+                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
+                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
+            ],
+            ['write'])
+        ) {
             disabled=""
         }
           

@@ -63,6 +63,18 @@
                 app.toastShow('Deleted','Context deleted successfully.',{type:"success"})
             }, 1000)
         })
+        .fail(function(data) {
+            try {
+                app.dialog.hide()
+                for (messageData of JSON.parse(data.responseText).messages) {
+                    app.toastShow('Error on Delete',messageData.message,{closable:true,type:"error"})
+                    break;
+                }
+
+            } catch (error) {}
+        })
+        .always(function() {
+        }); 
     }
 
     app.md.contextListener=(input)=> {
@@ -92,7 +104,13 @@
 
 <sl-tab-group id="context_form_tab_group">
     <sl-tab slot="nav" panel="general">General</sl-tab>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['write'])) { %>
+    <% if (UserHasPermissionOnElement(
+        userPermissions,
+        [
+            prefix+'.bucket',prefix+'.bucket.'+bucket.uuid
+        ],
+        ['write'])
+       ) { %>
         <sl-tab slot="nav" panel="operations">Operations</sl-tab>
     <% } %>
 
@@ -106,25 +124,44 @@
         </div>
         <% } %>
     </sl-tab-panel>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['write'])) { %>
+    <% if (UserHasPermissionOnElement(
+        userPermissions,
+        [
+            prefix+'.bucket',prefix+'.bucket.'+bucket.uuid
+        ],
+        ['write'])
+       ) { %>
     <sl-tab-panel name="operations">
         <%- pluginOperations %>
-        <sl-details summary="Delete">
-            <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
-                Deleting a Context involves making its associated flag values completely UNAVAILABLE.
+
+        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+            <sl-details summary="Delete">
+                <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
+                    Deleting a Context involves making its associated flag values completely UNAVAILABLE.
+                    <br>
+                    <br>
+                </label>
+                <button type="button" class="btn btn-outline-danger" onclick="app.md.deleteContext()"><i class="bi bi-trash-fill"></i> Delete Context</button>
                 <br>
-                <br>
-            </label>
-            <button type="button" class="btn btn-outline-danger" onclick="app.md.deleteContext()"><i class="bi bi-trash-fill"></i> Delete Context</button>
-            <br>
-        </sl-details>
+            </sl-details>
+        <% } else { %>
+            <div class="alert alert-warning fade show" role="alert">
+                <p>Only Users with "Write" permission on Flags, Can Modify Bucket Contexts.</p>
+            </div>                     
+        <% } %>
     </sl-tab-panel>
     <% } %>
 </sl-tab-group>
 
 <div slot="footer" style="padding: 20px;background-color: var(--color-footer-bg);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['write'])){ %>
+    <% if (UserHasPermissionOnElement(
+        userPermissions,
+        [
+            prefix+'.bucket',prefix+'.bucket.'+bucket.uuid
+        ],
+        ['write']
+       )){ %>
         <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.saveContext(this)">Save</button>
     <% } %>
 </div>
@@ -133,5 +170,30 @@
     $(document).ready(function() {
         document.getElementById('context_form_tab_group').show('general')
         document.getElementById("context_name").focus()
+
+        let formIsdisabled = true
+        if (app.md.context_form.userHasPermissionOnElement(
+                app.md.context_form.userPermissions,
+                [
+                    app.md.context_form.prefix+'.bucket'
+                ],  
+                ['write']
+            ) &&
+            app.md.context_form.userHasPermissionOnElement(
+                app.md.context_form.userPermissions,
+                [
+                    app.md.context_form.prefix+'.flag'
+                ],  
+                ['write']
+            )
+
+        ) {
+            formIsdisabled=false
+        }
+
+        if (formIsdisabled) {
+            document.getElementById("context_name").disabled="disabled"
+        }
+
     })
 </script>

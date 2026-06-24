@@ -19,7 +19,14 @@ export class FlagService implements IDisposable {
         this.serviceSecurityElement=serviceSecurityElementPrefix+".flag"
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])
-        this.userCanWrite = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["write"])        
+        this.userCanWrite = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["write"])
+        // ?A user with any specific flag or context permission can list/read flags.
+        // if (!this.userCanRead) {
+        //     this.userCanRead = this.userPermissions.some((rule:any) =>
+        //         rule[1].startsWith(this.serviceSecurityElement+'.') ||
+        //         rule[1].startsWith(serviceSecurityElementPrefix+'.bucket.')
+        //     )
+        // }
 
     }
 
@@ -54,10 +61,53 @@ export class FlagService implements IDisposable {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
 
-        if (this.userCanWrite || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+newFlag.uuid],["write"])) {
+        // General flag write (liberty_flag.flag) is the only permission that allows
+        // modifying all contexts without restriction. A specific flag permission
+        // (liberty_flag.flag.<uuid>) still requires explicit context access per context.
+        const writeOperationApproved = this.userCanWrite || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+newFlag.uuid],["write"])
+
+        // Collect context uuids the user has explicit access to (read or write),
+        // combined with any flag write permission, allows saving that context's engine config.
+        const oldReadableContextUuids:string[] = []
+
+        for (const rule of this.userPermissions) {
+            const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
+            // matches liberty_flag.bucket.<bucketUuid>.context.<contextUuid>
+            const match = rule[1].match(new RegExp(`^${bucketPrefix.replace(/\./g,'\\.')}[^\\.]+\\.context\\.(.+)$`))
+            if (match && (rule[2]==="read" || rule[2]==="write")) {
+                oldReadableContextUuids.push(match[1])
+            }
+        }
+
+
+        if (this.userCanWrite || writeOperationApproved) {
+            // If the user only has context-level access, rebuild the contexts array
+            // entirely from the DB copy, merging only engine/engine_parameters for
+            // contexts the user is permitted to access. Every other field, and every
+            // context not in the DB, is ignored — even if the attacker submits it.
+            if (!this.userCanWrite && oldReadableContextUuids.length > 0) {
+                const oldFlag = await this.flagModel.getByUuId(newFlag.uuid)
+                newFlag.contexts = oldFlag.contexts.map((oldContext:any) => {
+
+                    // Find the submitted entry for this context by its DB-authoritative uuid
+                    const submittedContext = newFlag.contexts.find(
+                        submitedFlagContext => submitedFlagContext.bucket_context_uuid === oldContext.bucket_context_uuid
+                    )
+                    if (submittedContext) {
+                        // Only trust engine and engine_parameters from the submission
+                        return {
+                            ...oldContext,
+                            engine: submittedContext.engine,
+                            engine_parameters: submittedContext.engine_parameters,
+                        }
+                    }
+
+                // Not accessible or not submitted — keep DB version untouched
+                return oldContext
+                })
+            }
             newFlag=await middlewareTargets["FlagServiceCrudMiddleware"].beforeUpdate(newFlag)
             return await this.flagModel.updateOne(newFlag)
-            
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            

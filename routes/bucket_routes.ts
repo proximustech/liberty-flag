@@ -16,6 +16,27 @@ import { exposedMiddlewareTargets as middlewareTargets } from "../values/middlew
 import koaBody from 'koa-body';
 import { FlagServiceFactory } from "../factories/FlagServiceFactory";
 
+/**
+ * Filters a contexts array to only those the user has explicit permission on.
+ * When the user has general bucket access, all contexts are returned unchanged.
+ */
+function filterPermittedContexts(contexts:any[], userPermissions:any, bucketUuid:string):any[] {
+
+    /**
+     * hasGeneralBucketReadAccess is true if the user has general (non-specific) bucket permission,
+     * which grants access to all contexts without restriction.
+     */
+    
+    const hasGeneralBucketReadAccess = UserHasPermissionOnElement(userPermissions,['liberty_flag.bucket'],['read','write'])
+    const hasSpecificBucketReadAccess = UserHasPermissionOnElement(userPermissions,[`liberty_flag.bucket.${bucketUuid}`],['read','write'])
+    if (hasGeneralBucketReadAccess || hasSpecificBucketReadAccess) return contexts
+    return contexts.filter(ctx =>
+        UserHasPermissionOnElement(userPermissions,
+            ['liberty_flag.bucket.'+bucketUuid+'.context.'+ctx.uuid],
+            ['read','write'])
+    )
+}
+
 module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     let viewVars = {...appViewVars};
@@ -58,7 +79,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             let outputFormat:any = ctx.request.query.output_format || "html"
             if (outputFormat=="json") {
-                ctx.body = JSON.stringify(await bucketService.getAll(filter,1000,0))
+                const allBuckets = await bucketService.getAll(filter,1000,0)
+                allBuckets.forEach((currentBucket:any) => {
+                    currentBucket.contexts = filterPermittedContexts(currentBucket.contexts, viewVars.userPermissions, currentBucket.uuid)
+                })
+                ctx.body = JSON.stringify(allBuckets)
                 return
             }            
 
@@ -69,8 +94,17 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.listPageNumber = listPageNumber
             viewVars.searchValue = searchValue
             viewVars.buckets = await bucketService.getAll(filter,listRegistersNumber,skipRegistersNumber)
-            viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
-
+            
+            viewVars.buckets = viewVars.buckets.map((bucket:any) => {
+                bucket.contexts = filterPermittedContexts(bucket.contexts, viewVars.userPermissions, bucket.uuid)
+                return bucket
+            })
+            
+            try {
+                viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+            } catch(e) {
+                viewVars.tagUuidMap = new Map()
+            }
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
             viewVars.userHasPermissionOnElement = "app.md.buckets_list.userHasPermissionOnElement=" +  UserHasPermissionOnElement
 
@@ -111,12 +145,18 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             viewVars.pluginOperations = ""
             await DynamicViews.addViewVarContent(dynamicViewsDefinition,"bucket_form","pluginOperations",viewVars,ctx)            
 
-            viewVars.tags = await tagService.getAll()
+            try {
+                viewVars.tags = await tagService.getAll()
+            } catch(e) {
+                viewVars.tags = []
+            }
 
             if (uuid !=="") {
-                bucket = await bucketService.getByUuId(uuid) 
+                bucket = await bucketService.getByUuId(uuid)
                 viewVars.editing = true
                 bucket=await middlewareTargets["BucketServiceCrudMiddleware"].beforeFormShow(bucket)
+
+                bucket.contexts = filterPermittedContexts(bucket.contexts, viewVars.userPermissions, uuid)
             }
             else {
                 viewVars.editing = false
@@ -274,6 +314,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let bucket = await bucketService.getByUuId(bucketUuid)
             let context = bucket.contexts[contextIndex] || new BucketContextDataObject()
 
+            // Reject if the requested context is not in the user's permitted set.
+            if (context.uuid && filterPermittedContexts([context], viewVars.userPermissions, bucketUuid).length === 0) {
+                throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized)
+            }
+
             let contextFormData:any = { bucket, context }
             contextFormData = await middlewareTargets["BucketServiceCrudMiddleware"].beforeContextFormShow(contextFormData)
             bucket = contextFormData.bucket
@@ -397,11 +442,10 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
             for (let bucketIndex = 0; bucketIndex < buckets.length; bucketIndex++) {
                 const bucket = buckets[bucketIndex];
-                bucket.contexts.forEach(context => {
+                const permittedContexts = filterPermittedContexts(bucket.contexts, viewVars.userPermissions, bucket.uuid)
+                permittedContexts.forEach(context => {
                     nameBucketContextMap.set(context.name,bucket.uuid+","+context.uuid)
-                    
                 });
-                
             }
 
             let contexts:any=[]
@@ -458,29 +502,38 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
             let contextUuid = uuids.split(",")[1]
             let bucket = await bucketService.getByUuId(bucketUuid)
             let contextName = ""
-            bucket.contexts.forEach(context => {
+            const permittedInBucket = filterPermittedContexts(bucket.contexts, viewVars.userPermissions, bucketUuid)
+            permittedInBucket.forEach(context => {
                 if (context.uuid===contextUuid) {
                     contextName=context.name
-                    
                 }
             });
+
+            // Reject if the requested context uuid is not permitted for this user.
+            if (!contextName) {
+                throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized)
+            }
 
             let buckets = await bucketService.getAll()
             viewVars.matchedContextsUuids=[]
 
             for (let bucketIndex = 0; bucketIndex < buckets.length; bucketIndex++) {
-                const bucket = buckets[bucketIndex];
-                bucket.contexts.forEach(context => {
+                const currentBucket = buckets[bucketIndex];
+                const permittedContexts = filterPermittedContexts(currentBucket.contexts, viewVars.userPermissions, currentBucket.uuid)
+                permittedContexts.forEach(context => {
                     if (context.name===contextName) {
                         viewVars.matchedContextsUuids.push(context.uuid)
                     }
                 });
-                
             }
 
             viewVars.uuids= uuids
             viewVars.bucketUuidMap = bucketService.getUuidMapFromList(await bucketService.getAll())
-            viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+            try {
+                viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+            } catch(e) {
+                viewVars.tagUuidMap = new Map()
+            }
             viewVars.contextName = contextName
 
             viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement

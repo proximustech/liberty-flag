@@ -39,16 +39,20 @@
             <div class="lp_container">
                 <div class="lp_contrast_container">
                     <div>
-                        <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>');">
-                            <i class="bi bi-pencil"></i>
+                        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['read','write'])) { %>
+                            <button class="lp_button" onclick="app.setViewForPendingOperation('app_drawer');app.drawer.show();app.ajax('app_drawer', '/<%= prefix %>/bucket_form?uuid=<%= bucket.uuid %>');">
+                                <i class="bi bi-pencil"></i>
+                            </button>                    
+                            <button class="lp_button" title="Edit contexts" onclick="app.md.editContexts('<%= bucket.uuid %>')">
+                                <i class="bi bi-files"></i>
+                            </button>   
+                        <% } %>
+                        <% if ( UserHasPermissionOnElement(userPermissions,[prefix+'.bucket',prefix+'.bucket.'+bucket.uuid],['read','write']) ) { %>
+                        <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>');">
+                            <i class="bi bi-flag"></i>
                         </button>
-                    <button class="lp_button" onclick="app.ajax('content_view','/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>');">
-                        <i class="bi bi-flag"></i>
-                    </button>
-                    <button class="lp_button" title="Edit contexts" onclick="app.md.editContexts('<%= bucket.uuid %>')">
-                        <i class="bi bi-files"></i>
-                    </button>   
-                </div>
+                        <% } %>
+                    </div>
                     <strong>Name:</strong> <%= bucket.name %>                                                    
                 </div>
                 <div class="lp_register_container_body">

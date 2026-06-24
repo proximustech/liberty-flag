@@ -33,7 +33,15 @@
 
     app.md.addContextToList=(bucketContext,contextIndex)=>{
         let disabled = ""
-        if (!app.md.bucket_form.userHasPermissionOnElement(app.md.bucket_form.userPermissions,[app.md.bucket_form.prefix+'.bucket',app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid],['write'])) {
+        if (!app.md.bucket_form.userHasPermissionOnElement(
+            app.md.bucket_form.userPermissions,
+            [
+                app.md.bucket_form.prefix+'.bucket',
+                app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid,
+                app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid+'.context.'+bucketContext.uuid
+            ],
+            ['write'])
+        ) {
             disabled="disabled='disabled'"
         }
         let contextKeyLabel =``
@@ -212,7 +220,7 @@
                 </sl-details>
                 <% } else { %>
                     <div class="alert alert-warning fade show" role="alert">
-                        <p>Only Users with "Write" permission on Flags, Can delete Buckets.</p>
+                        <p>Only Users with "Write" permission on Flags, Can Modify Buckets.</p>
                     </div>                     
                 <% } %>
             <% } %>

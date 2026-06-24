@@ -1,13 +1,23 @@
 export let dynamicViewsDefinition = {
     //"route_target":{viewVar[bases]}
-    "bucket_form":{
-        "pluginOperations":[
-            //"../plugins/_lf_permissions/services/permissions_dynamic_view",
+    "root":{
+        "pluginsMenus":[
+            "../plugins/_lf_permissions/services/mystuf_menu_dynamic_view",
         ]
+    },      
+    "bucket_form":{       
+        "pluginOperations":[
+            "../plugins/_lf_permissions/services/permissions_dynamic_view",
+        ],       
     },
     "flag_form":{
         "pluginOperations":[
-            //"../plugins/_lf_permissions/services/permissions_dynamic_view",
+            "../plugins/_lf_permissions/services/permissions_dynamic_view",
         ]
-    },    
+    },
+    "context_form":{
+        "pluginOperations":[
+            "../plugins/_lf_permissions/services/context_permissions_dynamic_view",
+        ]
+    },
 }

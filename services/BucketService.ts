@@ -23,6 +23,10 @@ export class BucketService implements IDisposable {
         this.userPermissions=userPermissions
         this.userCanRead = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["read"])
         this.userCanWrite = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement],["write"])
+        // ?A user with any specific resource permission (bucket or context level) can list buckets.
+        //if (!this.userCanRead) {
+            //this.userCanRead = this.userPermissions.some((rule:any) => rule[1].startsWith(this.serviceSecurityElement+'.'))
+        //}
     }
 
     async create(bucket:BucketDataObject){
@@ -61,25 +65,46 @@ export class BucketService implements IDisposable {
             
         });         
 
-        if (this.userCanWrite || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+bucket.uuid],["write"])) {
-            let newBucketContextUuIds:string[] = []
-            bucket.contexts.forEach(context => {
-                if (context.uuid ==="") {
-                    context.uuid = Uuid.createMongoUuId()
-                }
-                newBucketContextUuIds.push(context.uuid)
-            });
-            oldBucketContextUuIds.forEach(oldBucketContextUuid => {
-                if ( !newBucketContextUuIds.includes(oldBucketContextUuid)) {
-                    this.flagService.deleteFromContexts(oldBucketContextUuid)
-                }
-                
-            });
+        const hasSpecificBucketWrite = UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+bucket.uuid],["write"])
+        const hasGeneralFlagsWrite = UserHasPermissionOnElement(this.userPermissions,['liberty_flag.flag'],["write"])
+
+
+        if (hasGeneralFlagsWrite && (this.userCanWrite || hasSpecificBucketWrite)) {
+
+            // Assign uuids to any genuinely new contexts in the submission first.
+            bucket.contexts.forEach((context:any) => {
+                if (context.uuid === "") context.uuid = Uuid.createMongoUuId()
+            })
+
+            const submittedContextUuids:Set<string> = new Set(bucket.contexts.map((currentContext:any) => currentContext.uuid))
+
+
+            // Determine which context uuids the user is permitted to see/modify.
+            const permittedContextUuids:Set<string> = new Set([...oldBucketContextUuIds,...submittedContextUuids])
+
+            // Restore any DB contexts that were not visible to this user — they must
+            // never be deleted or modified regardless of what the submission contains.
+            // if (!this.userCanWrite && !hasSpecificBucketWrite) {
+            //     oldBucket.contexts.forEach((oldBucketContext:any) => {
+            //         if (!permittedContextUuids.has(oldBucketContext.uuid)) {
+            //             bucket.contexts.push(oldBucketContext)
+            //         }
+            //     })
+            // }
+
+            //if (this.userCanWrite || hasSpecificBucketWrite) {
+                oldBucketContextUuIds.forEach(oldContextUuid => {
+                    if (permittedContextUuids.has(oldContextUuid) && !submittedContextUuids.has(oldContextUuid)) {
+                        this.flagService.deleteFromContexts(oldContextUuid)
+                    }
+                })
+            //}
+
             bucket=await middlewareTargets["BucketServiceCrudMiddleware"].beforeUpdate(bucket)
-            return await this.bucketModel.updateOne(bucket)            
+            return await this.bucketModel.updateOne(bucket)
         }
         else{
-            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);
         }         
     }
 

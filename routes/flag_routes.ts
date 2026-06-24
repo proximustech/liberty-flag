@@ -77,8 +77,39 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 viewVars.listPageNumber = listPageNumber
                 viewVars.searchValue = searchValue
                 viewVars.flags = await flagService.getAll(filter,listRegistersNumber,skipRegistersNumber)
-                viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+                try {
+                    viewVars.tagUuidMap = tagService.getUuidMapFromList(await tagService.getAll())
+                } catch(e) {
+                    viewVars.tagUuidMap = new Map()
+                }
                 viewVars.bucket = await bucketService.getByUuId(bucketUuid)
+
+                // Apply the same context visibility filter as flag_form:
+                // only general bucket/flag permission grants access to all contexts.
+                const hasGeneralFlagReadAccess =
+                    UserHasPermissionOnElement(viewVars.userPermissions,[prefix+'.bucket'],['read','write']) ||
+                    UserHasPermissionOnElement(viewVars.userPermissions,[prefix+'.flag'  ],['read','write'])
+                if (!hasGeneralFlagReadAccess) {
+                    const permittedContextUuids:Set<string> = new Set(
+                        viewVars.bucket.contexts
+                            .filter((ctx:any) => UserHasPermissionOnElement(viewVars.userPermissions,
+                                [prefix+'.bucket.'+bucketUuid+'.context.'+ctx.uuid],
+                                ['read','write']))
+                            .map((ctx:any) => ctx.uuid)
+                    )
+                    // Strip non-permitted contexts from bucket (for the context name map)
+                    viewVars.bucket.contexts = viewVars.bucket.contexts.filter((ctx:any) =>
+                        permittedContextUuids.has(ctx.uuid)
+                    )
+                    // Strip non-permitted context entries from every flag row
+                    viewVars.flags = viewVars.flags.map((flag:any) => {
+                        flag.contexts = flag.contexts.filter((ctx:any) =>
+                            permittedContextUuids.has(ctx.bucket_context_uuid)
+                        )
+                        return flag
+                    })
+                }
+
                 viewVars.getUuidMapFromBucketContextsList = BucketService.getUuidMapFromContextsList
                 
                 viewVars.UserHasPermissionOnElement = UserHasPermissionOnElement
@@ -135,7 +166,11 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                 let flag:FlagDataObject = new FlagDataObject()
                 viewVars.pluginOperations = ""
                 await DynamicViews.addViewVarContent(dynamicViewsDefinition,"flag_form","pluginOperations",viewVars,ctx)                            
-                viewVars.tags = await tagService.getAll()
+                try {
+                    viewVars.tags = await tagService.getAll()
+                } catch(e) {
+                    viewVars.tags = []
+                }
 
                 if (uuid !=="") {
     
@@ -149,6 +184,29 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
                     viewVars.editing = false
                 }
                 viewVars.bucket = await bucketService.getByUuId(flag.bucket_uuid)
+
+                // Filter bucket contexts to only those the user has an explicit permission on.
+                // Only a general (non-specific) bucket or flag permission grants access to all contexts.
+                // Specific resource permissions (bucket.<uuid>, flag.<uuid>) are not general access —
+                // the user may have been granted them precisely to work within limited contexts.
+                const hasGeneralFlagReadAccess =
+                    UserHasPermissionOnElement(viewVars.userPermissions,[prefix+'.bucket'],['read','write']) ||
+                    UserHasPermissionOnElement(viewVars.userPermissions,[prefix+'.flag'  ],['read','write'])
+                if (!hasGeneralFlagReadAccess) {
+                    const permittedContextUuids:Set<string> = new Set(
+                        viewVars.bucket.contexts
+                            .filter((ctx:any) => UserHasPermissionOnElement(viewVars.userPermissions,
+                                [prefix+'.bucket.'+flag.bucket_uuid+'.context.'+ctx.uuid],
+                                ['read','write']))
+                            .map((ctx:any) => ctx.uuid)
+                    )
+                    viewVars.bucket.contexts = viewVars.bucket.contexts.filter((ctx:any) =>
+                        permittedContextUuids.has(ctx.uuid)
+                    )
+                    flag.contexts = flag.contexts.filter((ctx:any) =>
+                        permittedContextUuids.has(ctx.bucket_context_uuid)
+                    )
+                }
 
                 viewVars.flagContextsUuids = []
                 flag.contexts.forEach(flagContext => {

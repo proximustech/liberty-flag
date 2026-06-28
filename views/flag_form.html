@@ -8,7 +8,24 @@
     eval(`<%- flagValidateFunction %>`)
 
     app.md.flag_form.userPermissions = JSON.parse(`<%- JSON.stringify(userPermissions) %>`)
-    eval(`<%- userHasPermissionOnElement %>`)    
+    eval(`<%- userHasPermissionOnElement %>`)
+
+    // hasGeneralFlagWrite: controls whether the flag's own fields (name, description, tags)
+    // are editable and whether the Save button is shown. Does NOT grant context editability.
+    app.md.flag_form.hasGeneralFlagWrite = <%- JSON.stringify(hasGeneralFlagWrite) %>
+
+    // contextWriteUuids: the explicit list of context uuids the user can write.
+    // This is the sole source of truth for context editability — flag-level permissions
+    // never grant context write access.
+    app.md.flag_form.contextWriteUuids = <%- JSON.stringify(contextWriteUuids) %>
+
+    /**
+     * Returns true only if the user has an explicit write permission on this specific context.
+     * Flag-level or bucket-level write does NOT grant context editability.
+     */
+    app.md.flag_form.contextIsWritable = (contextUuid) => {
+        return app.md.flag_form.contextWriteUuids.includes(contextUuid)
+    }
 
     app.md.flag_form.flagContext=JSON.parse(`<%- JSON.stringify(flagContext) %>`)
     //app.md.flag_form.engineBoolean=JSON.parse(`<%- //JSON.stringify(engineBoolean) %>`)
@@ -86,6 +103,18 @@
                 app.toastShow('Deleted','Flag deleted successfully.',{type:"success"}) 
             },1000)   
         })
+        .fail(function(data) {
+            try {
+                app.dialog.hide()
+                for (messageData of JSON.parse(data.responseText).messages) {
+                    app.toastShow('Error on Delete',messageData.message,{closable:true,type:"error"})
+                    break;
+                }
+
+            } catch (error) {}
+        })
+        .always(function() {
+        });         
     
     }
 
@@ -149,15 +178,7 @@
         }
 
         let disabled = "disabled='disabled'"
-        if (app.md.flag_form.userHasPermissionOnElement(
-            app.md.flag_form.userPermissions,
-            [
-                app.md.flag_form.prefix+'.flag',
-                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
-                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+bucketContext.uuid
-            ],  
-            ['write'])
-        ) {
+        if (app.md.flag_form.contextIsWritable(bucketContext.uuid)) {
             disabled=""
         }
 
@@ -303,15 +324,7 @@
     app.md.setEngineView=(engine,contextUuid)=>{
 
         let disabled = "disabled='disabled'"
-        if (app.md.flag_form.userHasPermissionOnElement(
-            app.md.flag_form.userPermissions,
-            [
-                app.md.flag_form.prefix+'.flag',
-                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
-                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
-            ],
-            ['write'])
-        ) {
+        if (app.md.flag_form.contextIsWritable(contextUuid)) {
             disabled=""
         }
 
@@ -419,15 +432,7 @@
     app.md.addEngineBooleanConditionedTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(
-            app.md.flag_form.userPermissions,
-            [
-                app.md.flag_form.prefix+'.flag',
-                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
-                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
-            ],
-            ['write'])
-        ) {
+        if (app.md.flag_form.contextIsWritable(contextUuid)) {
             disabled=""
         }
 
@@ -483,15 +488,7 @@
     app.md.addEngineBooleanConditionedFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(
-            app.md.flag_form.userPermissions,
-            [
-                app.md.flag_form.prefix+'.flag',
-                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
-                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
-            ],
-            ['write'])
-        ) {
+        if (app.md.flag_form.contextIsWritable(contextUuid)) {
             disabled=""
         }
 
@@ -546,15 +543,7 @@
     app.md.addEngineBooleanConditionedOrTrueCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(
-            app.md.flag_form.userPermissions,
-            [
-                app.md.flag_form.prefix+'.flag',
-                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
-                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
-            ],
-            ['write'])
-        ) {
+        if (app.md.flag_form.contextIsWritable(contextUuid)) {
             disabled=""
         }
 
@@ -609,15 +598,7 @@
      app.md.addEngineBooleanConditionedOrFalseCondition=(contextUuid,condition=JSON.parse(JSON.stringify(app.md.flag_form.engineBooleanConditionedCondition)) ) => {
 
         let disabled='disabled="disabled"'
-        if (app.md.flag_form.userHasPermissionOnElement(
-            app.md.flag_form.userPermissions,
-            [
-                app.md.flag_form.prefix+'.flag',
-                app.md.flag_form.prefix+'.flag.'+app.md.flag_form.flag.uuid,
-                app.md.flag_form.prefix+'.bucket.'+app.md.flag_form.flag.bucket_uuid+'.context.'+contextUuid
-            ],
-            ['write'])
-        ) {
+        if (app.md.flag_form.contextIsWritable(contextUuid)) {
             disabled=""
         }
           
@@ -727,14 +708,12 @@
 
 <% } %>
 <sl-tab-group id="flag_form_tab_group">
-    <sl-tab slot="nav" panel="general">General</sl-tab>
+    <sl-tab slot="nav" panel="general" <% if(!hasGeneralFlagWrite) { %>disabled<% } %> >General</sl-tab>
     <sl-tab slot="nav" panel="values">Context Values</sl-tab>
-
     <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write']) ) { %>
         <sl-tab slot="nav" panel="operations">Operations</sl-tab>
         
     <% } %>
-
     <sl-tab-panel name="general">
                 
         <% let fieldsEnabled = false; if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { fieldsEnabled = true }%>
@@ -745,31 +724,40 @@
         <select id="flag_tags" class="js-example-basic-single" name="state[]" multiple="multiple" style="width:100%" >
             <% tags.forEach(tag => { %>
                 <option value="<%= tag.uuid %>" <% if(flag.tags.includes(tag.uuid)){ %> selected <% } %> ><%= tag.name %></option>
-             
             <% }) %>
         </select>          
         <br>
         <br>
         Bucket Context Storage:<br>
         <br>
-        <% let disabled="disabled='disabled'" %>        
         <% bucket.contexts.forEach(context => { %>
-
-            <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { disabled="" } else { let disabled="disabled='disabled'" }%>
-
+            <%
+                // A context checkbox is enabled only if the user has an explicit write
+                // permission on this specific context. Flag-level write does not grant this.
+                let ctxWritable = UserHasPermissionOnElement(userPermissions,
+                    [
+                        prefix+'.bucket',
+                        prefix+'.bucket.'+flag.bucket_uuid
+                    ],
+                    ['write'])
+                let ctxDisabled = ctxWritable ? "" : "disabled='disabled'"
+            %>
             <div class="alert alert-light" role="alert">
                 <% let checked=""; if (flagContextsUuids.includes(context.uuid)) checked="checked" %>
-                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="app.md.setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %>  <%= disabled %> > <%= context.name %>
+                <input id="bucket_context_visibility_<%= context.uuid %>" value="<%= context.uuid %>" class="form-check-input" type="checkbox" onchange="app.md.setFlagContextValueConfig('<%= context.uuid %>')" <%= checked %> <%= ctxDisabled %> > <%= context.name %>
             </div>
         
         <% }) %>
-
-    </sl-tab-panel>
+    </sl-tab-panel>  
     <sl-tab-panel id="contexts_values_config" name="values"></sl-tab-panel>
 
     <% if (editing && UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { %>
         <sl-tab-panel name="operations">
             <%- pluginOperations %>
+
+            <div class="alert alert-warning fade show" role="alert">
+                <p>A flag can be delete only having the General Flag Write Permission.</p>
+            </div>              
             <sl-details summary="Delete">
                 <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
                     Afer deleting this Flag, the clients will NO longer receive It's configuration.
@@ -786,8 +774,14 @@
 
 <div slot="footer" style="padding: 20px;background-color: var(--color-footer-bg);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
     <button type="button" class="btn btn-secondary" onclick="app.drawer.hide()">Close</button>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag',prefix+'.flag.'+flag.uuid],['write'])) { %>
-        <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitFlag(this)">Save</sl-button>
+    <%
+        // Show Save if the user can change something:
+        // - general flag write (can edit flag fields: name, description, tags), OR
+        // - write permission on at least one context.
+        const userCanSaveFlag = hasGeneralFlagWrite || contextWriteUuids.length > 0
+    %>
+    <% if (userCanSaveFlag) { %>
+        <button type="button" class="btn btn-primary" style="background-color: var(--main-contrast-color);" onclick="app.md.submitFlag(this)">Save</button>
     <% } %>
 </div>
 
@@ -800,7 +794,12 @@
             document.getElementById('flag_form_tab_group').show('values')
             document.getElementById(`bucket_context_value_config_${app.md.flag_form.bucket_context_uuid}`).show()
         } else {
-            document.getElementById('flag_form_tab_group').show('general')
+            if(app.md.flag_form.hasGeneralFlagWrite){
+                document.getElementById('flag_form_tab_group').show('general')
+
+            }else{
+                document.getElementById('flag_form_tab_group').show('values')
+            }
         }
         if (app.md.flag_form.flag.name==="") {
             setTimeout(()=>{document.getElementById("flag_name").focus()},500)        

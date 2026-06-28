@@ -134,7 +134,18 @@ export class BucketService implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<BucketDataObject> {
 
-        if (this.userCanRead || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+"."+uuid],["read","write"])) {
+        // Allow any user who has an explicit permission on this bucket or any of its
+        // sub-resources (contexts), OR any flag-level permission (since flags belong to
+        // buckets and the flag form needs the bucket's context list).
+        const flagPrefix = this.serviceSecurityElement.replace('.bucket','.flag')
+        const hasAnySubResourceAccess = this.userPermissions.some((rule:any) =>
+            rule[1].startsWith(this.serviceSecurityElement+'.'+uuid+'.context.') ||
+            rule[1].startsWith(flagPrefix+'.')
+        )
+
+        if (this.userCanRead ||
+            UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+"."+uuid],["read","write"]) ||
+            hasAnySubResourceAccess) {
             return await this.bucketModel.getByUuId(uuid)
            
         }

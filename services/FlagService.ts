@@ -61,57 +61,71 @@ export class FlagService implements IDisposable {
             throw new ExceptionInvalidObject(ExceptionInvalidObject.invalidObject,userValidationResult.messages)
         }
 
-        // General flag write (liberty_flag.flag) is the only permission that allows
-        // modifying all contexts without restriction. A specific flag permission
-        // (liberty_flag.flag.<uuid>) still requires explicit context access per context.
-        const writeOperationApproved = this.userCanWrite || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+newFlag.uuid],["write"])
+        const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
 
-        // Collect context uuids the user has explicit access to (read or write),
-        // combined with any flag write permission, allows saving that context's engine config.
-        const oldReadableContextUuids:string[] = []
+        // hasFullWriteAuthority: the user may change the flag's own fields (name, description,
+        // tags). Granted by general flag/bucket write or specific-bucket/flag write.
+        // It does NOT grant context visibility or editability — those are per-context only.
+        const hasFullWriteAuthority =
+            this.userCanWrite ||
+            //UserHasPermissionOnElement(this.userPermissions,[bucketPrefix],["write"]) ||
+            //UserHasPermissionOnElement(this.userPermissions,[bucketPrefix+'.'+newFlag.bucket_uuid],["write"]) ||
+            UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+newFlag.uuid],["write"])
 
+        // Context writability is determined EXCLUSIVELY by per-context write rules.
+        // No flag-level or bucket-level grant ever makes a context writable.
+        const perContextWriteUuids:string[] = []
         for (const rule of this.userPermissions) {
-            const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
-            // matches liberty_flag.bucket.<bucketUuid>.context.<contextUuid>
             const match = rule[1].match(new RegExp(`^${bucketPrefix.replace(/\./g,'\\.')}[^\\.]+\\.context\\.(.+)$`))
-            if (match && (rule[2]==="read" || rule[2]==="write")) {
-                oldReadableContextUuids.push(match[1])
+            if (match && rule[2] === 'write') {
+                perContextWriteUuids.push(match[1])
             }
         }
 
+        if (!hasFullWriteAuthority && perContextWriteUuids.length === 0) {
+            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized)
+        }
 
-        if (this.userCanWrite || writeOperationApproved) {
-            // If the user only has context-level access, rebuild the contexts array
-            // entirely from the DB copy, merging only engine/engine_parameters for
-            // contexts the user is permitted to access. Every other field, and every
-            // context not in the DB, is ignored — even if the attacker submits it.
-            if (!this.userCanWrite && oldReadableContextUuids.length > 0) {
-                const oldFlag = await this.flagModel.getByUuId(newFlag.uuid)
-                newFlag.contexts = oldFlag.contexts.map((oldContext:any) => {
+        // Fetch the current DB copy — always needed for the safe merge below
+        const oldFlag = await this.flagModel.getByUuId(newFlag.uuid)
 
-                    // Find the submitted entry for this context by its DB-authoritative uuid
-                    const submittedContext = newFlag.contexts.find(
-                        submitedFlagContext => submitedFlagContext.bucket_context_uuid === oldContext.bucket_context_uuid
-                    )
-                    if (submittedContext) {
-                        // Only trust engine and engine_parameters from the submission
-                        return {
-                            ...oldContext,
-                            engine: submittedContext.engine,
-                            engine_parameters: submittedContext.engine_parameters,
-                        }
+        if (!hasFullWriteAuthority) {
+            // Non-full-authority users: restore all top-level flag fields from DB
+            newFlag.name = oldFlag.name
+            newFlag.description = oldFlag.description
+            newFlag.tags = oldFlag.tags
+            newFlag.bucket_uuid = oldFlag.bucket_uuid
+        }
+
+        // Rebuild contexts from DB, applying submitted engine/engine_parameters only for
+        // contexts the user has an explicit per-context write rule on.
+        
+        if (!hasFullWriteAuthority) {
+            newFlag.contexts = oldFlag.contexts.map((oldContext:any) => {
+    
+                if (!perContextWriteUuids.includes(oldContext.bucket_context_uuid)) {
+                    return oldContext
+                }
+    
+                const submittedContext = newFlag.contexts.find(
+                    (submitted:any) => submitted.bucket_context_uuid === oldContext.bucket_context_uuid
+                )
+                if (submittedContext) {
+                    return {
+                        ...oldContext,
+                        engine: submittedContext.engine,
+                        engine_parameters: submittedContext.engine_parameters,
                     }
-
-                // Not accessible or not submitted — keep DB version untouched
+                }
+    
+                // Context is writable but not present in submission — keep DB version
                 return oldContext
-                })
-            }
-            newFlag=await middlewareTargets["FlagServiceCrudMiddleware"].beforeUpdate(newFlag)
-            return await this.flagModel.updateOne(newFlag)
+            })
+            
         }
-        else{
-            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
-        }            
+
+        newFlag=await middlewareTargets["FlagServiceCrudMiddleware"].beforeUpdate(newFlag)
+        return await this.flagModel.updateOne(newFlag)
 
     }
 
@@ -150,7 +164,13 @@ export class FlagService implements IDisposable {
     }
 
     async deleteByUuId(flagUuId:string){
-        if (this.userCanWrite) {
+
+        const hasFullWriteAuthority =
+            this.userCanWrite ||
+            UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+'.'+flagUuId],["write"])
+
+
+        if (hasFullWriteAuthority) {
             middlewareTargets["FlagServiceCrudMiddleware"].beforeDelete(flagUuId)
             return await this.flagModel.deleteByUuId(flagUuId) 
            
@@ -191,7 +211,17 @@ export class FlagService implements IDisposable {
 
     async getByNameAndBucketUuid(name:string,bucketUuid:string) : Promise<FlagDataObject> {
 
-        if (this.userCanRead || UserHasPermissionOnElement(this.userPermissions,['liberty_flag.bucket.'+bucketUuid],["read","write"])) {
+        // Allow access if the user has general flag read, a specific bucket permission,
+        // or any context-level permission — so partial-write users can look up flags.
+        const hasContextLevelAccess = this.userPermissions.some((rule:any) => {
+            const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
+            return rule[1].startsWith(bucketPrefix) && rule[1].includes('.context.')
+        })
+
+        const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
+        if (this.userCanRead ||
+            UserHasPermissionOnElement(this.userPermissions,[bucketPrefix+'.'+bucketUuid],["read","write"]) ||
+            hasContextLevelAccess) {
             return await this.flagModel.getByNameAndBucketUuid(name,bucketUuid)
 
         }
@@ -215,30 +245,64 @@ export class FlagService implements IDisposable {
 
     async getByUuId(uuid:string) : Promise<FlagDataObject> {
 
-        if (this.userCanRead || UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+"."+uuid],["read","write"])) {
-            return await this.flagModel.getByUuId(uuid)
+        // Allow access if the user has general flag read, a specific flag permission,
+        // a specific-bucket permission, or a context-level permission — so users with
+        // bucket-scope or context-scope grants can open the flag form.
+        const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
+        const hasContextLevelAccess = this.userPermissions.some((rule:any) =>
+            rule[1].startsWith(bucketPrefix) && rule[1].includes('.context.')
+        )
 
+        // We need the flag's bucket_uuid to check bucket-specific permission.
+        // Fetch from DB first, then gate — this avoids a chicken-and-egg problem by
+        // letting any of the other checks short-circuit before the DB call.
+        if (this.userCanRead ||
+            UserHasPermissionOnElement(this.userPermissions,[this.serviceSecurityElement+"."+uuid],["read","write"]) ||
+            hasContextLevelAccess) {
+            return await this.flagModel.getByUuId(uuid)
         }
-        else{
-            throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
-        }            
+
+        // Bucket-specific check requires the flag's bucket_uuid, so fetch first.
+        const flag = await this.flagModel.getByUuId(uuid)
+        if (UserHasPermissionOnElement(this.userPermissions,[bucketPrefix+'.'+flag.bucket_uuid],["read","write"])) {
+            return flag
+        }
+
+        throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized)
 
     }
 
     async getAll(filter:any={},limit=0,skip=0) : Promise<FlagDataObject[]> {
-        if (this.userCanRead || ('uuid' in filter)) {
+        const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
+        const bucketUuidInFilter:string = filter.bucket_uuid || ""
+        const hasBucketAccess = bucketUuidInFilter !== "" &&
+            UserHasPermissionOnElement(this.userPermissions,[bucketPrefix+'.'+bucketUuidInFilter],["read","write"])
+        // Also allow any user who has at least one specific flag or context permission
+        const hasAnySpecificAccess = this.userPermissions.some((rule:any) =>
+            rule[1].startsWith(this.serviceSecurityElement+'.') ||
+            rule[1].startsWith(bucketPrefix)
+        )
+
+        if (this.userCanRead || ('uuid' in filter) || hasBucketAccess || hasAnySpecificAccess) {
             return await this.flagModel.getAll(filter,limit,skip)
-           
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            
         } 
     }
 
-    async getCount(filter={}) : Promise<number> {
-        if (this.userCanRead || ('uuid' in filter)) {
+    async getCount(filter:any={}) : Promise<number> {
+        const bucketPrefix = this.serviceSecurityElement.replace('.flag','.bucket.')
+        const bucketUuidInFilter:string = filter.bucket_uuid || ""
+        const hasBucketAccess = bucketUuidInFilter !== "" &&
+            UserHasPermissionOnElement(this.userPermissions,[bucketPrefix+'.'+bucketUuidInFilter],["read","write"])
+        const hasAnySpecificAccess = this.userPermissions.some((rule:any) =>
+            rule[1].startsWith(this.serviceSecurityElement+'.') ||
+            rule[1].startsWith(bucketPrefix)
+        )
+
+        if (this.userCanRead || ('uuid' in filter) || hasBucketAccess || hasAnySpecificAccess) {
             return await this.flagModel.getCount(filter)
-           
         }
         else{
             throw new ExceptionNotAuthorized(ExceptionNotAuthorized.notAuthorized);            

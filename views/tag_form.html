@@ -63,6 +63,18 @@
                 app.toastShow('Deleted','Tag deleted successfully.',{type:"success"}) 
             },1000)   
         })
+        .fail(function(data) {
+            try {
+                app.dialog.hide()
+                for (messageData of JSON.parse(data.responseText).messages) {
+                    app.toastShow('Error on Delete',messageData.message,{closable:true,type:"error"})
+                    break;
+                }
+
+            } catch (error) {}
+        })
+        .always(function() {
+        }); 
     
     }    
 
@@ -96,7 +108,7 @@
             <sl-tab-panel name="operations">
                 <sl-details summary="Delete">
                     <label style='margin-bottom:7px;font-size:17px' style="text-align: justify;">
-                        Deleting a Tag will also remove It from the associated elements.
+                        Deleting a Tag will also remove It from the associated elements and you will require Write permission over those elements.
                         <br>
                         <br>
                     </label>

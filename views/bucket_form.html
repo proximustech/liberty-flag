@@ -38,7 +38,7 @@
             [
                 app.md.bucket_form.prefix+'.bucket',
                 app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid,
-                app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid+'.context.'+bucketContext.uuid
+                //app.md.bucket_form.prefix+'.bucket.'+app.md.bucket_form.bucket.uuid+'.context.'+bucketContext.uuid
             ],
             ['write'])
         ) {
@@ -156,6 +156,18 @@
                 app.toastShow('Deleted','Bucket deleted successfully.',{type:"success"}) 
             },1000)   
         })
+        .fail(function(data) {
+            try {
+                app.dialog.hide()
+                for (messageData of JSON.parse(data.responseText).messages) {
+                    app.toastShow('Error on Delete',messageData.message,{closable:true,type:"error"})
+                    break;
+                }
+
+            } catch (error) {}
+        })
+        .always(function() {
+        }); 
     
     }    
 

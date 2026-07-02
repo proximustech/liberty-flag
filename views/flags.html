@@ -2,23 +2,31 @@
     app.md = {}
 </script>
 <% let bucketContextsMap = getUuidMapFromBucketContextsList(bucket.contexts) %>
-<div class="lp_contrast_container lp_module_fixed_bar">
-    <div class="lp_bread_crumbs_container" id="lp_bread_crumbs_container"></div>
-    <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
-        <div class="btn-group" role="group" aria-label="" style="margin-bottom: 10px;">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="app.ajax('app_drawer', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>');app.drawer.show();">
-                <i class="bi bi-plus-circle"></i> Add
-            </button>        
-
-        </div>
-    <% } %>
-    
-    <div style="max-width: 250px;margin-bottom: 10px;margin-left: auto;margin-right: auto;">
-        <sl-input id="flag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>&search_value=${this.value}`)" value="<%= searchValue %>" >
-            <sl-icon name="search" slot="prefix"></sl-icon>
-        </sl-input>    
+<div class="lp_contrast_container lp_module_fixed_bar lp_fixed_bar_collapsed" id="flags_fixed_bar">
+    <div class="lp_fixed_bar_toggle" onclick="(function(bar){bar.classList.toggle('lp_fixed_bar_collapsed');var icon=bar.querySelector('.lp_fixed_bar_toggle i');icon.className=bar.classList.contains('lp_fixed_bar_collapsed')?'bi bi-chevron-down':'bi bi-chevron-up';})(document.getElementById('flags_fixed_bar'))">
+        <span class="lp_fixed_bar_toggle_space"></span>
+        <button title="Toggle bar">
+            <i class="bi bi-chevron-down"></i>
+        </button>
     </div>
-    <div id="list_navigation_bar"></div>
+    <div class="lp_fixed_bar_content">
+        <div class="lp_bread_crumbs_container" id="lp_bread_crumbs_container"></div>
+        <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.flag'],['write'])) { %>
+            <div class="btn-group" role="group" aria-label="" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="app.ajax('app_drawer', '/<%= prefix %>/flag_form?bucket_uuid=<%= bucket.uuid %>');app.drawer.show();">
+                    <i class="bi bi-plus-circle"></i> Add
+                </button>        
+
+            </div>
+        <% } %>
+        
+        <div style="max-width: 250px;margin-bottom: 10px;margin-left: auto;margin-right: auto;">
+            <sl-input id="flag_search_box" placeholder="Type: filter, Intro: search" size="medium" autocomplete="one-time-code" pill onkeydown="app.ajaxOnPressedKey(event,13,'content_view',`/<%= prefix %>/flags?<%= extendedFilterDefinition %>bucket_uuid=<%= bucket.uuid %>&search_value=${this.value}`)" value="<%= searchValue %>" >
+                <sl-icon name="search" slot="prefix"></sl-icon>
+            </sl-input>    
+        </div>
+        <div id="list_navigation_bar"></div>
+    </div>
 </div>
 <table 
     id="flags_table"

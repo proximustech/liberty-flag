@@ -3,11 +3,19 @@
 </script>
 
 <% if (UserHasPermissionOnElement(userPermissions,[prefix+'.bucket'],['read'])) { %>
-    <div class="lp_contrast_container lp_module_fixed_bar">
-        <div style="max-width: 250px;margin-left: auto;margin-right: auto;">
-            <sl-input id="context_search_box" placeholder="Type: filter" size="medium" autocomplete="one-time-code" pill>
-                <sl-icon name="search" slot="prefix"></sl-icon>
-            </sl-input>    
+    <div class="lp_contrast_container lp_module_fixed_bar lp_fixed_bar_collapsed" id="contexts_fixed_bar">
+        <div class="lp_fixed_bar_toggle" onclick="(function(bar){bar.classList.toggle('lp_fixed_bar_collapsed');var icon=bar.querySelector('.lp_fixed_bar_toggle i');icon.className=bar.classList.contains('lp_fixed_bar_collapsed')?'bi bi-chevron-down':'bi bi-chevron-up';})(document.getElementById('contexts_fixed_bar'))">
+            <span class="lp_fixed_bar_toggle_space"></span>
+            <button title="Toggle bar">
+                <i class="bi bi-chevron-down"></i>
+            </button>
+        </div>
+        <div class="lp_fixed_bar_content">
+            <div style="max-width: 250px;margin-left: auto;margin-right: auto;">
+                <sl-input id="context_search_box" placeholder="Type: filter" size="medium" autocomplete="one-time-code" pill>
+                    <sl-icon name="search" slot="prefix"></sl-icon>
+                </sl-input>    
+            </div>
         </div>
     </div>
     <table 

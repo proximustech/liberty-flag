@@ -1,3 +1,36 @@
+<style>
+    .lp_dialog_btn_primary {
+        background-color: var(--main-contrast-color);
+        border: 1.5px solid var(--main-contrast-color);
+        color: white;
+        opacity: 1;
+        transition: opacity 0.2s ease;
+        border-radius: 4px;
+    }
+    .lp_dialog_btn_primary:hover {
+        opacity: 0.8;
+        border: 1.5px solid var(--main-contrast-color);
+    }
+    .sl-theme-dark .lp_dialog_btn_primary {
+        color: #a8c5ff;
+    }
+    .lp_dialog_btn_outline {
+        color: var(--main-contrast-color);
+        border: 1.5px solid var(--main-contrast-color);
+        background-color: transparent;
+        border-radius: 4px;
+        padding: 8px 12px;
+        transition: background-color 0.2s ease;
+    }
+    .lp_dialog_btn_outline:hover {
+        background-color: rgba(2, 132, 199, 0.06);
+        border: 1.5px solid var(--main-contrast-color);
+    }
+    .sl-theme-dark .lp_dialog_btn_outline:hover {
+        background-color: rgba(81, 111, 160, 0.12);
+        border: 1.5px solid var(--main-contrast-color);
+    }
+</style>
 <script>
     app.md = {} 
 </script>
@@ -90,7 +123,7 @@
         if (!bucket || !bucket.contexts || bucket.contexts.length === 0) {
             app.dialog.innerHTML = '<p>No contexts available for this bucket.</p>';
             app.dialog.label = 'Edit Context';
-            app.dialog.insertAdjacentHTML('beforeend', '<div slot="footer"><button type="button" class="btn btn-secondary" onclick="app.dialog.hide()">Close</button></div>');
+            app.dialog.insertAdjacentHTML('beforeend', '<div slot="footer"><button type="button" class="btn lp_dialog_btn_primary" onclick="app.dialog.hide()">Close</button></div>');
             app.dialog.show();
             return;
         }
@@ -102,12 +135,12 @@
         let bucket = app.md.bucketsData[app.md._editContextBucketUuid];
         let html = '<div style="margin-bottom: 10px;">';
         bucket.contexts.forEach((context, index) => {
-            html += '<button type="button" class="btn btn-outline-primary" style="display:block;width:100%;margin-bottom:5px;text-align:left;" onclick="app.md._editContext(' + index + ')">' + app.escapeHTML(context.name) + '</button>';
+            html += '<button type="button" class="btn lp_dialog_btn_outline" style="display:block;width:100%;margin-bottom:5px;text-align:left;" onclick="app.md._editContext(' + index + ')">' + app.escapeHTML(context.name) + '</button>';
         });
         html += '</div>';
         app.dialog.innerHTML = html;
         app.dialog.label = 'Select a context to edit';
-        app.dialog.insertAdjacentHTML('beforeend', '<div slot="footer"><button type="button" class="btn btn-secondary" onclick="app.dialog.hide()">Close</button></div>');
+        app.dialog.insertAdjacentHTML('beforeend', '<div slot="footer"><button type="button" class="btn lp_dialog_btn_primary" onclick="app.dialog.hide()">Close</button></div>');
         app.dialog.show();
     };
 

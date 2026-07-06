@@ -18,7 +18,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/tags', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }        
 
@@ -67,7 +67,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
     
     router.get('/tag_form', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -119,7 +119,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.post('/tag',koaBody(), async (ctx:Context) => {
         
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -205,7 +205,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.delete('/tag',koaBody(), async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 

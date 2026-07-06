@@ -46,7 +46,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/buckets', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -131,7 +131,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/bucket_form', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -212,7 +212,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.post('/bucket',koaBody(), async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -300,7 +300,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/context_form', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -357,7 +357,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.delete('/bucket',koaBody(), async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -428,7 +428,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/contexts', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -479,7 +479,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/context', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -564,7 +564,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/context_stats', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 
@@ -624,7 +624,7 @@ module.exports = function(router:Router,appViewVars:any,prefix:string){
 
     router.get('/context_data_pulse_stats', async (ctx:Context) => {
 
-        if (typeof(ctx.session.passport.user)==="undefined") {
+        if (typeof(ctx.session?.passport?.user)==="undefined") {
             throw new ExceptionSessionInvalid(ExceptionSessionInvalid.exceptionSessionInvalid);
         }
 

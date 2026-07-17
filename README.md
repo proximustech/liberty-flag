@@ -1,9 +1,6 @@
-# 🚩 Liberty Flag
+<img src="https://github.com/proximustech/liberty-flag/raw/master/assets/images/liberty-flag.png" width="100%">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-Liberty%20Platform-blue)](https://github.com/proximustech/liberty-platform)
-[![TypeScript](https://img.shields.io/badge/TypeScript-60.5%25-3178c6)](https://www.typescriptlang.org/)
-[![HTML](https://img.shields.io/badge/HTML-39.5%25-e34c26)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+# Liberty Flag
 
 > **Everything teams expect from modern feature flag software, but better.**
 

@@ -70,10 +70,3 @@ Liberty Flag is built for scale and reliability, structured around three core co
 ### Prerequisites
 Liberty Flag runs inside the **Liberty Platform**. Ensure you have the Liberty Platform installed and running in your environment.
 - [Liberty Platform Repository](https://github.com/proximustech/liberty-platform)
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/proximustech/liberty-flag.git
-   cd liberty-flag

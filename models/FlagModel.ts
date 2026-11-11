@@ -22,11 +22,20 @@ export class FlagModel implements IDisposable {
         this.collection = this.dataBase.collection(this.collectionName);
     }
 
+    private async checkForDuplicatedNames(flag:FlagDataObject):Promise<void>{
+        const queryFlagResult = await this.getByNameAndBucketUuid(flag.name,flag.bucket_uuid)
+        if (queryFlagResult.uuid !== "" && queryFlagResult.uuid !== flag.uuid) {
+            throw new ExceptionRecordAlreadyExists("Name already exists")
+        }        
+    }
+
     async create(flag:FlagDataObject){
         flag.uuid = Uuid.createMongoUuId()
-        flag._id = new ObjectId(flag.uuid)        
+        flag._id = new ObjectId(flag.uuid)
+        await this.checkForDuplicatedNames(flag);
         const result = await this.collection.insertOne(flag,{writeConcern: {w: 1, j: true}}).catch((error) => {
             if (error.code === 11000) {
+                //DEPRECATED
                 throw new ExceptionRecordAlreadyExists("Name already exists")
             } else {
               console.log(error);
@@ -42,12 +51,14 @@ export class FlagModel implements IDisposable {
 
     async updateOne(flag:FlagDataObject){
         flag._id = new ObjectId(flag.uuid)
+        await this.checkForDuplicatedNames(flag);
         const result = await this.collection.replaceOne(
             {uuid: String(flag.uuid) }, 
             flag,
             {upsert: false,writeConcern: {w: 1, j: true}}
         ).catch((error) => {
             if (error.code === 11000) {
+                //DEPRECATED
                 throw new ExceptionRecordAlreadyExists("Name already exists")
             } else {
               console.log(error);
